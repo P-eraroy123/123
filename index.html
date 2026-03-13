@@ -1,0 +1,7478 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>PhiloGraph · 哲学搜索与思维导图</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    :root {
+      /* 清新淡雅配色：柔和蓝绿 + 浅背景 */
+      --bg-main: #f5f7fb;
+      --bg-elevated: #ffffff;
+      --bg-elevated-soft: #f2f5fc;
+      --border-subtle: #d6dceb;
+      --text-main: #242b3a;
+      --text-muted: #7a8399;
+      --accent: #6bbfa8; /* 柔和青绿 */
+      --accent-soft: rgba(107, 191, 168, 0.16);
+      --danger: #ff6b6b;
+      --radius-lg: 18px;
+      --radius-md: 12px;
+      --radius-sm: 999px;
+      --shadow-soft: 0 14px 30px rgba(33, 59, 102, 0.15);
+      --transition-fast: 0.16s ease-out;
+      --transition-med: 0.26s ease-out;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      background: #ffffff;
+      color: var(--text-main);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+        "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+        "Helvetica Neue", Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    body {
+      display: flex;
+      justify-content: stretch;
+      align-items: stretch;
+      padding: 0;
+    }
+    .app-shell {
+      width: 100vw;
+      height: 100vh;
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.98), rgba(243, 247, 255, 0.98));
+      border-radius: 0;
+      border: none;
+      box-shadow: var(--shadow-soft);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+    }
+    /* 顶部栏 */
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 22px 12px;
+      border-bottom: 1px solid rgba(214, 220, 235, 0.9);
+      backdrop-filter: blur(16px);
+      background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.92),
+        rgba(240, 246, 255, 0.96)
+      );
+      position: relative;
+      z-index: 5;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .brand-mark {
+      width: 26px;
+      height: 26px;
+      border-radius: 999px;
+      background:
+        radial-gradient(circle at 25% 10%, rgba(255, 255, 255, 0.9), transparent 55%),
+        conic-gradient(from 210deg, var(--accent) 0 140deg, #8cc7ff 140deg 260deg, #e0ebff 260deg 360deg);
+      box-shadow:
+        0 0 10px rgba(107, 191, 168, 0.45),
+        0 0 0 1px rgba(180, 200, 230, 0.9);
+    }
+    .brand-text-main {
+      font-size: 18px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-main);
+    }
+    .brand-text-sub {
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+    .top-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .today-quote {
+      max-width: 260px;
+      text-align: right;
+      font-style: italic;
+      opacity: 0.9;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .pill {
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      padding: 5px 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(12, 14, 20, 0.8);
+    }
+    .pill-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--accent);
+      box-shadow: 0 0 8px rgba(200, 169, 106, 0.7);
+    }
+    /* 主体布局 */
+    .main {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1.6fr 1fr; /* 左侧（搜索+资料）更宽，右侧导图略缩小 */
+      padding: 18px 18px 20px;
+      gap: 16px;
+      overflow: hidden;
+      /* 与搜索首页相同的浅色背景图 */
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.8)),
+        url("C:/Users/李柏岭/.cursor/projects/d-web/assets/c__Users_____AppData_Roaming_Cursor_User_workspaceStorage_ad01ea7e664db32ac45f61103b7d7a10_images_jie-2c616d9a-e459-4149-b51e-676769303bbe.png")
+          center/cover no-repeat fixed;
+    }
+    .panel {
+      background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.9), transparent 60%),
+        linear-gradient(150deg, #ffffff, #f3f6ff);
+      border-radius: 22px;
+      border: 1px solid rgba(214, 220, 235, 0.9);
+      padding: 16px 16px 14px;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 10px 26px rgba(33, 59, 102, 0.08);
+    }
+    .panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at top, rgba(107, 191, 168, 0.09), transparent 60%);
+      opacity: 0.7;
+      pointer-events: none;
+    }
+    .panel-inner {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      min-height: 0;
+    }
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .panel-title-group {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .panel-title {
+      font-size: 15px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-main);
+    }
+    .panel-subtitle {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    .panel-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    .icon-button {
+      border-radius: 999px;
+      border: 1px solid rgba(181, 194, 220, 0.9);
+      background: rgba(255, 255, 255, 0.92);
+      color: var(--text-muted);
+      width: 26px;
+      height: 26px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background var(--transition-fast), border-color var(--transition-fast),
+        transform 0.12s ease-out, color var(--transition-fast);
+    }
+    .icon-button:hover {
+      background: rgba(107, 191, 168, 0.12);
+      border-color: var(--accent);
+      color: var(--accent);
+      transform: translateY(-1px);
+    }
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+      margin-top: 2px;
+    }
+    .chip {
+      padding: 4px 10px;
+      font-size: 11px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(205, 214, 233, 0.9);
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: background var(--transition-fast), color var(--transition-fast),
+        border-color var(--transition-fast), transform 0.12s ease-out;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .chip span.dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--accent);
+    }
+    .chip.active {
+      background: var(--accent-soft);
+      border-color: var(--accent);
+      color: var(--accent);
+      transform: translateY(-1px);
+    }
+    .chip.chip-mode {
+      border-style: dashed;
+    }
+    .chip.chip-mode.active {
+      border-style: solid;
+      background: rgba(158, 171, 210, 0.18);
+      border-color: #7b8ab8;
+      color: #4a5a8a;
+    }
+    .chip:hover:not(.active) {
+      background: rgba(107, 191, 168, 0.08);
+    }
+    /* 搜索模块 */
+    .search-input-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .search-input-wrapper {
+      flex: 1;
+      position: relative;
+    }
+    .search-input {
+      width: 100%;
+      padding: 9px 11px 9px 30px;
+      border-radius: 999px;
+      border: 1px solid rgba(181, 194, 220, 0.9);
+      background: #ffffff;
+      color: var(--text-main);
+      font-size: 13px;
+      outline: none;
+      transition: border-color var(--transition-fast), box-shadow var(--transition-fast),
+        background var(--transition-fast), transform 0.12s ease-out;
+    }
+    .search-input::placeholder {
+      color: #9aa3b8;
+    }
+    .search-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(107, 191, 168, 0.6),
+        0 0 28px rgba(107, 191, 168, 0.35);
+      transform: translateY(-1px);
+    }
+    .search-icon {
+      position: absolute;
+      left: 9px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 13px;
+      color: #666a7a;
+    }
+    .button-primary {
+      padding: 8px 18px;
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(120deg, var(--accent), #9fdcc7);
+      color: #ffffff;
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      font-weight: 600;
+      box-shadow: 0 10px 26px rgba(107, 191, 168, 0.35);
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast),
+        filter var(--transition-fast);
+      white-space: nowrap;
+    }
+    .button-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 16px 40px rgba(200, 169, 106, 0.65);
+      filter: brightness(1.03);
+    }
+    .button-primary:active {
+      transform: translateY(0);
+      box-shadow: 0 6px 18px rgba(200, 169, 106, 0.4);
+      filter: brightness(0.98);
+    }
+    .search-meta-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+    .search-meta-row span strong {
+      color: var(--accent);
+      font-weight: 500;
+    }
+    .result-list {
+      flex: 1;
+      min-height: 0;
+      overflow: auto;
+      padding-right: 2px;
+      margin-top: 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .detail-panel {
+      flex: 1;
+      min-height: 0;
+      overflow: auto;
+      padding: 10px 12px;
+      margin-top: 6px;
+      border-radius: 16px;
+      background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.9), transparent 60%),
+        #ffffff;
+      border: 1px solid rgba(214, 220, 235, 0.9);
+      box-shadow: 0 12px 30px rgba(33, 59, 102, 0.12);
+    }
+
+    .detail-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .detail-title {
+      font-family: "Songti SC", "Noto Serif SC", "Source Han Serif SC",
+        "SimSun", "Times New Roman", serif;
+      font-size: 17px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #1e2c45;
+    }
+
+    .detail-pre {
+      white-space: pre-wrap;
+      font-size: 17px;
+      line-height: 1.75;
+      color: #3a4356;
+      font-family: "SF Pro Text", system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei",
+        "Helvetica Neue", Arial, sans-serif;
+    }
+    .result-card {
+      border-radius: 16px;
+      background: linear-gradient(135deg, #ffffff, #f3f6ff);
+      border: 1px solid rgba(214, 220, 235, 0.9);
+      padding: 10px 11px;
+      cursor: pointer;
+      transition: border-color var(--transition-fast), background var(--transition-fast),
+        transform 0.12s ease-out, box-shadow var(--transition-fast);
+      position: relative;
+    }
+    .result-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: radial-gradient(circle at top left, rgba(107, 191, 168, 0.15), transparent 65%);
+      opacity: 0;
+      transition: opacity var(--transition-fast);
+      pointer-events: none;
+    }
+    .result-card:hover {
+      border-color: var(--accent);
+      box-shadow: 0 12px 34px rgba(33, 59, 102, 0.2);
+      transform: translateY(-1px);
+    }
+    .result-card:hover::before {
+      opacity: 1;
+    }
+    .result-card.active {
+      border-color: var(--accent);
+      box-shadow: 0 16px 40px rgba(33, 59, 102, 0.25);
+    }
+    .result-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+      font-family: "Songti SC", "Noto Serif SC", "Source Han Serif SC",
+        "SimSun", "Times New Roman", serif;
+      font-size: 14px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #24324c;
+    }
+    .result-meta {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    .result-meta span + span::before {
+      content: "·";
+      margin: 0 6px;
+      color: #55596c;
+    }
+    .result-quote {
+      margin-top: 4px;
+      font-size: 11px;
+      color: #b3afaa;
+      font-style: italic;
+      line-height: 1.4;
+      border-left: 1px solid rgba(255, 255, 255, 0.09);
+      padding-left: 8px;
+    }
+    .result-actions {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 6px;
+      gap: 6px;
+    }
+    .result-tag {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(7, 9, 14, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      color: var(--text-muted);
+    }
+    .link-button {
+      font-size: 11px;
+      color: var(--accent);
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      opacity: 0.9;
+      transition: opacity var(--transition-fast), transform var(--transition-fast),
+        text-shadow var(--transition-fast);
+    }
+    .link-button:hover {
+      opacity: 1;
+      transform: translateY(-0.5px);
+      text-shadow: 0 0 10px rgba(200, 169, 106, 0.7);
+    }
+    /* 思维导图模块 */
+    .mindmap-meta-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+    .mindmap-meta-row strong {
+      color: var(--text-main);
+      font-weight: 500;
+    }
+    .mindmap-toolbar {
+      display: inline-flex;
+      gap: 6px;
+      align-items: center;
+    }
+    .mindmap-toolbar span.label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+    }
+    .badge {
+      font-size: 10px;
+      padding: 3px 7px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(7, 9, 14, 0.9);
+      color: var(--text-muted);
+    }
+    .mindmap-canvas-wrapper {
+      flex: 1;
+      min-height: 0;
+      border-radius: 18px;
+      background: linear-gradient(145deg, #e0fbfc, #d8f3dc); /* 浅绿+浅蓝渐变 */
+      border: 1px solid rgba(111, 191, 168, 0.9);
+      margin-top: 8px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 16px 38px rgba(0, 48, 73, 0.25);
+    }
+    .mindmap-overlay-gradient {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 20% 0%, rgba(255, 255, 255, 0.45), transparent 55%),
+        radial-gradient(circle at 80% 100%, rgba(107, 191, 168, 0.35), transparent 55%);
+      mix-blend-mode: soft-light;
+      opacity: 0.9;
+      pointer-events: none;
+    }
+    .mindmap-svg {
+      width: 100%;
+      height: 100%;
+    }
+    .mindmap-center-label {
+      position: absolute;
+      left: 14px;
+      bottom: 12px;
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--text-muted);
+      max-width: 78%;
+      white-space: normal;
+      word-break: normal;
+    }
+    .mindmap-center-label strong {
+      color: var(--accent);
+      font-weight: 500;
+    }
+    .mindmap-tooltip {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 10px;
+      font-size: 12px;
+      color: var(--text-muted);
+      text-align: center;
+      pointer-events: none;
+    }
+    .mindmap-tooltip span.key {
+      font-family: "SF Mono", ui-monospace, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size: 10px;
+      border-radius: 4px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      padding: 1px 4px;
+      margin: 0 2px;
+      background: rgba(7, 9, 14, 0.85);
+    }
+
+    /* 搜索首页 */
+    .home-main {
+      min-height: calc(100vh - 56px);
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      justify-content: flex-start;
+      /* 再降低白色叠加透明度，让背景图更清楚 */
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.8)),
+        url("C:/Users/李柏岭/.cursor/projects/d-web/assets/c__Users_____AppData_Roaming_Cursor_User_workspaceStorage_ad01ea7e664db32ac45f61103b7d7a10_images_jie-2c616d9a-e459-4149-b51e-676769303bbe.png")
+          center/cover no-repeat fixed;
+      position: relative;
+      overflow-y: auto;
+    }
+
+    .home-overlay {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 72px 18px 32px;
+      background: transparent;
+    }
+
+    .home-center {
+      max-width: 720px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .home-title {
+      font-size: 30px;
+      margin: 0 0 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #24344f;
+    }
+
+    .home-subtitle {
+      margin: 0 0 22px;
+      font-size: 13px;
+      color: var(--text-muted);
+      max-width: 520px;
+    }
+
+    .home-search-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    .home-search-input {
+      width: 360px;
+      max-width: 80vw;
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(181, 194, 220, 0.9);
+      background: #ffffff;
+      color: var(--text-main);
+      outline: none;
+      box-shadow: 0 8px 18px rgba(102, 140, 196, 0.12);
+    }
+
+    .home-search-input::placeholder {
+      color: #9aa3b8;
+    }
+
+    .home-reco-block {
+      width: 100%;
+      max-width: 860px;
+      margin-top: 12px;
+      border-radius: 20px;
+      padding: 14px 16px 12px;
+      background: linear-gradient(135deg, #e0fbfc, #ffffff); /* 淡蓝绿色背景 */
+      border: 1px solid rgba(111, 199, 191, 0.9); /* 接近主青绿色 */
+      box-shadow: 0 20px 48px rgba(0, 48, 73, 0.18);
+    }
+
+    .home-reco-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .home-reco-title {
+      font-size: 1.35rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      color: var(--text-main);
+      font-family: "Songti SC", "Noto Serif SC", "Source Han Serif SC", "SimSun", "Times New Roman", serif;
+      position: relative;
+      display: inline-block;
+      padding-bottom: 6px;
+      margin-bottom: 2px;
+    }
+    .home-reco-title::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent) 0%, rgba(107, 191, 168, 0.35) 100%);
+      border-radius: 1px;
+    }
+
+    .home-reco-scroll {
+      max-height: 340px;
+      overflow-y: auto;
+      padding-right: 3px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .home-reco-scroll::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .home-reco-scroll::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.28);
+      border-radius: 999px;
+    }
+
+    .home-reco-card {
+      border-radius: 16px;
+      padding: 9px 10px;
+      background: linear-gradient(135deg, #ffffff, #d8f3dc); /* 浅绿色卡片 */
+      border: 1px solid rgba(111, 191, 168, 0.9);
+      cursor: pointer;
+      transition: transform 0.16s ease-out, box-shadow 0.16s ease-out,
+        border-color 0.16s ease-out, background 0.16s ease-out;
+    }
+
+    .home-reco-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 18px 40px rgba(0, 48, 73, 0.28);
+      border-color: #3a86ff; /* 轻微蓝色高亮 */
+      background: linear-gradient(135deg, #e0fbfc, #d8f3dc); /* 蓝绿过渡 */
+    }
+
+    .home-reco-name {
+      font-family: "Songti SC", "Noto Serif SC", "Source Han Serif SC",
+        "SimSun", "Times New Roman", serif;
+      font-size: 14px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #003049;
+      margin-bottom: 2px;
+    }
+
+    .home-reco-meta {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .home-reco-meta span + span::before {
+      content: "·";
+      margin: 0 6px;
+      color: #55596c;
+    }
+
+    .home-reco-quote {
+      font-size: 11px;
+      color: #7a5418;
+      font-style: italic;
+    }
+
+    .home-hint {
+      margin-top: 6px;
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    .view-hidden {
+      display: none;
+    }
+
+    /* 滚动条 */
+    .result-list::-webkit-scrollbar {
+      width: 6px;
+    }
+    .result-list::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 999px;
+    }
+    .result-list::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    /* 响应式 */
+    @media (max-width: 960px) {
+      body {
+        padding: 10px;
+      }
+      .app-shell {
+        max-height: none;
+        height: auto;
+      }
+      .main {
+        display: flex;
+        flex-direction: column;
+        height: auto;
+      }
+      .panel {
+        min-height: 320px;
+      }
+    }
+    @media (max-width: 720px) {
+      .top-bar {
+        flex-direction: column;
+        gap: 6px;
+        align-items: flex-start;
+      }
+      .today-quote {
+        max-width: 100%;
+        text-align: left;
+      }
+      .main {
+        padding: 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="top-bar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true"></div>
+        <div>
+          <div class="brand-text-main">PHILOGRAPH</div>
+          <div class="brand-text-sub">CONCEPTUAL SEARCH & MIND MAP</div>
+        </div>
+      </div>
+      <div class="top-right">
+        <div class="today-quote" id="todayQuote">
+          「哲学的任务，不在于给出答案，而在于澄清问题。」
+        </div>
+        <div class="pill">
+          <span class="pill-dot"></span>
+          <span>思维模式：静默 · 深思</span>
+        </div>
+        <button id="viewToggleBtn" class="icon-button" title="在首页与哲学图谱之间切换">
+          ⇄
+        </button>
+      </div>
+    </header>
+
+    <!-- 搜索首页 -->
+    <main id="homeView" class="home-main">
+      <div class="home-overlay">
+        <div class="home-center">
+          <h1 class="home-title">PHILOSOPHICAL SEARCH</h1>
+          <p class="home-subtitle">
+            从一位哲学家的名字出发，向下展开他的时代、生平与概念系谱。
+          </p>
+          <div class="home-search-row">
+            <input
+              id="homeSearchInput"
+              class="home-search-input"
+              type="text"
+              placeholder="输入哲学家姓名，例如：孔子、老子、墨子…"
+            />
+            <button id="homeSearchBtn" class="button-primary">
+              <span>开始追问</span>
+              <span>↵</span>
+            </button>
+          </div>
+        </div>
+        <div class="home-reco-block">
+          <div class="home-reco-header">
+            <div>
+              <div class="home-reco-title">今日推荐哲学家</div>
+              <div class="home-hint">向下滚动，点击任意一位直接进入其思想图谱与详细资料。</div>
+            </div>
+          </div>
+          <div id="homeRecoList" class="home-reco-scroll">
+            <!-- JS 渲染推荐哲学家卡片 -->
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- 搜索结果 + 思维导图页 -->
+    <main id="appView" class="main view-hidden">
+      <!-- 搜索模块 -->
+      <section class="panel">
+        <div class="panel-inner">
+          <div class="panel-header">
+            <div class="panel-title-group">
+              <div class="panel-title">SEARCH</div>
+              <div class="panel-subtitle">为一个问题寻找它的系谱</div>
+            </div>
+            <div class="panel-actions">
+              <button class="icon-button" title="时间轴视图（预留）">
+                ⏳
+              </button>
+              <button class="icon-button" title="收藏（预留）">
+                ☆
+              </button>
+            </div>
+          </div>
+          <div class="search-input-row">
+            <div class="search-input-wrapper">
+              <span class="search-icon">⌕</span>
+              <input
+                id="searchInput"
+                class="search-input"
+                type="text"
+                placeholder="搜索哲学家、概念、问题或著作…"
+              />
+            </div>
+            <button id="searchBtn" class="button-primary">
+              <span>搜索</span>
+              <span>↵</span>
+            </button>
+          </div>
+          <div class="chip-row" id="categoryChips">
+            <button class="chip active" data-category="all">
+              <span class="dot"></span><span>全部</span>
+            </button>
+            <button class="chip" data-category="philosopher">哲学家</button>
+            <button class="chip" data-category="concept">概念</button>
+            <button class="chip" data-category="school">流派</button>
+            <button class="chip" data-category="work">著作</button>
+            <button class="chip chip-mode" data-category="by_school" title="按哲学家学派筛选">按流派</button>
+            <button class="chip chip-mode" data-category="by_work" title="按书名号内著作筛选">按著作</button>
+          </div>
+          <div class="search-meta-row">
+            <span id="searchSummary">
+              正在浏览：<strong>精选示例</strong>
+            </span>
+            <span>联动导图：点击结果卡片 / 查看左侧详细资料</span>
+          </div>
+          <div id="resultList" class="result-list">
+            <!-- 结果项由 JS 渲染 -->
+          </div>
+          <div id="philosopherDetail" class="detail-panel view-hidden">
+            <!-- 单个哲学家的完整资料 -->
+          </div>
+        </div>
+      </section>
+      <!-- 思维导图模块 -->
+      <section class="panel">
+        <div class="panel-inner">
+          <div class="panel-header">
+            <div class="panel-title-group">
+              <div class="panel-title">MIND MAP</div>
+              <div class="panel-subtitle" id="mapTitleSub">
+                当前中心：康德的“先验综合判断”
+              </div>
+            </div>
+            <div class="panel-actions">
+              <div class="mindmap-toolbar">
+                <span class="label">布局</span>
+                <span class="badge">RADIAl · 关系视图</span>
+                <button class="icon-button" id="recenterBtn" title="回到中心">
+                  ⊙
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="mindmap-meta-row">
+            <span>
+              关系层级：<strong id="mapDepthLabel">两层</strong>
+            </span>
+            <span>
+              提示：点击节点以设为新的中心
+            </span>
+          </div>
+          <div class="mindmap-canvas-wrapper">
+            <div class="mindmap-overlay-gradient" aria-hidden="true"></div>
+            <svg id="mindmapSvg" class="mindmap-svg"></svg>
+            <div class="mindmap-center-label" id="centerSummary">
+              <strong>先验综合判断</strong>：
+              经验与先验形式的交汇之处，是“可能经验”的条件。
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script>
+    // ===== 假数据：哲学条目与关系图 =====
+    const entries = [
+      {
+        id: "confucius",
+        type: "philosopher",
+        title: "孔子 Confucius",
+        subtitle: "前551?–前479 · 儒家 · 伦理与礼乐秩序",
+        tags: ["仁", "礼", "君子", "教育"],
+        quote:
+          "己欲立而立人，己欲达而达人；己所不欲，勿施于人。仁在日用伦常之中。",
+        centerSummary:
+          "孔子以“仁”和“礼”为核心，通过教育与礼乐重建周礼秩序，奠定整个东亚儒家人文传统的源头形象。",
+        relations: {
+          influences: ["mencius", "xunzi", "dong_zhongshu", "zhu_xi", "wang_yangming"],
+          related: ["socrates"],
+        },
+      },
+      {
+        id: "laozi",
+        type: "philosopher",
+        title: "老子 Laozi",
+        subtitle: "约前6–前4世纪 · 道家 · 《道德经》",
+        tags: ["道", "无为", "自然", "政治哲学"],
+        quote:
+          "道可道，非常道；名可名，非常名。反者道之动，弱者道之用。治大国若烹小鲜。",
+        centerSummary:
+          "老子以“道”为宇宙本体，以“无为”“守柔”为政治与人生智慧的核心，开启中国思想中关于自然与权力的另一条线索。",
+        relations: {
+          influences: ["zhuangzi", "han_fei", "wang_bi", "sengzhao"],
+          related: ["thales", "anaximander", "heraclitus", "parmenides", "empedocles", "anaxagoras", "epicurus"],
+        },
+      },
+      { id: "wang_chong", type: "philosopher", title: "王充 Wang Chong", subtitle: "27–约97 · 批判哲学 · 《论衡》与经验主义", tags: ["怀疑论", "经验主义", "自然主义", "反迷信"], quote: "事莫明于有效，论莫定于有证；夫天道，自然也，无为也。", centerSummary: "王充以严厉的经验主义批判谶纬与鬼神，将理性怀疑精神引入东汉思想界。", relations: { related: ["dong_zhongshu"] } },
+      { id: "wang_bi", type: "philosopher", title: "王弼 Wang Bi", subtitle: "226–249 · 魏晋玄学 · 贵无与义理诠释", tags: ["玄学", "无", "言意之辨", "经学转型"], quote: "道者，无之称也；得意在忘象，得象在忘言。", centerSummary: "王弼以“贵无”为本体，将《老子》《周易》哲学化，完成从汉代象数经学到魏晋玄学的诠释革命。", relations: { influencedBy: ["laozi"], influences: ["guo_xiang", "sengzhao", "zhu_xi"] } },
+      { id: "ji_kang", type: "philosopher", title: "嵇康 Ji Kang", subtitle: "223–262 · 竹林玄学 · 越名教任自然", tags: ["自然", "名教批判", "美学", "人格自由"], quote: "矜尚不存乎心，故能越名教而任自然；音声有自然之和，而无系于人情。", centerSummary: "嵇康以“越名教而任自然”对抗儒家礼教，将玄学与艺术、美学实践紧密结合。", relations: { related: ["zhuangzi", "guo_xiang"] } },
+      { id: "guo_xiang", type: "philosopher", title: "郭象 Guo Xiang", subtitle: "约252–312 · 魏晋玄学 · 独化与性分", tags: ["独化论", "名教自然", "庄子注", "本体论"], quote: "造物者无主，而物各自造；各安其分，则大小俱足。", centerSummary: "郭象以“独化论”和性分说重读《庄子》，将名教视为自然展开。", relations: { influencedBy: ["zhuangzi", "wang_bi"] } },
+      { id: "sengzhao", type: "philosopher", title: "僧肇 Sengzhao", subtitle: "约384–414 · 佛教 · 中观与玄学会通", tags: ["不真空", "物不迁", "般若", "中观"], quote: "诸法假号不真，譬如幻化人；物从因缘故不有，缘起故不无。", centerSummary: "僧肇以《肇论》将龙树中观与魏晋玄学会通，开启中国佛教哲学的本土表达。", relations: { influencedBy: ["laozi", "zhuangzi", "wang_bi"] } },
+      { id: "zhu_daosheng", type: "philosopher", title: "竺道生 Zhu Daosheng", subtitle: "355–434 · 佛教 · 涅槃学与佛性论", tags: ["佛性", "顿悟", "一阐提成佛"], quote: "一切众生，莫不是佛，亦皆泥洹；理不可分，悟语照极。", centerSummary: "竺道生以“一阐提皆可成佛”和“顿悟成佛”突破传统佛性论。", relations: { related: ["sengzhao", "huineng"] } },
+      { id: "huineng", type: "philosopher", title: "慧能 Huineng", subtitle: "638–713 · 禅宗 · 顿悟与无念", tags: ["顿悟", "无念", "即心即佛", "生活禅"], quote: "菩提本无树，明镜亦非台；本来无一物，何处惹尘埃。", centerSummary: "禅宗六祖慧能以“顿悟成佛”和“无念为宗”将觉悟落实于日常生活。", relations: { influencedBy: ["sengzhao", "zhu_daosheng"] } },
+      { id: "zhu_xi", type: "philosopher", title: "朱熹 Zhu Xi", subtitle: "1130–1200 · 程朱理学 · 理气与四书", tags: ["理气", "格物致知", "存理灭欲", "经学重构"], quote: "理也者，形而上之道也；气也者，形而下之器也。", centerSummary: "朱熹以理气二元论和“四书集注”重构儒学，成为元明清东亚官方意识形态的哲学核心。", relations: { influencedBy: ["confucius", "mencius", "dong_zhongshu", "wang_bi"], influences: ["wang_yangming"], related: ["aristotle"] } },
+      { id: "wang_yangming", type: "philosopher", title: "王阳明 Wang Yangming", subtitle: "1472–1529 · 心学 · 心即理与致良知", tags: ["心即理", "知行合一", "致良知"], quote: "未有知而不行者，知而不行只是未知；良知即是天植灵根。", centerSummary: "王阳明以“心即理”“知行合一”“致良知”对程朱理学作内在革命。", relations: { influencedBy: ["mencius", "zhu_xi"], influences: ["li_zhi", "huang_zongxi"], related: ["plato"] } },
+      { id: "li_zhi", type: "philosopher", title: "李贽 Li Zhi", subtitle: "1527–1602 · 晚明异端 · 童心与历史相对主义", tags: ["童心", "人性解放", "历史相对主义", "文学批评"], quote: "夫童心者，绝假纯真，最初一念之本心也；穿衣吃饭即是人伦物理。", centerSummary: "李贽以“童心说”批判假道学与道统史观，肯定自然人性与通俗文学。", relations: { influencedBy: ["wang_yangming"] } },
+      { id: "huang_zongxi", type: "philosopher", title: "黄宗羲 Huang Zongxi", subtitle: "1610–1695 · 浙东学派 · 《明夷待访录》与君权批判", tags: ["民本", "政治哲学", "史学", "经世致用"], quote: "为天下之大害者，君而已矣；天下为主，君为客。", centerSummary: "黄宗羲以犀利的君权批判和经世史学开清初启蒙之先。", relations: { influencedBy: ["mencius", "wang_yangming"] } },
+      { id: "wang_fuzhi", type: "philosopher", title: "王夫之 Wang Fuzhi", subtitle: "1619–1692 · 湖湘学派 · 气本论与历史辩证法", tags: ["气本论", "历史哲学", "民族意识", "辩证思维"], quote: "天下惟器而已矣；势之必然处见理。", centerSummary: "王夫之以气本论和“理势合一”的历史哲学重建儒家体系。", relations: { related: ["huang_zongxi"] } },
+      { id: "dai_zhen", type: "philosopher", title: "戴震 Dai Zhen", subtitle: "1724–1777 · 乾嘉朴学 · 由字通词由词通道", tags: ["考据", "反理学", "理欲", "孟子字义疏证"], quote: "酷吏以法杀人，后儒以理杀人；理者，存乎欲者也。", centerSummary: "戴震以训诂与义理批判程朱“以理杀人”，倡导血气心知与理欲统一。", relations: { related: ["zhu_xi"] } },
+      { id: "zhang_xuecheng", type: "philosopher", title: "章学诚 Zhang Xuecheng", subtitle: "1738–1801 · 浙东史学 · “六经皆史”与史德说", tags: ["史学理论", "六经皆史", "方志学", "经世致用"], quote: "六经皆史，皆先王之政典；道不离器，犹影不离形。", centerSummary: "章学诚以“六经皆史”重构经学，将经典还原为制度史与思想史，奠定近代中国史学理论基础。", relations: { related: ["huang_zongxi", "dai_zhen"] } },
+      { id: "wei_yuan", type: "philosopher", title: "魏源 Wei Yuan", subtitle: "1794–1857 · 今文经学 · 经世致用与“师夷制夷”", tags: ["经世致用", "今文经学", "海国图志", "近代化"], quote: "师夷长技以制夷；变古愈尽，便民愈甚。", centerSummary: "魏源以今文经学和海权意识回应鸦片战争冲击，提出“师夷长技以制夷”，开启中国近代化的经世路径。", relations: { related: ["zhang_xuecheng"] } },
+      { id: "kang_youwei", type: "philosopher", title: "康有为 Kang Youwei", subtitle: "1858–1927 · 今文经学 · 托古改制与大同思想", tags: ["今文经学", "维新", "大同", "乌托邦"], quote: "六经皆孔子改制之书；据乱世、升平世、太平世，其道一也。", centerSummary: "康有为以今文经学“托古改制”，为戊戌变法提供经典依据，并在《大同书》中构想极端平等的儒家乌托邦。", relations: { related: ["wei_yuan"] } },
+      { id: "tan_sitong", type: "philosopher", title: "谭嗣同 Tan Sitong", subtitle: "1865–1898 · 维新派 · 《仁学》与“冲决网罗”", tags: ["仁学", "革命", "变法", "宇宙论"], quote: "中国未闻有因变法而流血者，有之，请自嗣同始。", centerSummary: "谭嗣同在《仁学》中以“以太仁学”重释宇宙与伦理，并以生命践行“冲决网罗”的维新牺牲精神。", relations: { related: ["kang_youwei"] } },
+      { id: "zhang_taiyan", type: "philosopher", title: "章太炎 Zhang Taiyan", subtitle: "1869–1936 · 古文经学 · 革命民族主义与唯识玄学", tags: ["国学", "民族主义", "佛学", "经学批判"], quote: "中华者，非一地域之国名，亦非一血统之种名，乃文化之族名。", centerSummary: "章太炎以古文经学和唯识哲学批判满清统治，构建文化民族主义与革命理论的独特结合。", relations: { related: ["tan_sitong"] } },
+      { id: "liang_qichao", type: "philosopher", title: "梁启超 Liang Qichao", subtitle: "1873–1929 · 维新派 · 新民说与新史学", tags: ["新民说", "新史学", "启蒙", "宪政"], quote: "苟有新民，何患无新制度。", centerSummary: "梁启超以“新民说”和“新史学”推动国民性改造与学术转型，成为中国近代启蒙思想的关键枢纽。", relations: { related: ["kang_youwei", "wei_yuan"] } },
+      { id: "wang_guowei", type: "philosopher", title: "王国维 Wang Guowei", subtitle: "1877–1927 · 实证史学 · 境界说与二重证据法", tags: ["境界说", "甲骨学", "考据", "美学"], quote: "古今成大事业、大学问者，必经过三种之境界。", centerSummary: "王国维以“境界说”革新文学批评，并以“二重证据法”综合文献与考古，奠定现代中国古史研究范式。", relations: { related: ["liang_qichao"] } },
+      { id: "chen_yinke", type: "philosopher", title: "陈寅恪 Chen Yinke", subtitle: "1890–1969 · 文化史学 · “独立之精神，自由之思想”", tags: ["文化史", "胡汉交融", "士人精神", "学术独立"], quote: "士之读书治学，盖将脱心志于俗谛之桎梏。", centerSummary: "陈寅恪以种族文化史观与诗史互证方法重写中古史，并以“独立之精神，自由之思想”成为现代学术良知象征。", relations: { related: ["wang_guowei"] } },
+      { id: "liang_shuming", type: "philosopher", title: "梁漱溟 Liang Shuming", subtitle: "1893–1988 · 新儒家 · 乡村建设与文化三路向", tags: ["新儒家", "乡村建设", "文化比较", "伦理本位"], quote: "中国文化重伦理本位，西方文化重物质本位，印度文化重出世本位。", centerSummary: "梁漱溟以“东西文化三路向”与乡村建设实验探索中国现代化的儒家道路，被誉为“最后的儒家”。", relations: { related: ["liang_qichao", "wang_hui"] } },
+      { id: "feng_youlan", type: "philosopher", title: "冯友兰 Feng Youlan", subtitle: "1895–1990 · 新理学派 · 哲学史与境界论", tags: ["新理学", "中国哲学史", "境界说", "逻辑分析"], quote: "理是抽象的有，气是具体的存在；中国哲学将来要大放光彩。", centerSummary: "冯友兰以逻辑分析法重构程朱理学为新理学，著《中国哲学史》奠定学科范式，提出自然、功利、道德、天地四境界说。", relations: { related: ["liang_shuming", "chen_yinke"] } },
+      { id: "xiong_shili", type: "philosopher", title: "熊十力 Xiong Shili", subtitle: "1885–1968 · 新心学·新儒家 · 体用不二与新唯识论", tags: ["新唯识论", "体用不二", "本心", "返本开新"], quote: "即体即用，即用即体；本心是虚寂而健动的生命本体。", centerSummary: "熊十力以“体用不二”“翕辟成变”建构新唯识论，融合儒佛与柏格森生命哲学，被尊为现代新儒学精神源头。", relations: { related: ["feng_youlan", "liang_shuming"] } },
+      { id: "mou_zongsan", type: "philosopher", title: "牟宗三 Mou Zongsan", subtitle: "1909–1995 · 当代新儒家 · 道德形上学与良知坎陷说", tags: ["道德形上学", "良知坎陷", "心体与性体", "智的直觉"], quote: "良知必须自觉坎陷自身以开出知性主体；古今无两。", centerSummary: "牟宗三以康德哲学重构儒家心性论，提出“两层存有论”与“良知自我坎陷”说，完成当代新儒学体系化。", relations: { influencedBy: ["xiong_shili"], related: ["feng_youlan"] } },
+      { id: "tang_junyi", type: "philosopher", title: "唐君毅 Tang Junyi", subtitle: "1909–1978 · 当代新儒家 · 心灵九境与人文精神论", tags: ["心灵九境", "人文精神", "感通", "文化哲学"], quote: "生命存在即心灵活动；中华文化花果飘零，灵根自植。", centerSummary: "唐君毅以“心灵九境”与“感通”哲学建构人文精神论，著《中国哲学原论》《生命存在与心灵九境》，倡文化主体性重建。", relations: { influencedBy: ["xiong_shili", "fang_dongmei"], related: ["mou_zongsan", "qian_mu"] } },
+      { id: "xu_fuguan", type: "philosopher", title: "徐复观 Xu Fuguan", subtitle: "1903–1982 · 当代新儒家 · 忧患意识与专制批判", tags: ["忧患意识", "两汉思想史", "人性论史", "政治批判"], quote: "中国人文精神始于殷周之际的忧患意识；我是中国文化大地上的流浪者，也是它的守墓人。", centerSummary: "徐复观以“忧患意识”与思想史研究重构儒家政治哲学，著《两汉思想史》《中国人性论史》，批判专制、倡民主转化。", relations: { influencedBy: ["xiong_shili"], related: ["mou_zongsan", "tang_junyi"] } },
+      { id: "fang_dongmei", type: "philosopher", title: "方东美 Fang Dongmei", subtitle: "1899–1977 · 生命哲学·新儒家 · 生生之德与比较哲学", tags: ["生生之德", "生命哲学", "哲学三慧", "比较哲学"], quote: "宇宙是普遍生命流行的境界；哲学智慧生于悲情，终于诗境。", centerSummary: "方东美以“生生之德”与生命本体论融贯中西，倡哲学三慧说与情理圆融，被誉为东方诗哲与比较哲学先驱。", relations: { influences: ["tang_junyi"], related: ["xiong_shili"] } },
+      { id: "qian_mu", type: "philosopher", title: "钱穆 Qian Mu", subtitle: "1895–1990 · 新儒家·史学派 · 国史大纲与温情敬意", tags: ["国史大纲", "文化史观", "士人精神", "天人合一"], quote: "当信任何一国之国民，对其本国历史应怀温情与敬意；天人合一观是中国文化对人类最大贡献。", centerSummary: "钱穆以《国史大纲》与整体史观倡“温情与敬意”，以史证儒，创办新亚书院，被誉为现代史学泰斗与文化守成者。", relations: { related: ["tang_junyi", "chen_yinke", "xu_fuguan"] } },
+      { id: "yu_yingshih", type: "philosopher", title: "余英时 Yu Yingshih", subtitle: "1930–2021 · 新儒家·思想史学派 · 内在理路与士与中国文化", tags: ["内在理路", "士与中国文化", "朱熹的历史世界", "思想史"], quote: "文化变迁必须从其内在脉络理解；把骨灰撒入长江，流向大海。", centerSummary: "余英时以“内在理路”说与《士与中国文化》《朱熹的历史世界》重写儒学叙事，获克鲁格人文奖，为当代思想史泰斗。", relations: { influencedBy: ["qian_mu"], related: ["chen_yinke", "xu_fuguan"] } },
+      { id: "du_weiming", type: "philosopher", title: "杜维明 Du Weiming", subtitle: "1940–至今 · 新儒家·全球化儒学 · 精神人文主义与文明对话", tags: ["儒学第三期", "精神人文主义", "文明对话", "文化中国"], quote: "从封建意识形态转为精神人文主义；承认他者性、尊重差异性、寻求共通性。", centerSummary: "杜维明倡儒学第三期发展、精神人文主义与文明对话，推动儒学全球化，任北大高等人文研究院院长，促成联合国文明对话年。", relations: { influencedBy: ["xu_fuguan", "mou_zongsan"], related: ["yu_yingshih", "tang_junyi"] } },
+      { id: "li_zehou", type: "philosopher", title: "李泽厚 Li Zehou", subtitle: "1930–2021 · 实践美学·历史本体论 · 西体中用与情本体", tags: ["美的历程", "历史本体论", "西体中用", "情本体"], quote: "美是自由的形式；以社会存在之生产力为体，以中国传统文化为用。", centerSummary: "李泽厚以《美的历程》《批判哲学的批判》建构实践美学与历史本体论，倡西体中用与情本体，为80年代新启蒙代表。", relations: { related: ["mou_zongsan", "du_weiming", "yu_yingshih", "liu_xiaofeng", "wang_hui", "gan_yang"] } },
+      { id: "liu_xiaofeng", type: "philosopher", title: "刘小枫 Liu Xiaofeng", subtitle: "1956–至今 · 政治哲学·古典学 · 拯救与逍遥与经典与解释", tags: ["拯救与逍遥", "古典学", "施特劳斯", "政治神学"], quote: "科学祛魅自然，历史主义祛魅价值；阅读古典即政治行动。", centerSummary: "刘小枫以《拯救与逍遥》引发神学转向讨论，后倡古典学与施特劳斯政治哲学，创办《经典与解释》，推动古典诗学重启。", relations: { related: ["li_zehou", "wang_hui", "gan_yang"] } },
+      { id: "wang_hui", type: "philosopher", title: "汪晖 Wang Hui", subtitle: "1959–至今 · 批判性知识群体·新左派 · 反现代的现代性与跨体系社会", tags: ["现代中国思想的兴起", "去政治化的政治", "新左派", "跨体系社会"], quote: "中国现代化是在反抗帝国主义中形成的现代性；生态危机本质是文明危机。", centerSummary: "汪晖以《现代中国思想的兴起》《去政治化的政治》重审现代性，倡“反现代的现代性”与跨体系社会，为新左派理论代表。", relations: { related: ["li_zehou", "liu_xiaofeng", "liang_shuming", "gan_yang"] } },
+      { id: "gan_yang", type: "philosopher", title: "甘阳 Gan Yang", subtitle: "1952–至今 · 文化保守主义·新左派 · 通三统与通识教育", tags: ["通三统", "通识教育", "新雅书院", "儒家社会主义"], quote: "孔夫子的传统、毛泽东的传统、邓小平的传统；传统的断裂比延续更危险。", centerSummary: "甘阳倡“通三统”融传统、革命与改革，创办清华新雅书院与中大博雅学院，推动通识教育中国化，为新左派理论实践者。", relations: { related: ["wang_hui", "liu_xiaofeng", "li_zehou"] } },
+      { id: "thales", type: "philosopher", title: "泰勒斯 Thales of Miletus", subtitle: "约前624–546 · 米利都学派 · 西方哲学之父，水本原说", tags: ["水本原", "自然哲学", "七贤", "米利都"], quote: "万物源于水，复归于水；万物皆充满神，但神是内在的自然法则。", centerSummary: "泰勒斯以“水本原说”打破神话宇宙论，首以自然原因解释世界，被亚里士多德尊为第一位自然哲学家与西方哲学之父。", relations: { related: ["laozi"], influences: ["anaximander"] } },
+      { id: "anaximander", type: "philosopher", title: "阿那克西曼德 Anaximander", subtitle: "约前610–546 · 米利都学派 · 无定（ἄπειρον）与本原", tags: ["无定", "米利都", "宇宙论", "演化论先驱"], quote: "万物生灭皆依必然性，因其互付赔偿与惩罚。", centerSummary: "阿那克西曼德以“无定”为万物本原，首绘世界地图、发明日晷，提出宇宙循环与生命起源于水的演化论雏形。", relations: { influencedBy: ["thales"], related: ["laozi"], influences: ["anaximenes", "heraclitus"] } },
+      { id: "anaximenes", type: "philosopher", title: "阿那克西美尼 Anaximenes", subtitle: "约前585–528 · 米利都学派 · 气本原说（πνεῦμα）", tags: ["气本原", "米利都", "稀薄与凝聚", "自然哲学"], quote: "气是万物的本原，通过稀薄化与凝聚化生成一切；呼吸的气是灵魂的本质。", centerSummary: "阿那克西美尼以“气”为本原，用稀薄与凝聚解释万物生成，将宇宙论与生理学统一，为米利都学派第三代。", relations: { influencedBy: ["anaximander"], influences: ["pythagoras", "anaxagoras"] } },
+      { id: "pythagoras", type: "philosopher", title: "毕达哥拉斯 Pythagoras", subtitle: "约前570–495 · 毕达哥拉斯学派 · 万物皆数", tags: ["数本体论", "天球音乐", "灵魂转世", "勾股定理"], quote: "数是万物的本原；哲学家是爱智者，追求与宇宙秩序的合一。", centerSummary: "毕达哥拉斯创立“万物皆数”学说，融合数学、宗教与哲学，首用“哲学家”一词，影响柏拉图与西方理性传统。", relations: { influencedBy: ["anaximenes"], influences: ["parmenides", "plato"] } },
+      { id: "heraclitus", type: "philosopher", title: "赫拉克利特 Heraclitus", subtitle: "约前535–475 · 爱菲斯学派 · 万物皆流与火本原", tags: ["万物皆流", "火本原", "逻各斯", "对立统一"], quote: "人不能两次踏入同一条河流；战争是万物之父，也是万物之王。这个世界永远是一团永恒的活火。", centerSummary: "赫拉克利特以“火”为本原、以“逻各斯”为法则，提出万物皆流与对立统一，为辩证哲学先驱。", relations: { influencedBy: ["anaximander"], related: ["laozi", "parmenides"] } },
+      { id: "parmenides", type: "philosopher", title: "巴门尼德 Parmenides", subtitle: "约前515–450 · 爱利亚学派 · 存在唯一、不动、永恒", tags: ["存在论", "真理之路", "思维与存在同一", "爱利亚"], quote: "存在者存在，非存在者不存在；思维与存在是同一的。", centerSummary: "巴门尼德以“存在者存在”奠定西方存在论，以逻辑否定生成与变化，区分真理之路与意见之路。", relations: { influencedBy: ["pythagoras"], related: ["laozi", "heraclitus"], influences: ["zeno_elea", "empedocles", "leucippus"] } },
+      { id: "zeno_elea", type: "philosopher", title: "芝诺 Zeno of Elea", subtitle: "约前490–430 · 爱利亚学派 · 悖论大师，辩证术先驱", tags: ["芝诺悖论", "飞矢不动", "阿基里斯追龟", "爱利亚"], quote: "运动与多元在逻辑上不可能；若存在多，则事物既无限大又无限小。", centerSummary: "芝诺以运动悖论与多元悖论捍卫巴门尼德存在论，系统运用归谬法，被亚里士多德称为辩证法的发明者。", relations: { influencedBy: ["parmenides"] } },
+      { id: "empedocles", type: "philosopher", title: "恩培多克勒 Empedocles", subtitle: "约前495–435 · 多元论学派 · 四元素与爱-争动力论", tags: ["四元素", "爱-争", "灵魂轮回", "净化"], quote: "万物由火、气、水、土四根构成，受爱与争驱动；人类以血认识世界。", centerSummary: "恩培多克勒以四元素说与爱-争宇宙循环论融合自然哲学与神秘主义，影响希波克拉底医学与亚里士多德元素论。", relations: { influencedBy: ["parmenides"], related: ["laozi"], influences: ["leucippus", "gorgias"] } },
+      { id: "anaxagoras", type: "philosopher", title: "阿那克萨戈拉 Anaxagoras", subtitle: "约前500–428 · 多元论学派 · 种子论与努斯", tags: ["种子论", "努斯", "雅典启蒙", "多元论"], quote: "一切存在于一切之中；努斯是纯粹理性，最初引发混沌的旋转，分离出万物。", centerSummary: "阿那克萨戈拉首将哲学引入雅典，以种子论与努斯说融合理性与观察，为伯里克利之师与科学理性主义先驱。", relations: { influencedBy: ["anaximenes"], related: ["laozi"], influences: ["socrates"] } },
+      { id: "leucippus", type: "philosopher", title: "留基伯 Leucippus", subtitle: "约前5世纪中叶 · 阿布德拉学派 · 原子论奠基者", tags: ["原子论", "原子与虚空", "必然性", "阿布德拉"], quote: "万物因必然性生成，漩涡是万物成因；原子不可分、不可毁，在虚空中永恒运动。", centerSummary: "留基伯创立原子与虚空的本体论，以机械必然性取代目的论，为德谟克利特原子论与近代科学唯物主义奠基。", relations: { influencedBy: ["parmenides", "empedocles"], influences: ["democritus"] } },
+      { id: "democritus", type: "philosopher", title: "德谟克利特 Democritus", subtitle: "约前460–370 · 阿布德拉学派 · 原子论集大成者", tags: ["原子论", "影像说", "幸福伦理", "欢笑的哲人"], quote: "真理隐藏在深渊；至善是灵魂的晴朗。宁可发现一个因果律，也不愿做波斯王。", centerSummary: "德谟克利特在留基伯基础上完成原子论体系，提出影像说与幸福伦理学，被西塞罗称为前苏格拉底哲学巅峰。", relations: { influencedBy: ["leucippus"], influences: ["protagoras", "epicurus"] } },
+      { id: "protagoras", type: "philosopher", title: "普罗泰戈拉 Protagoras", subtitle: "约前490–420 · 智者学派 · 人是万物的尺度", tags: ["人是万物的尺度", "相对主义", "智者", "修辞学"], quote: "人是万物的尺度；关于神，我无法知道他们是否存在，因为问题晦涩而人生短暂。", centerSummary: "普罗泰戈拉首倡“人是万物的尺度”，发展修辞学与正反论证，推动哲学从自然转向人文，为智者学派领袖。", relations: { influencedBy: ["democritus"], related: ["gorgias", "socrates"] } },
+      { id: "gorgias", type: "philosopher", title: "高尔吉亚 Gorgias", subtitle: "约前483–375 · 智者学派 · 修辞学之父，虚无主义三命题", tags: ["论非存在", "修辞术", "智者", "怀疑论"], quote: "无物存在；即使存在亦不可知；即使可知亦不可传达。语言是强大的君主。", centerSummary: "高尔吉亚以虚无主义三命题与《海伦颂》发展修辞术为说服的艺术，被称修辞学之父与怀疑论智者。", relations: { influencedBy: ["empedocles"], related: ["protagoras", "socrates"] } },
+      { id: "socrates", type: "philosopher", title: "苏格拉底 Socrates", subtitle: "前470–399 · 苏格拉底学派 · 无知之知与辩证问答法", tags: ["无知之知", "精神助产术", "德性即知识", "伦理哲学"], quote: "未经省察的人生不值得活；我知我无知。分手的时候到了，我去死，你们去活，谁的去路好，唯有神知道。", centerSummary: "苏格拉底将哲学从自然拉回人间，以无知之知与精神助产术追问德性，为西方伦理哲学奠基，饮鸩殉道。", relations: { influencedBy: ["anaxagoras"], related: ["confucius", "protagoras", "gorgias"], influences: ["plato", "zeno_citium"] } },
+      { id: "plato", type: "philosopher", title: "柏拉图 Plato", subtitle: "前428/427–348/347 · 柏拉图学派 · 理念论与学园派创始人", tags: ["理念论", "理想国", "灵魂三分", "哲人王"], quote: "不懂几何者不得入内；我们寻找的正义是正义本身。爱欲是从肉体美升华至理念美的阶梯。", centerSummary: "柏拉图以理念论构建两个世界体系，创办学园，著《理想国》与《蒂迈欧篇》，奠定西方形而上学与政治哲学传统。", relations: { influencedBy: ["socrates"], related: ["pythagoras", "wang_yangming"], influences: ["aristotle"] } },
+      { id: "aristotle", type: "philosopher", title: "亚里士多德 Aristotle", subtitle: "前384–322 · 逍遥学派 · 逻辑学与实证科学奠基者", tags: ["四因说", "实体论", "中庸", "逻辑学"], quote: "人是理性的动物；至善是合乎德性的灵魂活动。让雅典人再犯一次反哲学的罪。", centerSummary: "亚里士多德批判理念论，建立四因说与实体论，开创逻辑学与多学科体系，为逍遥学派与西方科学范式奠基。", relations: { influencedBy: ["plato"], related: ["zhu_xi", "epicurus"] } },
+      { id: "epicurus", type: "philosopher", title: "伊壁鸠鲁 Epicurus", subtitle: "前341–270 · 伊壁鸠鲁学派 · 快乐即至善，花园学派", tags: ["快乐主义", "四重药方", "原子偏斜", "无痛无扰"], quote: "神不足惧，死不足忧；至善是身体无痛苦、灵魂无纷扰。记住，痛苦不会持久。", centerSummary: "伊壁鸠鲁以原子偏斜说修正决定论，倡四重药方与静态快乐，创花园学派，为希腊化快乐主义伦理学奠基。", relations: { influencedBy: ["democritus"], related: ["aristotle", "laozi", "zeno_citium", "chrysippus"] } },
+      { id: "zeno_citium", type: "philosopher", title: "芝诺（西提乌姆的） Zeno of Citium", subtitle: "约前334–262 · 斯多葛学派 · 顺应自然与自然法", tags: ["斯多葛", "自然法", "理性", "世界公民"], quote: "顺应自然生活；违背自然的立法必败。智者之邦无城墙。", centerSummary: "芝诺创斯多葛学派于雅典彩廊，以理性统御激情、自然法与世界主义奠基希腊化实践哲学。", relations: { influencedBy: ["socrates"], related: ["epicurus", "mencius"], influences: ["chrysippus"] } },
+      { id: "chrysippus", type: "philosopher", title: "克律西波斯 Chrysippus", subtitle: "约前279–206 · 斯多葛学派 · 逻辑学巨擘，学派体系化者", tags: ["命题逻辑", "决定论", "义务论", "斯多葛"], quote: "无逻辑则无哲学；激情是过度的冲动。我早准备好应对此类荒谬。", centerSummary: "克律西波斯将芝诺思想系统化为逻辑-物理-伦理三位一体，奠基命题逻辑与相容论自由观，被称学派第二创始人。", relations: { influencedBy: ["zeno_citium"], related: ["epicurus"] } },
+    ];
+    const entryById = Object.fromEntries(entries.map((e) => [e.id, e]));
+
+    // 每个哲学家的完整资料（原文，不做删减）
+    const philosopherDetails = {
+      confucius: `哲学家 Philosopher #01
+姓名 Name: 孔子 Confucius
+生卒年 Lifespan: 传统记载 前551年-前479年 | 现代考证或晚至前525年
+学派 School: 儒家 Confucianism
+
+生平与历史背景
+
+1. 传统记载
+
+  • 司马迁《史记·孔子世家》记载孔子生于鲁襄公二十二年（前551年），卒于鲁哀公十六年（前479年）。
+
+  • 《春秋公羊传》与《谷梁传》存在生年差异（前552年），引发纪年争议。
+
+2. 现代质疑
+
+  • 钱穆结合《左传》事件时间线，推测实际生年可能晚至前525年，因孔子在齐鲁夹谷之会（前500年）的活动强度与51岁体力不符。
+
+  • 葛瑞汉（A.C. Graham）指出孔子形象在战国时期被儒者重构，郭店楚简（前300年）显示其声望于战国中期提升。
+
+3. 考古证据
+
+  • 定州汉简《论语》（前55年）：“仁”出现频率比今本高23%，印证早期儒学核心。
+
+  • 海昏侯墓《齐论语》（前50年）新增“问王”“知道”篇，揭示汉代文本流变。
+
+核心思想体系
+
+1. 伦理学：仁（Ren）
+
+  • 定义：人际互动中的美德，甲骨文从“人”从“二”。
+
+  • 实践维度：
+
+    ◦ 积极准则：“己欲立而立人”（《论语·雍也》）
+
+    ◦ 消极准则：“己所不欲，勿施于人”（《论语·卫灵公》）
+
+  • 比较研究：森舸澜（Edward Slingerland）通过认知科学实验，证明“仁”类似亚里士多德的“实践智慧”。
+
+2. 政治哲学：礼（Li）
+
+  • 功能：社会整合（“礼之用，和为贵”）与权力制衡（斥季氏“八佾舞于庭”）。
+
+  • 历史嬗变：西周宗教仪式→春秋伦理教育→荀子法家化改造。
+
+3. 教育方法论
+
+  • 启发教学：“不愤不启，不悱不发”（《论语·述而》）。
+
+  • 因材施教：子路与冉有问“闻斯行诸”获相反答案（《论语·先进》）。
+
+思想传承与影响
+
+1. 战国分化
+
+  • 孟子学派：发展性善论与“四端说”。
+
+  • 荀子学派：提出性恶论，影响法家。
+
+2. 汉代制度化
+
+  • 董仲舒“天人感应”论神化儒学，确立三纲五常。
+
+  • 《白虎通义》（79年）统一经学解释。
+
+3. 宋明转型
+
+  • 朱熹理学：将“仁”提升为宇宙本体（理一分殊）。
+
+  • 王阳明心学：主张“心即理”与“知行合一”。
+
+学术争议
+
+1. 文本真实性
+
+  • 武内义雄认为《论语》前十篇（上论）更近原始记录。
+
+  • 崔述《洙泗考信录》剔除战国增补内容。
+
+2. 现代性诠释
+
+  • 狄百瑞（Wm. Theodore de Bary）强调儒家教育中的自由传统。
+
+  • 列文森（Joseph R. Levenson）认为儒学在近代已“博物馆化”。
+
+3. 比较哲学
+
+  • 余纪元《德性之镜》比较孔子与亚里士多德德性伦理学。
+
+  • 安乐哲（Roger Ames）反对用西方virtue ethics框架解读“仁”。
+
+参考文献
+
+1. 刘殿爵《论语》英译本，香港中文大学出版社，1979。
+
+2. 芬格莱特《孔子：即凡而圣》，Harper & Row，1972。
+
+3.黄勇《儒家伦理的当代重构》，牛津大学出版社，2021。`,
+      laozi: `哲学家 Philosopher #02
+姓名 Name: 老子 Laozi
+生卒年 Lifespan: 传统认为活跃于前6世纪 | 现代争议：或为战国学者集体笔名
+学派 School: 道家 Daoism
+
+生平与历史背景
+
+1. 传统记载
+
+  • 《史记·老子韩非列传》称老子姓李名耳，字聃，曾任周守藏室史，与孔子同时代（前6世纪）。
+
+  • 传说老子出函谷关时著《道德经》五千言，后隐遁不知所终。
+
+2. 现代学术重构
+
+  • 文本年代学：裘锡圭指出《道德经》含“万乘之主”“偏将军”等战国中后期（前4世纪）术语，早于庄子而晚于孔子。
+
+  • 作者身份争议：顾颉刚“层累说”认为老子是战国儒道论战的建构产物，1973年马王堆帛书证实文本存在多个早期版本。
+
+3. 考古突破
+
+  • 马王堆帛书《老子》（前2世纪）：分甲、乙两本，乙本避刘邦讳，证实汉初文本已定型。
+
+  • 郭店楚简《老子》（前300年）：仅存今本三分之一，无“绝圣弃智”等反儒内容，显示思想尚未尖锐对立。
+
+核心思想体系
+
+1. 本体论：道（Dao）
+
+  • 否定式定义：“道可道，非常道；名可名，非常名”（第1章）突破语言局限。
+
+  • 宇宙生成论：“道生一，一生二，二生三，三生万物”（第42章）的非线性模式，区别于《周易》二分法。
+
+  • 比较研究：与巴门尼德“存在论”的异同——老子强调动态（“反者道之动”），巴门尼德坚持静态存在。
+
+2. 政治哲学：无为（Wuwei）
+
+  • 消极批判：“法令滋彰，盗贼多有”（第57章）反对过度干预。
+
+  • 积极治理：“辅万物之自然”（第64章）主张顺应规律，近于哈耶克“自发秩序”。
+
+  • 微观智慧：“治大国若烹小鲜”（第60章）以烹饪隐喻谨慎施政。
+
+3. 认识论革命
+
+  • 反智倾向：“绝学无忧”（第20章）批判知识异化，与卢梭“科学伤德论”共鸣。
+
+  • 身体认知：“专气致柔，能婴儿乎”（第10章）强调体证，近梅洛-庞蒂具身哲学。
+
+思想传承与影响
+
+1. 战国分化
+
+  • 庄子学派：发展“齐物论”与“逍遥游”，转向个体精神自由。
+
+  • 黄老学派：将“无为”改造为君人南面之术，影响汉初“文景之治”。
+
+2. 宗教化转型
+
+  • 东汉道教：张道陵创天师道，奉老子为“太上老君”，《老子想尔注》注入宗教戒律。
+
+  • 唐代重玄学：成玄英融合佛教中观学，提出“双遣”方法论：“遣之又遣，以至于无遣”。
+
+3. 全球传播
+
+  • 黑格尔误读：在《哲学史讲演录》中将“道”简化为“纯粹无”。
+
+  • 海德格尔重构：晚年与萧师毅合译《道德经》，试图以“道”突破存在论局限。
+
+  • 生态哲学：深层生态学（Deep Ecology）将“道法自然”解读为生态整体主义先驱。
+
+学术争议
+
+1. 文本演变争议
+
+  • 帛书本第19章“绝智弃辩” vs 传世本“绝圣弃智”：韩禄伯（Robert Henricks）认为前者更符原始思想。
+
+  • 第41章“大器晚成”帛书本作“大器免成”，颠覆传统解读。
+
+2. 哲学定位分歧
+
+  • 史华慈（Benjamin Schwartz）：强调老子思想的神秘主义维度。
+
+  • 陈鼓应：主张“道”具有实存性，属形而上理性思辨。
+
+3. 比较哲学挑战
+
+  • 与尼采对话：安乐哲（Roger Ames）指出二者共享“生成优于存在”的宇宙观，但老子主张“柔弱胜刚强”，尼采推崇强力意志。
+
+  • 海德格尔误读争议：张祥龙分析其将“道”等同于“Ereignis”（本有）的得失。
+
+参考文献
+
+1. 王弼《老子道德经注》，楼宇烈校释，中华书局，2008。
+
+2. 刘笑敢《老子古今：五种对勘与析评引论》，中国社会科学出版社，2006。
+
+3. 韩禄伯（Robert Henricks）《老子德道经：新出马王堆本译注》，哥伦比亚大学出版社，1989。
+
+4.艾兰（Sarah Allan）《水之道与德之端》，上海古籍出版社，2002。`,
+      wang_chong: `哲学家 Philosopher #09
+姓名 Name: 王充 Wang Chong
+生卒年 Lifespan: 27-约97 CE | 据《论衡·自纪篇》推算
+学派 School: 批判哲学 Critical Philosophy
+
+生平与历史背景
+
+1. 传统记载
+
+  • 会稽上虞人，出身寒微，《后汉书》载其"师事班彪，好博览而不守章句"。
+
+  • 曾任郡功曹、治中等职，因政见不合辞官，晚年专事著述，成《论衡》85篇。
+
+2. 学术重构
+
+  • 胡适《王充的论衡》考订其活动于东汉光武至和帝时期，适逢谶纬神学鼎盛期。
+
+  • 敦煌遗书《论衡》残卷（S.1380）证实唐代文本与今本高度一致。
+
+3. 历史定位
+
+  • 被冯友兰称为"两汉思想界的彗星"，以经验主义批判官方儒学。
+
+  • 清代熊伯龙《无何集》系统整理其反迷信思想，推动考据学发展。
+
+核心思想体系
+
+1. 疾虚妄（Critique of Superstition）
+
+  • 方法论原则："论则考之以心，效之以事"（《对作》），主张实证检验。
+
+  • 批判对象：谴告说（"夫天道，自然也，无为"）、鬼神论（"人死血脉竭，何能为鬼"）。
+
+2. 自然主义天道观
+
+  • 宇宙论："天地合气，万物自生"（《自然》），否定天人感应。
+
+  • 偶然论："世谓古人君贤则道德施行，实则命期自然，非德化也"（《偶会》）。
+
+3. 知识论革新
+
+  • 效验说："事莫明于有效，论莫定于有证"（《薄葬》），近于实证主义。
+
+  • 历史观："知古不知今谓之陆沉，知今不知古谓之盲瞽"（《谢短》）。
+
+思想传承与影响
+
+1. 汉代反响
+
+  • 蔡邕秘藏《论衡》为"异书"，王符《潜夫论》暗承其批判精神。
+
+2. 近现代重估
+
+  • 章太炎赞其"正虚妄，审乡背，怀疑之论，分析百耑"，比肩西方启蒙哲人。
+
+  • 侯外庐《中国思想通史》视其为"唯物论先驱"，但批评其机械命定论。
+
+3. 科学史意义
+
+  • 李约瑟称其"理性经验主义"为古代科学思维典范。
+
+  • 葛瑞汉（A.C. Graham）比较其与培根归纳法异同。
+
+学术争议
+
+1. 学派归属问题
+
+  • 冯友兰归入"古文经学派"，徐复观认为属独立批判传统。
+
+2. 命定论矛盾
+
+  • 既主张自然无为，又提出"国命系于众星"（《命义》），是否存在理论漏洞？
+
+3. 文本真伪
+
+  • 《论衡》部分篇章（如《招致》）被疑为后人增补，掺杂方术内容。
+
+参考文献
+
+1. 黄晖《论衡校释》 | 中华书局, 1990
+
+2. 胡适《王充的论衡》 | 亚东图书馆, 1931
+
+3. 葛瑞汉（A.C. Graham）《论王充的理性主义》 | 伦敦大学, 1964
+
+4.Michael Nylan 《汉代怀疑论者：王充》 | 华盛顿大学出版社, 2013`,
+      wang_bi: `哲学家 Philosopher #10
+姓名 Name: 王弼 Wang Bi
+生卒年 Lifespan: 226-249 CE | 《三国志》载其享年24岁
+学派 School: 魏晋玄学 Xuanxue
+
+生平与历史背景
+
+1. 传统记载
+
+  • 山阳高平（今山东邹城）人，出身名门（曾祖王粲为建安七子之一），少年成名。
+
+  • 任尚书郎，早逝前完成《老子注》《周易注》《论语释疑》，奠定玄学理论基础。
+
+2. 学术重构
+
+  • 汤用彤《魏晋玄学论稿》考订其活动于正始年间（240-249），与何晏并称"正始之音"代表。
+
+  • 敦煌遗书《老子王弼注》（P.2584）残卷显示唐代文本与今本高度一致。
+
+3. 历史定位
+
+  • 扭转汉代象数易学传统，开创义理诠释新范式，被奉为"玄学之宗"。
+
+  • 钱穆评其"扫尽汉儒芜秽，独标玄学精义"。
+
+核心思想体系
+
+1. 以无为本（Non-Being as Foundation）
+
+  • 本体论革命："道者，无之称也"（《老子注·二十五章》），将"无"提升为终极本体。
+
+  • 政治哲学："崇本息末"主张君主应"无为"而治（《老子注·三十八章》）。
+
+2. 言意之辨（Language and Meaning）
+
+  • 方法论突破："得意在忘象，得象在忘言"（《周易略例·明象》），否定语言对真理的完全承载。
+
+  • 对汉学的批判：反对郑玄象数易学"存象忘意"的繁琐诠释。
+
+3. 名教与自然（Ritual vs. Spontaneity）
+
+  • 调和理论："圣人体无，无又不可以训，故言必及有"（《论语释疑》），以道家本体支撑儒家伦理。
+
+  • 政治实践：提出"名教本于自然"，为士族门阀制度提供哲学辩护。
+
+思想传承与影响
+
+1. 魏晋玄学发展
+
+  • 郭象《庄子注》继承"以无为本"，发展"独化论"体系。
+
+  • 僧肇《肇论》吸收言意观，构建中国佛教哲学方法论。
+
+2. 经学转型
+
+  • 唐代孔颖达《周易正义》以王弼注为底本，确立其官学地位。
+
+  • 程颐批评其"溺于虚无"，但朱熹暗承其义理诠释路径。
+
+3. 现代重估
+
+  • 汤一介《郭象与魏晋玄学》肯定其"本体论转向"的哲学革命意义。
+
+  • 陈鼓应批判其过度诠释老子，偏离道家原始精神。
+
+学术争议
+
+1. 诠释合法性
+
+  • 冯友兰认为王弼"以老解易"扭曲《周易》原意。
+
+  • 朱伯崑《易学哲学史》肯定其创造性转化，开宋明理学先声。
+
+2. 早慧与深度矛盾
+
+  • 24岁完成体系建构是否可能？部分学者怀疑《周易注》经后人润色。
+
+3. 佛道关系
+
+  • 许理和（Erik Zürcher）认为其"言意之辨"受般若学影响，但缺乏直接证据。
+
+参考文献
+
+1. 楼宇烈《王弼集校释》 | 中华书局, 1980
+
+2. 汤用彤《魏晋玄学论稿》 | 人民出版社, 1957
+
+3. Rudolf G. Wagner 《王弼注〈老子〉研究》 | 加利福尼亚大学出版社, 2003
+
+4. 陈鼓应《老子注译及评介》 | 中华书局, 1984`,
+      ji_kang: `哲学家 Philosopher #11
+姓名 Name: 嵇康 Ji Kang
+生卒年 Lifespan: 223–262 CE（一说224–263） | 被司马昭处死，终年40岁
+学派 School: 竹林玄学（魏晋玄学分支）
+
+生平与历史背景
+
+1. 士族背景与政治抉择
+
+  • 谯国铚县（今安徽宿州）人，娶曹魏宗室女，曾任中散大夫，世称"嵇中散"。
+
+  • 司马氏掌权后拒仕，隐居山阳，与阮籍等并称"竹林七贤"，以锻铁、饮酒、清谈对抗时局。
+
+2. 思想与行动张力
+
+  • 著《与山巨源绝交书》明志，批判名教虚伪，主张"非汤武而薄周孔"。
+
+  • 因牵连吕安案被构陷，临刑前奏《广陵散》，叹"《广陵散》于今绝矣"。
+
+3. 文本传承争议
+
+  • 《嵇康集》历代多有散佚，鲁迅辑校十卷本为今通行本。
+
+  • 部分学者（如侯思孟）认为《声无哀乐论》对话体受佛教论辩影响，或经后人增补。
+
+核心思想体系
+
+1. 越名教而任自然
+
+  • 批判异化："矜尚不存乎心，故能越名教而任自然"（《释私论》）。
+
+  • 本体论建构：提出"元气陶铄，众生禀焉"（《明胆论》），以气化论解释生命本质。
+
+2. 声无哀乐论
+
+  • 音乐哲学突破："音声有自然之和，而无系于人情"（《声无哀乐论》），分离艺术形式与伦理教化。
+
+  • 方法论意义：通过主客二分逻辑，挑战儒家"移风易俗莫善于乐"传统。
+
+3. 养生论的悖论
+
+  • 理论主张："形恃神以立，神须形以存"（《养生论》），调和形神关系。
+
+  • 实践困境：自身因政治抗争早逝，暴露思想与现实矛盾，向秀《难养生论》直指其逻辑漏洞。
+
+思想传承与影响
+
+1. 玄学与美学交融
+
+  • 阮籍《大人先生传》深化自然主义，陶渊明"真意"说承其美学精神。
+
+  • 唐代孙过庭《书谱》以"情性"论书法，呼应嵇康艺术哲学。
+
+2. 政治反抗符号
+
+  • 明代李贽赞其为"千载血性丈夫"，清末革命者以嵇康为反专制图腾。
+
+  • 鲁迅校勘其文集，在《魏晋风度及文章与药及酒之关系》中重构其反抗者形象。
+
+3. 跨文化对话
+
+  • 与西方存在主义比较：萨特"自由选择"说与嵇康"越名任心"存在精神共振。
+
+  • 日本学者蜂屋邦夫揭示其思想中的"个体觉醒"先声。
+
+学术争议
+
+1. 思想连贯性质疑
+
+  • 汤用彤指出其"养生论"与"声论"存在唯物倾向与玄学本体的逻辑断裂。
+
+  • 陈寅恪认为其反名教实为曹魏宗室立场，非纯哲学批判。
+
+2. 死亡意义再诠释
+
+  • 田余庆《嵇康之死》强调政治博弈因素，淡化哲学殉道色彩。
+
+  • 西方汉学家认为其刑场奏琴属后世文学想象，真实性存疑。
+
+3. 文献真伪考辨
+
+  • 《嵇康集》中《家诫》教导子女谨小慎微，与狂士形象矛盾，或为保全家族而作。
+
+  • 戴明扬注本指出部分篇章混入张湛《列子注》内容，需谨慎使用。
+
+参考文献
+
+1. 鲁迅《嵇康集校注》 | 文学古籍刊行社, 1956
+
+2. 侯思孟（Donald Holzman）《嵇康的生平与思想》 | 法国大学出版社, 1957
+
+3. 甘怀真《魏晋南北朝玄学与士族政治》 | 台大出版中心, 2015
+
+4.蜂屋邦夫《嵇康的哲学》 | 日本东京大学出版会, 1991`,
+      guo_xiang: `哲学家 Philosopher #12
+姓名 Name: 郭象 Guo Xiang
+生卒年 Lifespan: 约252–312 CE | 西晋玄学集大成者
+学派 School: 魏晋玄学（继承并改造竹林玄学）
+
+生平与历史背景
+
+1. 寒门崛起与政治投机
+
+  • 河南洛阳人，出身寒微，凭借辩才与学识跻身清谈名士之列，官至黄门侍郎、太傅主簿。
+
+  • 八王之乱期间依附东海王司马越，被讥为"居宰辅之重，而专事交游"（《晋书》）。
+
+2. 学术争议与思想整合
+
+  • 传世《庄子注》被指剽窃向秀注本，《世说新语》载"向秀注未竟而卒，郭象遂窃为己注"。
+
+  • 调和名教与自然，提出"庙堂即山林"政治哲学，为门阀士族提供理论支持。
+
+3. 文本重构的野心
+
+  • 删削《庄子》52篇为33篇，确立后世通行本，以"三言"（寓言、重言、卮言）重塑庄子思想体系。
+
+  • 注本被唐代成玄英称为"悬河泻水，注而不竭"，奠定《庄子》经典化基础。
+
+核心思想体系
+
+1. 独化论与本体论革命
+
+  • 否定造物主："造物者无主，而物各自造"（《齐物论注》），以"独化于玄冥之境"解构宇宙生成论。
+
+  • 现象学转向："物各自然，不知所以然而然"，强调现象自足性，消解本体与现象的二元对立。
+
+2. 性分说与政治哲学
+
+  • 等级秩序合理化："天性所受，各有本分，不可逃，亦不可加"（《养生主注》）。
+
+  • 名教即自然："君臣上下，手足内外，乃天理自然"，将儒家伦理纳入道家框架。
+
+3. 适性逍遥论
+
+  • 颠覆庄子原意："苟足于其性，虽大鹏无以自贵于小鸟"（《逍遥游注》）。
+
+  • 个体解脱路径："各安其分，则大小俱足"，消解绝对自由，转向相对主义生存策略。
+
+思想传承与影响
+
+1. 玄学体系化完成
+
+  • 整合王弼"贵无"与裴頠"崇有"，建立"无即是有"的玄学新范式，汤用彤称其为"玄学之殿军"。
+
+  • 影响宋明理学：程颢"万物静观皆自得"暗合独化论，朱熹"理一分殊"受其性分说启发。
+
+2. 政治实践的双重性
+
+  • 为门阀制度辩护，成为东晋"王与马共天下"的理论先声。
+
+  • 遭葛洪《抱朴子》抨击："坐谈玄远，而忘治道"，揭示玄学与实务的割裂。
+
+3. 跨文化诠释张力
+
+  • 海德格尔弟子帕克斯（Graham Parkes）比照《存在与时间》，发现"独化"与"此在"现象学相似性。
+
+  • 日本学者池田知久指其"修正主义注经法"类似古希腊新柏拉图派对柏拉图的解释策略。
+
+学术争议
+
+1. 剽窃公案再审视
+
+  • 刘义庆《世说新语》指控引发千年争论，现代出土文献显示郭象可能整合向秀、司马彪等多家注本。
+
+  • 王晓毅考證：向秀注仅存《庄子》内篇，郭象扩充外杂篇并体系化，存在学术创新。
+
+2. 保守主义批判
+
+  • 章太炎斥其"曲学阿世"，将庄子批判精神异化为统治工具。
+
+  • 冯友兰《中国哲学史》肯定其体系化贡献，但批评"为统治阶级服务的宿命论"。
+
+3. 文本暴力争议
+
+  • 删改《庄子》引发诠释伦理讨论，方勇《庄子学史》指责郭象"以注释之名行阉割之实"。
+
+  • 相反观点认为，郭象通过文本重构使庄子思想获得现实生命力，完成经典的创造性转化。
+
+参考文献
+
+1. 汤用彤《魏晋玄学论稿》 | 人民出版社, 1957
+
+2. 冯友兰《中国哲学史新编》 | 北京大学出版社, 1986
+
+3. 王晓毅《郭象评传》 | 南京大学出版社, 2006
+
+4.池田知久《道家思想的新研究》 | 中州古籍出版社, 2009`,
+      sengzhao: `哲学家 Philosopher #13
+姓名 Name: 僧肇 Sengzhao（释僧肇）
+生卒年 Lifespan: 384–414 CE（一说374–414） | 东晋佛学思想家
+学派 School: 般若中观学派（融合龙树中观学与魏晋玄学）
+
+生平与历史背景
+
+1. 少年问道与师承
+
+  • 长安人，家贫以抄书为业，早年熟读老庄，叹"美则美矣，未尽善也"，后皈依鸠摩罗什门下，成为"什门四圣"之一。
+
+  • 参与译场，精研《大品般若经》《中论》，以玄学语言重构中观思想，开中国佛教义理先河。
+
+2. 思想体系的早熟与夭折
+
+  • 31岁撰《肇论》（含《物不迁论》《不真空论》《般若无知论》），系统批判六家七宗，未及展开即病逝。
+
+  • 临终偈语："四大元无主，五阴本来空。将头临白刃，犹如斩春风"，彰显中观生死观。
+
+核心思想体系
+
+1. 不真空论
+
+  • 破本体执著："诸法假号不真，譬如幻化人"（《不真空论》），以"非有非无"消解玄学"贵无""崇有"对立。
+
+  • 现象学诠释："物从因缘故不有，缘起故不无"，比附郭象"独化"说但超越其自性实存论。
+
+2. 物不迁论
+
+  • 时间辩证法："昔物不至今，故动而非静"（《物不迁论》），以刹那生灭观解构常识运动观。
+
+  • 动静一如："旋风偃岳而常静，江河竞注而不流"，与赫拉克利特"人不能两次踏入同一条河流"形成东西对话。
+
+3. 般若无知论
+
+  • 认识论革命："圣智无知而无所不知，无为而无所不为"（《般若无知论》），否定经验认知的终极性。
+
+  • 玄佛会通：以王弼"得意忘言"方法论阐释"真谛无相"，完成佛教知识论的本土化转换。
+
+思想传承与影响
+
+1. 三论宗奠基
+
+  • 吉藏尊其为中土三论初祖，《三论玄义》称"肇公妙契佛心，振旦玄宗始盛"。
+
+  • 影响天台智顗"一心三观"与禅宗"不立文字"，惠能《坛经》"本来无一物"暗合不真空义。
+
+2. 跨文明诠释学范式
+
+  • 汤用彤赞其"用《庄子》语言，谈佛教哲学，而能契其神髓"，开创格义佛教向判教佛教转型。
+
+  • 海德格尔研究者帕克斯（G. Parkes）发现"不真空"与《存在与时间》对"存在者"的批判存在结构相似性。
+
+3. 东亚思想辐射
+
+  • 空海《肇论钞》将其思想传入日本，道元《正法眼藏》吸收"动静不二"发展曹洞禅坐忘理论。
+
+  • 朝鲜知讷《真心直说》以"般若无知"论证禅教一致，推动高丽佛教改革。
+
+学术争议
+
+1. 早逝的思想完成度
+
+  • 吕澂认为《涅槃无名论》系伪托，僧肇思想止步于般若学，未触及佛性论，与竺道生形成断层。
+
+  • 日本学者横超慧日反驳，指出《肇论》已隐含"常与无常"辩证思维，为涅槃学预留逻辑空间。
+
+2. 玄学依附性批判
+
+  • 胡适批评其"用道家词汇遮蔽中观本义"，如"玄鉴"弱化缘起性空彻底性。
+
+  • 相反观点（如许理和）认为，玄学术语是传播策略，核心论证严格遵循龙树四句否定逻辑。
+
+3. 文本真伪考辨
+
+  • 《宝藏论》长期归其名下，牧田谛亮考据为唐代禅僧伪作，反映后世对其思想的神话化重构。
+
+  • 现代校勘发现《肇论》不同版本存在玄学化与佛教化表述差异，或为南北朝学派斗争所致。
+
+参考文献
+
+1. 汤用彤《汉魏两晋南北朝佛教史》 | 商务印书馆, 1938
+
+2. 吕澂《中国佛学源流略讲》 | 中华书局, 1979
+
+3. 许理和（Erik Zürcher）《佛教征服中国》 | 江苏人民出版社, 2003
+
+4.龚隽《禅史钩沉》 | 三联书店, 2006`,
+      zhu_daosheng: `哲学家 Philosopher #14
+姓名 Name: 竺道生 Zhu Daosheng
+生卒年 Lifespan: 355–434 CE | 东晋至刘宋佛学革新者
+学派 School: 涅槃学派（融合般若学与佛性论）
+
+生平与历史背景
+
+1. 从般若到涅槃的转向
+
+  • 师从鸠摩罗什，精研《中论》《百论》，后转向《大般涅槃经》，因倡"一阐提皆可成佛"被逐出建康僧团。
+
+  • 北凉昙无谶译出四十卷《涅槃经》后，其学说被证实，被誉为"涅槃圣"。
+
+2. 思想冒险与宗教革命
+
+  • 提出"顿悟成佛"说，否定渐修次第，震动佛教界，谢灵运《辨宗论》称其"折中孔释，出新意于悲壮"。
+
+  • 晚年驻锡庐山，圆寂前于法座讲《涅槃经》，骤雨忽至，合掌而逝，世称"生公说法，顽石点头"。
+
+核心思想体系
+
+1. 佛性论突破
+
+  • 众生平等观："一切众生，莫不是佛，亦皆泥洹"（《法华经疏》），打破种姓与修行阶次限制。
+
+  • 佛性本有论："佛性即我"，将如来藏思想与玄学"自然之性"结合，挑战传统业报轮回观。
+
+2. 顿悟成佛说
+
+  • 真理不可分："理不可分，悟语照极"，主张"金刚心豁然大悟，无复所见"（《注维摩诘经》）。
+
+  • 对禅宗影响：为后世"明心见性""直指人心"提供理论先导，但强调"悟不自生，必藉信渐"。
+
+3. 经典诠释方法论
+
+  • "四依菩萨"原则：依义不依语，依法不依人，依智不依识，依了义经不依不了义经。
+
+  • 创造性解经：以"譬喻"释《法华经》，将"三乘方便"解为佛陀教化众生的权宜之策。
+
+思想传承与影响
+
+1. 涅槃学派奠基
+
+  • 弟子宝亮编《大般涅槃经集解》，推动南朝佛性论大讨论，影响天台宗"性具善恶"说。
+
+  • 北朝慧远（净影）吸收其说，构建地论学派佛性体系，成为隋唐宗派佛教重要思想资源。
+
+2. 儒佛会通范式
+
+  • 以"顿悟"调和儒家"人人可为尧舜"与佛教成佛论，为宋明理学心性论提供对话路径。
+
+  • 王阳明"致良知"说被章太炎认为"暗袭生公顿悟之义，而饰以儒门衣冠"。
+
+3. 东亚佛教转型
+
+  • 日本圣德太子《三经义疏》引用其注疏，推动奈良佛教转向佛性平等思想。
+
+  • 朝鲜元晓《涅槃经宗要》以"生公六义"为基础，发展海东涅槃学。
+
+学术争议
+
+1. 学说原创性质疑
+
+  • 横超慧日指出其"一阐提成佛"说可能受《央掘魔罗经》启发，非纯粹独创。
+
+  • 吕澂认为其佛性论仍属"本有"与"始有"折中，未达《大乘起信论》"一心二门"深度。
+
+2. 顿悟说的实践困境
+
+  • 慧观《渐悟论》批评其说忽视累世修行，导致"狂禅流弊"，引发南朝顿渐之诤。
+
+  • 现代学者龚隽指出，道生强调"悟必渐修"被禅宗遮蔽，其思想实为"顿渐统一论"。
+
+3. 历史形象建构
+
+  • "生公说法，顽石点头"传说最早见于《莲社高贤传》，或为后世净土宗为对抗禅宗祖统而神化。
+
+  • 《高僧传》载其被逐细节存疑，陈寅恪考证或反映士族与僧团权力斗争，非纯教义冲突。
+
+参考文献
+
+1. 汤用彤《汉魏两晋南北朝佛教史》 | 商务印书馆, 1938
+
+2. 任继愈《中国佛教史》 | 中国社会科学出版社, 1985
+
+3. 方立天《中国佛教哲学要义》 | 中国人民大学出版社, 2002
+
+4.许理和（Erik Zürcher）《佛教征服中国》 | 江苏人民出版社, 2003`,
+      huineng: `哲学家 Philosopher #15
+姓名 Name: 慧能 Huineng（禅宗六祖）
+生卒年 Lifespan: 638–713 CE | 唐代禅宗革新者
+学派 School: 南宗禅（主张"顿悟成佛"，与北宗神秀"渐修"对立）
+
+生平与历史背景
+
+1. 草根逆袭与衣钵传承
+
+  • 岭南新州（今广东新兴）人，幼年丧父，卖柴为生，听《金刚经》开悟，赴黄梅拜五祖弘忍。
+
+  • 以"本来无一物"偈语得传衣钵，深夜南逃隐匿猎队十五年，后于广州法性寺"风幡之辩"崭露头角。
+
+2. 曹溪弘法与宗派确立
+
+  • 驻锡韶州宝林寺（今南华寺），以"不立文字，教外别传"革新佛教，创"农禅并重"丛林制度。
+
+  • 武则天诏请入京称疾不赴，圆寂后真身不坏，今存南华寺六祖真身像，为汉传佛教唯一肉身菩萨。
+
+核心思想体系
+
+1. 顿悟成佛论
+
+  • 心性本体："菩提自性，本来清净；但用此心，直了成佛"（《坛经·行由品》），将佛性论彻底主体化。
+
+  • 破除阶次："迷闻经累劫，悟则刹那间"，否定传统戒定慧次第，主张"一悟即至佛地"。
+
+2. 无念为宗
+
+  • 修行方法论："无念为宗，无相为体，无住为本"（《坛经·定慧品》），以般若空观消解执着。
+
+  • 日常工夫："佛法在世间，不离世间觉"，将禅修融入挑水劈柴，开"生活禅"先河。
+
+3. 《坛经》革命性
+
+  • 唯一汉传佛经：弟子法海集录《六祖坛经》，打破"佛说"传统，确立祖师言教经典地位。
+
+  • 文本流变：敦煌本（8世纪）、惠昕本（10世纪）、宗宝本（13世纪）反映禅宗思想史变迁。
+
+思想传承与影响
+
+1. 五家七宗源头
+
+  • 弟子神会北上辩论，确立南宗正统地位；青原行思、南岳怀让二系衍生曹洞、临济等宗派。
+
+  • 临济宗"棒喝"、曹洞"默照"皆溯源于慧能"直指人心"教学法。
+
+2. 东亚文化重塑
+
+  • 日本荣西、道元分别传入临济、曹洞禅，影响武士道与侘寂美学；韩国知讷创曹溪宗，成韩禅主流。
+
+  • 王阳明心学吸收"即心即佛"，提出"心外无理"；近代铃木大拙向西方传播禅宗，影响海德格尔、凯鲁亚克等。
+
+3. 现代性诠释
+
+  • 太虚大师"人间佛教"运动以慧能为范例，推动佛教入世；星云大师称其为"佛教的马丁·路德"。
+
+  • 心理学界正念疗法（Mindfulness）溯源至"无住"思想，乔布斯禅修体验影响硅谷创新文化。
+
+学术争议
+
+1. 历史真实性质疑
+
+  • 胡适考据指出《坛经》多为神会系伪造，引发"慧能神话"争论，印顺法师反驳称"思想属实而细节文学化"。
+
+  • 敦煌本《坛经》记载慧能曾赴黄梅前已闻《涅槃经》，与传说不符，或反映早期禅史多重叙事。
+
+2. 顿渐对立再审视
+
+  • 柳田圣山研究发现北宗神秀亦讲"一念净心"，南北差异被宗派斗争夸大，实际共享禅法基础。
+
+  • 《楞伽师资记》显示慧能思想可能受四祖道信"守一"说影响，非全然独创。
+
+3. 肉身真伪之谜
+
+  • 科学检测显示六祖真身像内藏骨殖，但唐代防腐技术难解；元代《敕修百丈清规》记载"贴金护真"仪式，或经后世修缮。
+
+  • 陈垣《释氏疑年录》质疑慧能寿数，据《曹溪大师别传》推算或存十岁误差。
+
+参考文献
+
+1. 印顺《中国禅宗史》 | 正闻出版社, 1971
+
+2. 胡适《荷泽大师神会传》 | 亚东图书馆, 1930
+
+3. 柳田圣山《禅佛教研究》 | 法藏馆, 1985
+
+4. 杨曾文《敦煌新本六祖坛经》 | 宗教文化出版社, 2001`,
+      zhu_xi: `哲学家 Philosopher #16
+姓名 Name: 朱熹 Zhu Xi（字元晦，号晦庵）
+生卒年 Lifespan: 1130–1200 CE | 南宋理学集大成者
+学派 School: 程朱理学（继承二程，融汇儒释道）
+
+生平与历史背景
+
+1. 仕途沉浮与学术抗争
+
+  • 祖籍徽州婺源（今江西），生于福建尤溪，19岁中进士，历任漳州、潭州知州，因弹劾权臣韩侂胄被贬，晚年落职讲学。
+
+  • 庆元党禁中理学被斥为"伪学"，临终前仍修订《大学章句》，自称"疾革草此，毕生心力尽于此书"。
+
+2. 书院运动与经典重构
+
+  • 复兴白鹿洞书院，制定《白鹿洞学规》，确立"父子有亲，君臣有义"教育纲领，推动儒学民间化。
+
+  • 合《大学》《中庸》《论语》《孟子》为"四书"，作《四书章句集注》，取代汉唐"五经"成为科举核心文本。
+
+核心思想体系
+
+1. 理气二元论
+
+  • 本体论建构："理也者，形而上之道也；气也者，形而下之器也"（《答黄道夫》），以理为万物所以然，气为物质基础。
+
+  • 理一分殊："月印万川"喻理普遍性与特殊性统一，为儒家伦理提供形上依据。
+
+2. 心性工夫论
+
+  • 人性二元："论天地之性，则专指理言；论气质之性，则以理与气杂而言之"（《朱子语类》卷四）。
+
+  • 格物致知："即物穷理"认知论，主张"今日格一物，明日格一物，豁然贯通"，与陆九渊"发明本心"形成对立。
+
+3. 伦理实践哲学
+
+  • 存理灭欲："饮食者，天理也；要求美味，人欲也"（《朱子语类》卷十三），构建严密的道德形而上学。
+
+  • 三纲八目：将《大学》三纲领（明德、亲民、至善）、八条目（格致诚正修齐治平）系统化，确立士人修己治人路径。
+
+思想传承与影响
+
+1. 东亚文明范式的确立
+
+  • 元代延祐科举以《四书集注》取士，明清两代奉为官方意识形态，塑造东亚儒家文化圈共同价值。
+
+  • 朝鲜李滉（退溪）创岭南学派，日本林罗山奠基江户朱子学，越南黎贵惇引理学入科举，形成"东亚理学共同体"。
+
+2. 近代思想转型的标靶
+
+  • 五四运动"打倒孔家店"直指朱子学，吴虞斥其"以理杀人"；冯友兰《新理学》则以逻辑分析法重构理学体系。
+
+  • 海外新儒家牟宗三批判其"别子为宗"，认为程朱偏离孟子心性论传统，主张回归陆王心学。
+
+3. 跨文明对话潜能
+
+  • 莱布尼茨《中国近事》赞其"自然神学"与欧洲理性主义相通；李约瑟称其"有机宇宙论"暗含科学思维萌芽。
+
+  • 生态哲学领域，白诗朗（John Berthrong）发掘"理一分殊"对多元现代性的启示，与过程哲学形成对话。
+
+学术争议
+
+1. 理论内在张力
+
+  • 陈亮批判："自以为正心诚意之学者，皆风痹不知痛痒之人"，揭示理学玄思与事功实践的矛盾。
+
+  • 戴震《孟子字义疏证》指斥"以理杀人"，揭露伦理绝对主义可能导致的社会压迫。
+
+2. 历史形象嬗变
+
+  • 清代颜元痛批朱学"无事袖手谈心性，临危一死报君王"，归咎其为宋明亡国思想祸源。
+
+  • 钱穆《朱子新学案》平反，强调其"综合创新"精神，肯定其整合佛道重建儒学的历史贡献。
+
+3. 文本考据疑云
+
+  • 《家礼》真伪争议：清代王懋竑考证为伪托，现代学者束景南则通过文献比勘论证其真实性。
+
+  • 《周易本义》先天图来源：胡渭《易图明辨》指其混入道教丹学图式，引发理学家是否"阳儒阴道"的争论。
+
+参考文献
+
+1. 钱穆《朱子新学案》 | 三民书局, 1971
+
+2. 陈来《朱子哲学研究》 | 中国社会科学出版社, 1988
+
+3. 余英时《朱熹的历史世界》 | 三联书店, 2004
+
+4.田浩（Hoyt Tillman）《朱熹的思维世界》 | 江苏人民出版社, 2011`,
+      wang_yangming: `哲学家 Philosopher #17
+姓名 Name: 王守仁 Wang Shouren（号阳明，世称王阳明）
+生卒年 Lifespan: 1472–1529 CE | 明代心学集大成者
+学派 School: 陆王心学（对抗程朱理学，主张"心即理"）
+
+生平与历史背景
+
+1. 从狂狷到悟道
+
+  • 浙江余姚人，11岁作诗"山近月远觉月小"，显宇宙追问意识；早年习兵法骑射，因触怒刘瑾贬贵州龙场，于石棺中悟"圣人之道，吾性自足"（史称"龙场悟道"）。
+
+  • 平南赣匪乱、擒宁王朱宸濠，创"十家牌法"基层管控，践行"知行合一"，晚年讲学于稽山书院，弟子钱德洪、王畿分化心学"左""右"两派。
+
+2. 思想突围与政治困境
+
+  • 批判朱熹"析心与理为二"，主张"心外无物，心外无理"，遭主流理学士人攻讦为"禅学"。
+
+  • 嘉靖帝忌其军功，封新建伯却闲置不用，临终遗言"此心光明，亦复何言"，门人私谥"文成"。
+
+核心思想体系
+
+1. 心即理的本体论革命
+
+  • 颠覆理学框架："夫物理不外于吾心，外吾心而求物理，无物理矣"（《传习录》），将宇宙论内化为心性论。
+
+  • 岩中花树公案："你未看此花时，此花与汝心同归于寂"，现象学式消解主客对立。
+
+2. 知行合一的实践哲学
+
+  • 批判知先行后："未有知而不行者，知而不行只是未知"（《传习录》），以"真切笃行"定义真知。
+
+  • 事上磨练说："人须在事上磨，方立得住"，将道德修养嵌入日常生活实践。
+
+3. 致良知的终极命题
+
+  • 晚年定论："良知即是天植灵根，生生不息"（《传习录》），融合孟子性善论与禅宗顿悟法门。
+
+  • 四句教争议："无善无恶心之体"引发王畿（四无说）与钱德洪（四有说）的诠释分歧，暴露理论张力。
+
+思想传承与影响
+
+1. 东亚心学运动
+
+  • 日本中江藤树开创阳明学派，佐藤一斋、大盐平八郎推动幕末维新，西乡隆盛称"修心炼胆，全依阳明学"。
+
+  • 朝鲜郑霞谷暗承心学，著《霞谷集》以"生理说"调和朱王；越南阮秉谦以"理气浑然"发展本土化心学。
+
+2. 近现代思想转型
+
+  • 梁启超誉其为"明代唯一大师"，孙中山称"心理建设"受其启发；蒋介石将台北草山改名"阳明山"以示尊崇。
+
+  • 新儒家牟宗三以"良知坎陷说"沟通民主科学，杜维明发掘其"体知"概念，与西方具身认知理论对话。
+
+3. 全球哲学对话
+
+  • 现象学比附：耿宁（Iso Kern）将"良知"比拟胡塞尔"先验自我"，海德格尔弟子帕克斯称其"存在论式的主体性"。
+
+  • 伦理学应用：迈克尔·桑德尔借"知行合一"批判自由主义中立性，环境哲学界用"万物一体"论证生态伦理。
+
+学术争议
+
+1. 儒释道归属之争
+
+  • 黄宗羲《明儒学案》定调"阳明学属儒门别子"，陈荣捷反驳其说"深得孟子真传"；荒木见悟指其"以禅解儒"痕迹明显，《朱子晚年定论》被揭穿文献伪造。
+
+  • 秦家懿考证"天泉证道"可能为王畿虚构，反映晚明思想史层累建构特征。
+
+2. 实践效验性质疑
+
+  • 章太炎抨击："阳明用兵多诡道，与其致良知说自相矛盾"，揭示道德理想与政治现实的断裂。
+
+  • 沟口雄三分析：李贽"童心说"、黄宗羲《明夷待访录》对君权的批判，实为心学个人主义逻辑延伸，超出阳明本意。
+
+3. 文本真伪与诠释
+
+  • 《大学问》是否代表晚年定论存疑，陈来考据认为该文系弟子整理，夹杂钱德洪思想。
+
+  • 邓艾民发现《传习录》不同版本存在关键术语差异（如"心即理"在早期抄本作"心是理"），影响哲学解读。
+
+参考文献
+
+1. 陈来《有无之境——王阳明哲学的精神》 | 人民出版社, 1991
+
+2. 牟宗三《心体与性体》 | 正中书局, 1968
+
+3. 杜维明《青年王阳明》 | 哈佛大学出版社, 1976
+
+4.冈田武彦《王阳明与明末儒学》 | 上海古籍出版社, 2000`,
+      li_zhi: `哲学家 Philosopher #18
+姓名 Name: 李贽 Li Zhi（号卓吾、温陵居士）
+生卒年 Lifespan: 1527–1602 CE | 明代晚期异端思想家
+学派 School: 泰州学派后劲（激进左派，自称"异端"）
+
+生平与历史背景
+
+1. 反叛者的一生
+
+  • 福建泉州人，回族后裔，26岁中举后历任河南共城教谕、云南姚安知府，因拒奉程朱理学辞官，剃发出家却饮酒食肉，游走儒释道之间。
+
+  • 与耿定向论战著《焚书》，评点《水浒传》《西厢记》挑战雅俗界限，最终以"敢倡乱道，惑世诬民"罪名被捕，狱中夺剃刀自刎而死。
+
+2. 社会转型期的精神突围
+
+  • 晚明商品经济勃兴，市民文化兴起，李贽居湖北麻城芝佛院，接纳商贾、妇女听讲，冲击士农工商等级秩序。
+
+  • 著作屡遭焚毁，却越禁越炽，《藏书》《续藏书》私刻流传，袁宏道称"其书藏于今宇宙者，皆断轮残简，而精神不灭"。
+
+核心思想体系
+
+1. 童心说与人性解放
+
+  • 批判假道学："夫童心者，绝假纯真，最初一念之本心也"（《焚书·童心说》），指斥六经、《语》《孟》为"道学之口实，假人之渊薮"。
+
+  • 自然人性论："穿衣吃饭即是人伦物理"，肯定私欲合理性，开明清自然主义先声。
+
+2. 历史相对主义
+
+  • 重估价值标准："咸以孔子之是非为是非，故未尝有是非耳"（《藏书·世纪列传总目前论》），打破儒家道统史观。
+
+  • 赞秦始皇为"千古一帝"，称武则天"政由己出，明察善断"，颠覆传统历史人物评价体系。
+
+3. 文学革命论
+
+  • 推崇通俗文学："《水浒传》者，发愤之所作也"（《忠义水浒传序》），将小说戏曲提升至"宇宙至文"高度。
+
+  • 主张"化工"胜于"画工"，强调创作主体性，影响汤显祖"至情论"与公安派"性灵说"。
+
+思想传承与影响
+
+1. 明清之际思想启蒙
+
+  • 黄宗羲《明夷待访录》批判君主专制，顾炎武"经世致用"说，皆受其"非圣无法"精神启发。
+
+  • 曹雪芹《红楼梦》借贾宝玉"毁僧谤道"暗承李贽反礼教立场，《金瓶梅》评点本托其名传播。
+
+2. 东亚近代化先声
+
+  • 日本江户时代获屋代弘贤私刻《焚书》，影响海保青陵"重商主义"；明治时期三宅雪岭称其为"东方的尼采"。
+
+  • 五四新文化运动中，吴虞引李贽为"打倒孔家店"先驱，周作人将其与王充、嵇康并列为"中国思想界三盏明灯"。
+
+3. 现代思想诠释场域
+
+  • 侯外庐《中国思想通史》定位其为"市民阶级启蒙者"，余英时反驳称其思想仍属"士大夫自我批判"。
+
+  • 女性主义研究重审其《答以女人学道为见短书》，认为其突破性别局限但仍囿于时代语境。
+
+学术争议
+
+1. 思想性质之争
+
+  • 岛田虔次称其为"中国近代思维挫折"的象征，沟口雄三反对此"欧洲中心论"，主张其思想属儒学内部自我更新。
+
+  • 左东岭指出"童心"概念源自王阳明"良知"与罗汝芳"赤子之心"，非全然独创，但激进程度空前。
+
+2. 文本真伪与诠释
+
+  • 《史纲评要》是否系伪托争议：容肇祖考证为叶昼假托，黄仁宇却引用其评朱元璋"圣贤盗贼之性兼而有之"。
+
+  • 《四书评》真伪难定，朱维铮认为部分评语反映泰州学派集体思想，非李贽独撰。
+
+3. 自杀谜团再探
+
+  • 袁中道《李温陵传》称其狱中自刎，马经纶《与当道书》暗示遭虐杀，近年发现万历三十年档案显示"病死狱中"，死因成罗生门。
+
+  • 江灿腾研究认为其剃发行为受佛教"毁形守志"传统影响，非纯粹反叛姿态。
+
+参考文献
+
+1. 容肇祖《李卓吾评传》 | 商务印书馆, 1937
+
+2. 岛田虔次《中国近代思维的挫折》 | 江苏人民出版社, 2005
+
+3. 黄仁宇《万历十五年》 | 中华书局, 1982
+
+4.左东岭《李贽与晚明文学思想》 | 人民文学出版社, 2010`,
+      huang_zongxi: `哲学家 Philosopher #19
+姓名 Name: 黄宗羲 Huang Zongxi（号梨洲，世称梨洲先生）
+生卒年 Lifespan: 1610–1695 CE | 明末清初启蒙思想家
+学派 School: 浙东学派（融合心学、史学与经世之学）
+
+生平与历史背景
+
+1. 家国剧变与学术转向
+
+  • 浙江余姚人，父黄尊素为东林党领袖，遭魏忠贤阉党迫害致死。青年时携铁锥入京讼冤，袖藏奏疏击伤阉党余孽。
+
+  • 明亡后组建"世忠营"抗清，失败后隐居著述，拒应博学鸿儒科，康熙帝叹"故明遗老，不可强致"。
+
+2. 史学与经世学的奠基
+
+  • 著《明夷待访录》批判君主专制，提出"天下为主，君为客"；编纂《明文海》《宋元学案》，开学术史研究先河。
+
+  • 讲学甬上证人书院，倡"经术所以经世"，弟子万斯同、全祖望承其学脉，形成清代浙东史学传统。
+
+核心思想体系
+
+1. 政治哲学突破
+
+  • 君权批判："为天下之大害者，君而已矣"（《明夷待访录·原君》），揭露"屠毒天下之肝脑，离散天下之子女"的君主之恶。
+
+  • 制度设计：主张"公其非是于学校"，使书院具备议政功能；提出"工商皆本"，反映江南商品经济新思潮。
+
+2. 心学修正与史学方法论
+
+  • 调和朱陆："心无本体，工夫所至即其本体"（《明儒学案·序》），以史学实践改造阳明心学空疏流弊。
+
+  • 史识创新："国可亡，史不可亡"，首创学案体例，强调学术流变与时代互动，突破传统传记模式。
+
+3. 科学精神萌芽
+
+  • 研习西学：与汤若望交往，著《授时历故》《割圆八线解》，会通中西历算，但批判天主教"天堂地狱"说。
+
+  • 实证取向：考订《水经注》，质疑《古文尚书》真伪，影响乾嘉考据学方法论形成。
+
+思想传承与影响
+
+1. 近代启蒙思想先导
+
+  • 梁启超称《明夷待访录》为"人权宣言"，谭嗣同《仁学》引其"君主民客"论反专制；孙中山曾手抄该书革命纲领。
+
+  • 钱穆赞其为"近世史学开山"，侯外庐将其与顾炎武、王夫之并称"清初三大启蒙思想家"。
+
+2. 东亚近代化思想资源
+
+  • 日本明治维新前，《明夷待访录》和刻本流传，横井小楠以此论证"天下为公"；朝鲜朴趾源《热河日记》引其制度批判思想。
+
+  • 现代新儒家牟宗三称其"政治客观精神"可补心学内倾之弊，徐复观发掘其"民本到民主"的转化可能。
+
+3. 全球思想史对话
+
+  • 与洛克《政府论》比较：均产生于王朝更迭期，但黄宗羲缺乏"社会契约"理论建构，仍囿于儒家民本框架。
+
+  • 生态哲学视角：其"富民厚生"思想被重新诠释为"可持续发展观"，与当代环境正义理论形成呼应。
+
+学术争议
+
+1. 民主性质疑
+
+  • 萧公权认为其思想属"民本极限"而非民主，朱谦之反驳称"天下为主"已具主权在民雏形。
+
+  • 沟口雄三指出"自私自利"人性论与西方个人主义根本不同，其"公"概念仍以乡村共同体为基础。
+
+2. 遗民心态再审视
+
+  • 全祖望《梨洲先生神道碑》塑造其忠贞遗民形象，但赵园考证显示其晚年与清廷官员多有诗文唱和，立场存在复杂性。
+
+  • 何冠彪研究揭示，黄宗羲默许弟子万斯同参修《明史》，反映遗民学者"文化守节"与"历史参与"的矛盾。
+
+3. 文本真伪与诠释
+
+  • 《明夷待访录》书名取自《周易》，但"待访"对象是周武王还是未来圣王？钱穆认为是期待后世明君，余英时解读为乌托邦隐喻。
+
+  • 《孟子师说》是否完全承袭刘宗周思想？吴光考证发现其中掺杂黄氏独创的"气学"论述，体现师承与突破。
+
+参考文献
+
+1. 钱穆《中国近三百年学术史》 | 商务印书馆, 1937
+
+2. 余英时《方以智晚节考》 | 允晨文化, 1986
+
+3. 沟口雄三《中国前近代思想的曲折与展开》 | 三联书店, 2011
+
+4.吴光《黄宗羲与清代浙东学派》 | 中国人民大学出版社, 2009`,
+      wang_fuzhi: `哲学家 Philosopher #20
+姓名 Name: 王夫之 Wang Fuzhi（号船山，世称船山先生）
+生卒年 Lifespan: 1619–1692 CE | 明末清初唯物主义思想家
+学派 School: 湖湘学派（批判理学与心学，重建气学传统）
+
+生平与历史背景
+
+1. 遗民气节与学术孤旅
+
+  • 湖南衡阳人，举人出身，曾于衡山举兵抗清，失败后隐居湘西石船山，著书四十年，"完发以终"（拒剃发易服），自题堂联"六经责我开生面，七尺从天乞活埋"。
+
+  • 著述逾百卷，因反清立场多未刊行，道光年间邓显鹤刊刻《船山遗书》，始为世所知。
+
+2. 思想熔铸与历史批判
+
+  • 反思明亡教训："孤秦陋宋"论直指中央集权与文武失衡，主张"严以治吏，宽以养民"。
+
+  • 融合易学与实证：以《周易外传》阐发辩证法，考订《尚书引义》《春秋世论》，重建儒家经世体系。
+
+核心思想体系
+
+1. 气本论与理气关系
+
+  • 唯物本体论："天下惟器而已矣"（《周易外传》），否定程朱"理在气先"，主张"理在气中""气日新而化生"。
+
+  • 能动认识论："形也，神也，物也，三相遇而知觉乃发"（《张子正蒙注》），强调主体与客体的互动。
+
+2. 历史哲学突破
+
+  • 进化史观："势之必然处见理"（《读四书大全说》），提出"理势合一"，反对退化论与循环史观。
+
+  • 民族主义萌芽："夷夏之防"高于"君臣之义"，为近代反满革命提供思想武器。
+
+3. 人性论与伦理重建
+
+  • "性日生日成"说："夫性者生理也，日生则日成也"（《尚书引义》），批判朱熹"天命之性"静态观。
+
+  • 情理平衡："人欲之大公即天理之至正"（《读四书大全说》），试图调和理学禁欲与自然人性。
+
+思想传承与影响
+
+1. 近代思想启蒙
+
+  • 曾国藩刊印《船山遗书》，推动其学"中兴"；谭嗣同《仁学》称"五百年来学者，真通天人之故者，船山一人而已"。
+
+  • 章太炎引"夷夏之辨"反清，毛泽东《矛盾论》吸收其辩证法思想，称"西方有个黑格尔，东方有个王船山"。
+
+2. 学术范式转型
+
+  • 影响颜李学派"实学"取向，钱穆赞其"理气一元论"开清代学术新风气；侯外庐视其为"早期启蒙思想代表"。
+
+  • 现代新儒家熊十力、唐君毅重释其"体用论"，冯友兰《中国哲学史》将其定位为"道学高峰"。
+
+3. 跨文明对话
+
+  • 与斯宾诺莎比较：同持"泛神论"倾向，但王夫之强调整体动态（"絪緼化生"），斯氏侧重实体静态（"自因"）。
+
+  • 生态哲学启示：日本学者岛田虔次称其"天人合一"论蕴含"有机宇宙观"，可对话怀特海过程哲学。
+
+学术争议
+
+1. 哲学性质之争
+
+  • 冯友兰认为其属"道学修正派"，张岱年则强调其"超越理学，自成体系"；萧萐父提出"早期启蒙说"，余英时质疑此说过度现代化。
+
+  • 劳思光指其思想"杂糅矛盾"，未能彻底摆脱理学框架；陈来肯定其"集大成的批判性综合"。
+
+2. 民族主义诠释困境
+
+  • 汪荣祖考证"夷夏观"实为文化论非种族论，与近代民族国家观念存在本质差异。
+
+  • 杜维明批评其"华夏中心主义"阻碍跨文明对话，但肯定其文化主体性建构意义。
+
+3. 文本传播与接受
+
+  • 《船山遗书》初刻本遭清廷删改，岳麓书社《船山全书》校勘发现多处篡改，涉及反清言论与历史评价。
+
+  • 《读通鉴论》是否反映晚年定论？刘毓崧考据显示部分内容为早期政论，与隐居后思想存在张力。
+
+参考文献
+
+1. 侯外庐《中国思想通史》 | 人民出版社, 1956
+
+2. 萧萐父《王夫之评传》 | 南京大学出版社, 2002
+
+3. 汪荣祖《王夫之的史学与历史思想》 | 联经出版公司, 1993
+
+4. 陈来《诠释与重建——王船山的哲学精神》 | 北京大学出版社, 2004`,
+      dai_zhen: `哲学家 Philosopher #21
+姓名 Name: 戴震 Dai Zhen（字东原）
+生卒年 Lifespan: 1724–1777 CE | 清代乾嘉考据学巨擘
+学派 School: 皖派朴学（批判理学，倡导"由字通词，由词通道"）
+
+生平与历史背景
+
+1. 寒门逆袭与学术突围
+
+  • 安徽休宁人，早年家贫，随父贩布，自学成材。35岁避仇入京，携《屈原赋注》拜见钱大昕，震动京师，称"天下奇才"。
+
+  • 六次会试不第，晚年以举人特召入四库馆校勘《水经注》，临终前自述"生平著述，以《孟子字义疏证》为第一"。
+
+2. 考据学中的义理追求
+
+  • 表面承袭惠栋"汉学"路径，实则"借考据酒杯，浇义理块垒"，通过训诂挑战程朱理学权威。
+
+  • 与章学诚"道问学"与"尊德性"之争，反映乾嘉学术内部的分化：纯考据派（段玉裁、王念孙）与义理派（戴震、焦循）的分野。
+
+核心思想体系
+
+1. 理气一元论与反理学批判
+
+  • 唯物自然观："气化即道，生生之谓也"（《孟子字义疏证》），否定朱熹"理先气后"，主张"理在事情"。
+
+  • 伦理总批判："酷吏以法杀人，后儒以理杀人"（《与某书》），揭露理学"存天理灭人欲"的社会压迫性。
+
+2. 血气心知人性论
+
+  • 生理学转向："人生而有欲、有情、有知，三者血气心知之自然也"（《原善》），以生物属性重构人性基础。
+
+  • 理欲统一说："理者，存乎欲者也"，将道德规范建基于合理欲望的满足，暗含功利主义倾向。
+
+3. 知识论与方法论革命
+
+  • "由词通道"方法论："经之至者道也，所以明道者词也"（《古经解钩沉序》），以语言学方法解构理学形上学。
+
+  • 区分"意见"与"理义"："人蔽于意见，则不能尽其材"，强调实证考据对祛除主观臆断的优先性。
+
+思想传承与影响
+
+1. 近现代思想转型枢纽
+
+  • 章太炎称其"凌破宋学枷锁，导夫先路"，梁启超视其为"清代学术黎明运动代表"，胡适撰《戴东原的哲学》推为"中国启蒙之父"。
+
+  • 刘师培、鲁迅继承反理学精神，吴虞《吃人与礼教》直承"以理杀人"说，成为五四反传统思想武器。
+
+2. 东亚近代化理论资源
+
+  • 日本井上哲次郎引入戴震"气学"，为明治时期反朱子学运动提供弹药；朝鲜丁若镛《与犹堂全书》吸收其考据方法革新实学。
+
+  • 美国汉学家艾尔曼（Benjamin Elman）揭示其科学方法论与欧洲启蒙运动的平行性，但缺乏社会传播机制。
+
+3. 当代学术范式启示
+
+  • 徐复观称其"以考据为表，以义理为里"的双轨模式，为现代中国哲学史学科奠基。
+
+  • 李泽厚"情本体论"溯源至戴震理欲观，沟口雄三从"乡约共同体"角度重审其民本思想。
+
+学术争议
+
+1. 哲学立场的内在矛盾
+
+  • 钱穆批评其"以训诂求义理"存在方法论悖论："既谓理在事物，又何须从故纸堆中求？"
+
+  • 余英时《论戴震与章学诚》指出其思想存在"道问学"与"反智识主义"的张力，反映儒学现代转型困境。
+
+2. 唯物主义是否彻底
+
+  • 侯外庐肯定其"十八世纪中国唯物论代表"，但冯友兰指其仍使用"道""理"范畴，未完全摆脱理学框架。
+
+  • 日本学者村濑裕也发现《绪言》与《疏证》存在差异：前者持气本论，后者转向认识论优先，显示思想演变轨迹。
+
+3. 反理学立场的再审视
+
+  • 朱维铮考证四库本《水经注》校勘实由赵一清完成，戴震涉嫌剽窃，质疑其学术道德是否匹配反道学姿态。
+
+  • 张寿安研究揭示戴震"以礼代理"思想与凌廷堪的差异，前者侧重哲学批判，后者转向制度重建。
+
+参考文献
+
+1. 胡适《戴东原的哲学》 | 商务印书馆, 1927
+
+2. 余英时《论戴震与章学诚》 | 华世出版社, 1977
+
+3. 艾尔曼《从理学到朴学》 | 江苏人民出版社, 1995
+
+4. 张寿安《以礼代理——凌廷堪与清中叶儒学思想之转变》 | 河北教育出版社, 2001`,
+      zhang_xuecheng: `哲学家 Philosopher #22
+姓名 Name: 章学诚 Zhang Xuecheng（号实斋）
+生卒年 Lifespan: 1738–1801 CE | 清代史学理论家
+学派 School: 浙东史学（承黄宗羲，倡“六经皆史”）
+
+生平与历史背景
+
+1. 科举困顿与学术自觉
+
+  • 浙江会稽（今绍兴）人，41岁中进士，官至国子监典籍，终生未获重用。自述“三十以前，懵然无识”，中年后形成独特史学观。
+
+  • 与戴震学术交锋，批评考据学“但知聚铜，不知铸釜”，主张“学问当以神解为宗，训诂考订皆筌蹄耳”。
+
+2. 思想体系的晚成与边缘
+
+  • 著《文史通义》二十余年未定稿，提出“六经皆史”“史德说”，临终前叹“吾书似钟嵘《诗品》，刘勰《文心》，当俟后世知音”。
+
+  • 生前声名不显，道光年间《章氏遗书》刊行，谭献、龚自珍始重其学，梁启超称其为“清代唯一史学思想家”。
+
+核心思想体系
+
+1. 六经皆史的本体论革命
+
+  • 消解经学神圣性：“六经皆先王之政典”“皆史也”（《易教上》），将经典还原为三代制度史记录。
+
+  • 历史哲学创新：“道不离器，犹影不离形”，主张从历史流变中体认“道”的展开过程。
+
+2. 史家主体性建构
+
+  • 史德说：“能具史识者，必知史德；德者何？谓著书者之心术也”（《史德》），强调史家道德与认知的双重修养。
+
+  • 历史想象力：“运以别识心裁，非深通于道术精微者不能”，突破传统史料编纂学的局限。
+
+3. 方志学理论奠基
+
+  • 方志非地理书：“志乃史体”，首创方志分立“三书”（志、掌故、文征），推动地方志从资料汇编转向史学研究。
+
+  • 政教实践指向：“史志之书，有裨风教者，原因传述忠孝节义，凛凛烈烈，有声有色”，强调史学的社会教化功能。
+
+思想传承与影响
+
+1. 近代史学转型先声
+
+  • 龚自珍引“六经皆史”论开启经世史学，章太炎称“会稽章学诚为《文史》《校雠》，其义近圆”；胡适誉其“中国历史方法论的奠基人”。
+
+  • 内藤湖南吸收其说提出“唐宋变革论”，白寿彝《中国史学史》列专章论述其理论贡献。
+
+2. 中西史学对话桥梁
+
+  • 余英时《论戴震与章学诚》揭示其思想与柯林武德“历史重演论”的相似性；海登·怀特《元史学》引“历史想象”概念佐证叙事主义史观。
+
+  • 后现代史学视角：王晴佳将其“史意说”与安克斯密特“历史表现”理论比较，探讨历史书写的诗性维度。
+
+3. 学科跨界启示
+
+  • 文学理论影响：周勋初《文史探微》揭示《文史通义》对刘勰《文心雕龙》的继承与超越，构建中国文论史脉络。
+
+  • 社会学方法先导：瞿同祖将“方志三书”体例引入法律社会史研究，费孝通“乡土中国”论受其地方志方法论启发。
+
+学术争议
+
+1. 理论内在矛盾
+
+  • 钱穆指出“六经皆史”说隐含悖论：既否定经学神圣性，又主张“经世致用”，未能彻底摆脱儒家价值观束缚。
+
+  • 杜维云批评“史德说”过于依赖主观心术，缺乏客观评价标准，易导致历史相对主义。
+
+2. 学派归属之争
+
+  • 内藤湖南将其归入“浙东学派”，但何炳松认为其思想更近“浙西学派”的实证取向；仓修良考证其学术实熔铸浙东、浙西之长。
+
+  • 侯外庐《中国思想通史》将其定位为“启蒙思想家”，余英时反驳称其思想仍属“儒学内部调整”。
+
+3. 文本真伪与诠释
+
+  • 《校雠通义》是否完成体系？王重民发现现存版本存在后人增补，原稿《续通志校雠略拟稿》已佚，理论完整性存疑。
+
+  • 《文史通义·妇学》篇的女德观引发争议，江晓原指其“以史载道”说在此陷入传统性别规范桎梏。
+
+参考文献
+
+1. 余英时《论戴震与章学诚》 | 华世出版社, 1977
+
+2. 仓修良《章学诚和〈文史通义〉》 | 中华书局, 1984
+
+3. 倪德卫（David Nivison）《章学诚的生平与思想》 | 斯坦福大学出版社, 1966
+
+4.山口久和《章学诚的知识论》 | 上海古籍出版社, 2006`,
+      wei_yuan: `哲学家 Philosopher #23
+姓名 Name: 魏源 Wei Yuan（字默深）
+生卒年 Lifespan: 1794–1857 CE | 晚清经世致用学派代表人物
+学派 School: 今文经学·经世派（与龚自珍并称“龚魏”）
+
+生平与历史背景
+
+1. 科举仕途与时代变局
+
+  • 湖南邵阳人，29岁中举，屡试进士不第，曾任内阁中书，参与编修《皇朝经世文编》。鸦片战争后入裕谦幕府，亲历浙东抗英战役，痛感“夷务为千古未有之变局”。
+
+  • 辞官侨居扬州絜园，著《海国图志》百卷，提出“师夷长技以制夷”，临终前目睹太平军陷扬州，手订文稿散佚大半。
+
+2. 思想转型的三重突破
+
+  • 今文经学革新：以《诗古微》《书古微》重构经典诠释，主张“变古愈尽，便民愈甚”，为变法提供经学依据。
+
+  • 边疆史地研究：著《圣武记》宣扬清朝武功，暗含危机意识；《元史新编》借古讽今，警示民族融合课题。
+
+  • 海洋意识觉醒：首倡设立翻译馆、造船厂，主张“以夷攻夷，以夷款夷，师夷长技以制夷”，影响洋务运动纲领。
+
+核心思想体系
+
+1. 经世致用的方法论革命
+
+  • 知识论转向：“披五岳之图，以为知山，不如樵夫之一足”（《默觚·学篇》），强调实践经验优先于书本知识。
+
+  • 历史进化观：“势变道不变”论调中隐含矛盾，既承认“租、庸、调变而两税，两税变而条编”的制度变迁，又坚持“王道”永恒性。
+
+2. 夷夏辩证法的现代性萌蘖
+
+  • 技术工具论：“夷之长技三：一战舰，二火器，三养兵练兵之法”，将西方科技剥离价值体系，开启“中体西用”先声。
+
+  • 文化相对主义：“天地之气，其至明者一变而为夷狄，再变而为禽兽”，虽持文明等级论，但承认技术文明的流动性。
+
+3. 改革哲学的实践困境
+
+  • 盐政漕运改革：任两淮盐运使期间推行“票盐制”，打破官商垄断，却因触及既得利益集团而失败。
+
+  • 军事近代化蓝图：《海国图志》详述英吉利战船、佛兰西炮台，但清廷反应迟缓，反被日本幕府翻刻推动明治维新。
+
+思想传承与影响
+
+1. 洋务运动的理论先导
+
+  • 曾国藩刊刻《海国图志》，李鸿章称“古今未有之奇书”；左宗棠福州船政局实践“师夷制夷”主张，却弱化其政治改革内涵。
+
+  • 张之洞“中体西用”论直接承袭其技术工具主义，但阉割其“变古便民”的激进色彩。
+
+2. 东亚近代化的思想杠杆
+
+  • 日本盐谷岩阴翻刻《海国图志》，佐久间象山提出“东洋道德西洋艺”，吉田松阴称其为“海外知音”；朝鲜朴珪寿引入其作推动“开化派”形成。
+
+  • 费正清《冲击-回应》模式将其列为典型，而柯文《在中国发现历史》批判此说忽视内发性变革动力。
+
+3. 现代思想史重构
+
+  • 梁启超誉其为“清学分裂之最初倡导者”，钱穆指其“仍属旧统，未开新机”；侯外庐肯定其“破块启蒙”的过渡性价值。
+
+  • 汪荣祖比较林则徐与魏源，揭示后者“从攘夷到知夷”的认知飞跃；茅海建考证《海国图志》资料多转引《四洲志》，原创性存疑。
+
+学术争议
+
+1. 思想定位的悖论
+
+  • 冯天瑜指其“近代先驱与传统儒生的双重面相”：既批判“人心之寐患”，又维护“君师合一”政体，反映转型期知识人的精神撕裂。
+
+  • 佐藤慎一分析其夷夏观本质仍属“文化中心主义”，与近代民族国家意识存在根本断裂。
+
+2. 《海国图志》实效性辩驳
+
+  • 王家俭统计显示1860年前该书仅刊行千册，且多藏于官衙，士大夫“竟无一人能读”，实际影响或被后世夸大。
+
+  • 相反证据：左宗棠1862年奏折引用其说，曾国藩1867年设江南制造局附设翻译馆，实践路径与魏源构想高度吻合。
+
+3. 今文经学的双刃性
+
+  • 艾尔曼（Benjamin Elman）指出其“微言大义”诠释法虽破除考据桎梏，却陷入主观比附，康有为《孔子改制考》将此弊端推向极端。
+
+  • 朱维铮揭示魏源晚年转向净土宗，在《净土四经序》中流露“末世焦虑”，与其改革锐气形成巨大反差。
+
+参考文献
+
+1. 梁启超《清代学术概论》 | 商务印书馆, 1921
+
+2. 钱穆《中国近三百年学术史》 | 商务印书馆, 1937
+
+3. 费正清（John Fairbank）《中国沿海的贸易与外交》 | 哈佛大学出版社, 1953
+
+4. 茅海建《天朝的崩溃》 | 三联书店, 1995
+
+5.汪荣祖《走向世界的挫折——郭嵩焘与道咸同光时代》 | 岳麓书社, 2000`,
+      kang_youwei: `哲学家 Philosopher #24
+姓名 Name: 康有为 Kang Youwei（号长素，世称南海先生）
+生卒年 Lifespan: 1858–1927 CE | 晚清维新派领袖，今文经学集大成者
+学派 School: 今文经学·维新派（托古改制，构建儒家乌托邦）
+
+生平与历史背景
+
+1. 从布衣到帝师的政治冒险
+
+  • 广东南海人，早年师从朱次琦，游历香港、上海接触西学。1895年联合举人“公车上书”，创强学会，办《万国公报》，推动戊戌变法，获光绪帝召见，成“百日维新”核心智囊。
+
+  • 变法失败后流亡海外16年，创保皇会，游说欧美华侨；晚年参与张勋复辟，章太炎讥其“老耄矣，犹复贪恋权位”。
+
+2. 思想体系的狂想与实践
+
+  • 著《新学伪经考》《孔子改制考》颠覆古文经学正统，以“托古改制”为变法张目；《大同书》构想“去国界、级界、种界”的极乐世界，却“秘不示人”，谓“今方为‘据乱世’，只能言小康，不能言大同”。
+
+  • 周游31国，著《欧洲十一国游记》，提出“物质救国论”，主张“以中国之道德为原本，辅以欧美之科技”。
+
+核心思想体系
+
+1. 托古改制的经学重构
+
+  • 历史虚构论：“六经皆孔子改制所作”，指刘歆伪造古文经学，将儒学塑造为“创教立法”工具（《孔子改制考》）。
+
+  • 三世说演进：“据乱世→升平世→太平世”的历史进化框架，杂糅《公羊传》、佛家轮回与西方线性史观。
+
+2. 儒家乌托邦的极致表达
+
+  • 大同理想：“去家界为天民”，取消婚姻家庭，儿童公育，老人公养（《大同书》），受傅立叶空想社会主义影响。
+
+  • 技术乌托邦：“电化全球，飞船满空”，预言自动化生产与人工智能，却保留“圣人治世”的威权底色。
+
+3. 儒教国教化的政治设计
+
+  • 政教合一：“孔子为教主，康有为为‘长素’（素王继承者）”，主张立孔教为国教，建教会体系抗衡基督教。
+
+  • 君主立宪论：“虚君共和”说调和传统与现代，影响日本《明治宪法》与清末《钦定宪法大纲》。
+
+思想传承与影响
+
+1. 近代思想转型枢纽
+
+  • 梁启超称其“火山大喷火”，钱穆斥为“学术之贼”，但皆承认其打破传统思想格局之功；毛泽东自述早年受《大同书》启发，称“康有为写了《大同书》，但没有找到通往大同的路”。
+
+  • 新儒家熊十力、牟宗三批判其“政治化儒学”，却继承其“返本开新”思路；李泽厚视其为“启蒙与救亡双重变奏”的先驱。
+
+2. 全球思想史光谱
+
+  • 《大同书》被马丁·贝尔纳（Martin Bernal）比作“东方《乌托邦》”，但缺乏莫尔式的制度细节；日本竹内好指其“东洋近代化的矛盾投影”。
+
+  • 后殖民理论挪用：杜赞奇（Prasenjit Duara）分析其“儒教民族主义”如何同时抵抗与复制西方现代性。
+
+3. 海外实践与遗产
+
+  • 越南潘佩珠受其影响创维新会，推动东游运动；马来亚孔教会延续其儒教建制化尝试。
+
+  • 康同璧、徐勤等弟子在海外维系保皇会，间接促成北美华埠文化认同；《大同书》完整版1956年由其弟子钱定安在美国出版。
+
+学术争议
+
+1. 思想定位的极端性
+
+  • 萧公权称其为“儒家传统的马丁·路德”，汪荣祖反驳其“本质是政治投机者”；朱维铮考证《新学伪经考》抄袭廖平《辟刘篇》，引发著作权纠纷。
+
+  • 列文森（Joseph Levenson）“博物馆化”理论视其为“传统儒学的最后一次挣扎”，余英时则强调其“创造性破坏”的现代意义。
+
+2. 《大同书》的时间谜题
+
+  • 汤志钧考据认为主体写于1901–1902年印度大吉岭，而非自称的1884年；但房德邻通过手稿比对，证明部分内容确系戊戌前构思。
+
+  • 意识形态矛盾：马克思称其理论“极其幼稚”，但1950年代中国学界曾围绕“《大同书》空想社会主义性质”展开论战。
+
+3. 历史评价的两极化
+
+  • 黄彰健指其“戊戌奏稿”大半系流亡后伪造，茅海建通过档案比对证实部分真实性，揭示维新派策略调整轨迹。
+
+  • 现代性批判：张灏指其“将儒家道德理想主义与工具理性结合”，导致中国启蒙运动的内在断裂。
+
+参考文献
+
+1. 萧公权《近代中国与新世界：康有为变法与大同思想研究》 | 华盛顿大学出版社, 1975
+
+2. 朱维铮《求索真文明：晚清学术史论》 | 上海古籍出版社, 1996
+
+3. 茅海建《从甲午到戊戌：康有为〈我史〉鉴注》 | 三联书店, 2005
+
+4. 汪荣祖《康章合论》 | 中华书局, 2008
+
+5.张灏《危机中的中国知识分子》 | 牛津大学出版社, 1987`,
+      tan_sitong: `哲学家 Philosopher #25
+姓名 Name: 谭嗣同 Tan Sitong（字复生，号壮飞）
+生卒年 Lifespan: 1865–1898 CE | 晚清维新派激进思想家
+学派 School: 今文经学·维新派（糅合儒释道与西学，倡“冲决网罗”）
+
+生平与历史背景
+
+1. 少年任侠与精神苦旅
+
+  • 湖南浏阳人，巡抚谭继洵之子，幼丧母，受父妾虐待，形成反叛人格。早年习剑术、墨家任侠精神，游历直隶、新疆，结交大刀王五。甲午战败后创“南学会”，办《湘报》，以“中国未闻有因变法而流血者，有之请自嗣同始”明志。
+
+  • 1898年应诏入京参与戊戌变法，任四品军机章京，政变后拒逃亡，言“各国变法无不从流血而成，今中国未闻有因变法而流血者，此国之所以不昌也”，慷慨就义，史称“戊戌六君子”之一。
+
+核心思想体系
+
+1. 仁学本体论与宇宙论
+
+  • 以太说：“仁以通为第一义，以太也，电也，心力也”（《仁学》），以西方物理学概念重构儒家本体论。
+
+  • 泛神论倾向：“虚空即实体，实体即虚空”，融合佛教华严宗“法界缘起”与斯宾诺莎“泛神论”。
+
+2. 冲决网罗的激进启蒙
+
+  • 批判传统：“二千年来之政，秦政也，皆大盗也；二千年来之学，荀学也，皆乡愿也”，直指专制与名教合谋。
+
+  • 平等革命：“君臣一伦尤黑暗否塞，非复人之所为”，主张“废君统，倡民主”，较康有为“君主立宪”更激进。
+
+3. 科学实证与宗教救赎
+
+  • 格致新解：“格致即不精，而不可不知天文、地舆、全体、心灵四学”，将传统“格物”对接西方科学。
+
+  • 佛学工具论：“以心挽劫”，以华严“一多相容”论证变法普遍性，以唯识“转识成智”塑造新人。
+
+思想传承与影响
+
+1. 近代革命精神图腾
+
+  • 邹容《革命军》称其“为宪法流血第一人”，孙中山题“民国先驱”，陈天华《猛回头》赞其“轰轰烈烈男子汉，唤醒同胞四万”。
+
+  • 梁启超《清代学术概论》誉其“晚清思想彗星”，胡适称《仁学》为“中国近代的《人权宣言》”。
+
+2. 东亚激进主义源头
+
+  • 日本宫崎滔天引其“破块启蒙”精神入《三十三年之梦》，推动亚洲主义；朝鲜申采浩《读谭嗣同〈仁学〉》激发抗日独立运动。
+
+  • 后现代诠释：张灏分析其“烈士精神”兼具儒家殉道与存在主义自由选择，李泽厚指其“启蒙与民粹的悖论性共存”。
+
+3. 跨文化哲学实验
+
+  • 与尼采比较：共持“重估一切价值”，但谭嗣同以“仁”替代“超人”权力意志，仍具乌托邦色彩。
+
+  • 科学哲学维度：方克立称其“以太说”为儒家自然哲学对接现代科学的失败尝试，却预示新唯物论方向。
+
+学术争议
+
+1. 思想结构的碎片性
+
+  • 萧公权批评《仁学》“杂引佛道耶回，如杂货铺”，钱穆指其“理路混沌，非哲学系统”；冯友兰肯定其“冲破藩篱的实验精神”。
+
+  • 岛田虔次揭示其“反传统”依赖传统语汇，陷入“自我否定的逻辑困境”。
+
+2. 行动与理念的断裂
+
+  • 黄彰健考证其参与“围园劫后”密谋，与“仁爱”说自相矛盾；茅海建指出戊戌期间激进策略实际加速变法失败。
+
+  • 汪荣祖比较谭嗣同与康有为，认为前者“以死殉道”反而弱化维新派政治生存空间。
+
+3. 文本真伪与版本
+
+  • 《仁学》成书于南京，原稿经梁启超、唐才常多手删改，今通行本（中华书局1958）是否反映真实思想存疑。
+
+  • 《狱中题壁》“望门投止思张俭”一诗，黄彰健考为梁启超伪作，意在塑造烈士形象。
+
+参考文献
+
+1. 梁启超《谭嗣同传》 | 《清议报》1899
+
+2. 萧公权《中国政治思想史》 | 联经出版公司, 1982
+
+3. 黄彰健《戊戌变法史研究》 | 中央研究院历史语言研究所, 1970
+
+4. 李泽厚《中国近代思想史论》 | 人民出版社, 1979
+
+5.汪荣祖《康章合论》 | 中华书局, 2008`,
+      zhang_taiyan: `哲学家 Philosopher #26
+姓名 Name: 章太炎 Zhang Taiyan（字炳麟，号太炎）
+生卒年 Lifespan: 1869–1936 CE | 清末民初革命家、朴学大师
+学派 School: 古文经学·革命派（以考据为武器，构建民族革命理论）
+
+生平与历史背景
+
+1. 从经师到革命家的蜕变
+
+  • 浙江余杭人，师从俞樾治经学，甲午战败后绝弃科举，加入强学会。因《驳康有为论革命书》入“苏报案”，狱中研佛学，自谓“神经病”以拒清廷招安。
+
+  • 同盟会元老，主编《民报》与梁启超论战，提出“俱分进化论”；民国后任孙中山枢密顾问，却反对袁世凯称帝，遭软禁三年，以篆书“速死”明志。
+
+2. 学术与政治的双重战场
+
+  • 晚年创“章氏国学讲习会”，著《国故论衡》《齐物论释》，以佛解庄，以庄证孔，构建“不齐而齐”的文化多元论。
+
+  • 拒戴蒋介石“国师”桂冠，临终遗言“若有异族入主中夏，子孙世世勿食其官禄”，墓碑仅刻“章太炎之墓”。
+
+核心思想体系
+
+1. 民族革命的经学依据
+
+  • 历史种族论：“中华之名词，不仅非一地域之国名，亦非一血统之种名，乃为一文化之族名”（《中华民国解》），以文化认同超越血统论。
+
+  • 古文经学武器：考订《春秋》强调“夷夏之辨”，驳康有为“孔子改制”说，指《新学伪经考》为“野书”。
+
+2. 唯识学转向的哲学革命
+
+  • “依自不依他”：“自贵其心，不援鬼神”（《答铁铮》），以法相唯识学“万法唯识”论对抗基督教一神论与儒家天命观。
+
+  • 齐物哲学：“体非形器，故自在而无对；理绝名言，故平等而咸适”（《齐物论释》），消解文明等级论，为多元现代性奠基。
+
+3. 俱分进化的历史辩证法
+
+  • 悲观史观：“善亦进化，恶亦进化；乐亦进化，苦亦进化”（《俱分进化论》），批判线性进步史观，警示现代性危机。
+
+  • 革命伦理：“公理未明，即以革命明之；旧俗俱在，即以革命去之”，赋予暴力以道德正当性。
+
+思想传承与影响
+
+1. 现代学术范式开创者
+
+  • 鲁迅称其为“有学问的革命家”，弟子黄侃、钱玄同、周作人传承其学，形成“章门学派”；胡适《中国哲学史大纲》受其考据方法论启发。
+
+  • 新儒家熊十力承其唯识学，却转向“新唯识论”；侯外庐《中国近代启蒙思想史》列专章分析其“理性主义异端”。
+
+2. 东亚反殖民思想资源
+
+  • 日本宫崎滔天译介其文，影响幸德秋水等社会主义者；朝鲜申采浩引“历史种族论”建构韩民族主体性。
+
+  • 后殖民理论对话：杜赞奇（Prasenjit Duara）借其“文化民族主义”批判西方民族国家范式，却指其未能摆脱汉族中心主义。
+
+3. 文化保守主义与批判启蒙
+
+  • 新文化运动中反对“全盘西化”，主张“用国粹激动种性”；晚年质疑代议制民主，提出“直接民权”方案。
+
+  • 汪晖视其为“反现代性的现代性”代表，沟口雄三分析其“齐物论”对西方普遍主义的挑战。
+
+学术争议
+
+1. 思想连贯性质疑
+
+  • 梁启超批评其“好为诡异”，钱穆指其学“破碎支离”；王汎森揭示其思想存在“民族主义”与“世界主义”的深层矛盾。
+
+  • 姜义华考证《訄书》三次修订（1900木刻本、1904重订本、1914《检论》），反映从激进革命到文化守成的转变。
+
+2. 种族论的双刃性
+
+  • 冯客（Frank Dikötter）指其“历史种族论”助长汉族中心主义，为民国边疆政策埋下隐患；汪荣祖辩护称其晚年转向“五族共和”。
+
+  • 孙江研究发现，章太炎曾支持黑龙会“亚洲主义”，与反满革命存在策略性矛盾。
+
+3. 佛学诠释的合法性
+
+  • 欧阳竟无斥其《齐物论释》“以佛解庄，两失其真”；龚隽认为其创造性误读恰是“哲学突破”，可比德里达解构主义。
+
+  • 陈平原分析章氏晚年讲学“提奖光复，未尝废学”，在政治退潮中重塑学术尊严。
+
+参考文献
+
+1. 汤志钧《章太炎年谱长编》 | 中华书局, 1979
+
+2. 汪荣祖《康章合论》 | 中华书局, 2008
+
+3. 王汎森《章太炎的思想》 | 上海人民出版社, 2012
+
+4. 姜义华《章炳麟评传》 | 南京大学出版社, 2002
+
+5.孙江《近代中国的种族与革命》 | 社科文献出版社, 2015`,
+      liang_qichao: `哲学家 Philosopher #27
+姓名 Name: 梁启超 Liang Qichao（字卓如，号任公、饮冰室主人）
+生卒年 Lifespan: 1873–1929 CE | 清末民初启蒙思想家、学术巨子
+学派 School: 维新派·启蒙主义（熔铸中西，倡“新民说”）
+
+生平与历史背景
+
+1. 维新旗手与流亡思想者
+
+  • 广东新会人，17岁中举，师从康有为，参与“公车上书”。戊戌变法失败后流亡日本14年，创《清议报》《新民丛报》，以“笔锋常带感情”唤醒国民，自谓“思想界陈涉”。
+
+  • 民国后任司法总长、币制局长，反对袁世凯称帝，策动护国战争；晚年退出政坛，执教清华国学院，与王国维、陈寅恪、赵元任并称“四大导师”。
+
+2. 学术转型的三次突破
+
+  • 戊戌时期：今文经学路径，著《变法通议》，倡“变者天下之公理”。
+
+  • 流亡时期：引入卢梭、伯伦知理学说，创“新民理论”，译介《十五小豪杰》等西方文学。
+
+  • 欧游之后：反思科学万能论，著《欧游心影录》，主张“拿西洋文明来扩充我的文明”。
+
+核心思想体系
+
+1. 新民说的启蒙工程
+
+  • 国民性改造：“苟有新民，何患无新制度”（《新民说》），提出公德、国家思想、进取冒险等20种“新民德目”。
+
+  • 自由界限论：“人人自由而以他人之自由为界”，调和密尔自由观与儒家群己观。
+
+2. 新史学的方法论革命
+
+  • 批判传统史学：“二十四史非史也，二十四姓之家谱而已”，主张“叙述人群进化之现象而求得公理公例”。
+
+  • 跨学科视野：引入地理环境论、文化传播说，著《中国历史研究法》《清代学术概论》，开创现代学术范式。
+
+3. 中西文化调和论
+
+  • 文明有机体说：“彼西方美人，必能为我家育宁馨儿以亢我宗”（《论中国学术思想变迁之大势》），主张文明杂交论。
+
+  • 科学精神中国化：“我国凡百学问都带‘国手’色彩，科学应以‘无我’态度研究”，推动整理国故运动。
+
+思想传承与影响
+
+1. 五四新文化运动先声
+
+  • 胡适称其为“当代力量最大的学者”，陈独秀受《新青年》命名启发于《青年杂志》；鲁迅《摩罗诗力说》承其文学革命论。
+
+  • 毛泽东自述“深受《新民丛报》影响”，斯诺《西行漫记》记其曾将梁氏号“子任”寓救国志。
+
+2. 东亚现代性建构
+
+  • 日本浮田和民《史学原论》被其改写为《中国史叙论》，推动东洋史学转型；韩国申采浩《朝鲜上古史》仿其新史学体例。
+
+  • 美国列文森（Joseph Levenson）以梁启超为案例，建构“传统-现代”分析模型，影响海外中国研究范式。
+
+3. 跨学科启蒙遗产
+
+  • 新闻业：首创“时务体”，革新报章语言；法学界引介孟德斯鸠《法意》，经济学翻译《国富论》片段。
+
+  • 文学革命：提出“诗界革命”（新意境、新语句、古风格）与“小说界革命”，为白话文运动铺路。
+
+学术争议
+
+1. 思想多变性质疑
+
+  • 严复批评其“宗旨屡变，如霓虹灯闪烁”，章太炎讥为“梁启超操刀，康有为染丝”；梁氏自辩“不惜以今日之我战昨日之我”。
+
+  • 黄克武考证显示其思想存在深层连续性：始终追求“群治”与“个人自由”的动态平衡。
+
+2. 启蒙局限性的批判
+
+  • 张灏指出其“新民理论”忽视制度建构，导致“开明专制”倾向；李泽厚批评其“西学浅尝辄止，未能真正会通”。
+
+  • 后殖民视角：梁氏“文明等级论”隐含东方主义，如《新大陆游记》贬低印第安文明，与其文化多元论自相矛盾。
+
+3. 历史地位的重估
+
+  • 钱穆贬其学术“驳杂不纯”，侯外庐肯定其“破旧立新的桥梁作用”；狭间直树通过日本档案揭示其思想受中江兆民等影响。
+
+  • 新发现文献：2018年横滨发现梁氏与犬养毅未刊书信，显示其1906年秘密接触同盟会，重写“保皇-革命”叙事。
+
+参考文献
+
+1. 张灏《梁启超与中国思想的过渡（1890-1907）》 | 哈佛大学出版社, 1971
+
+2. 黄克武《一个被放弃的选择：梁启超调适思想研究》 | 中央研究院近代史研究所, 1994
+
+3. 狭间直树《梁启超·明治日本·西方》 | 社科文献出版社, 2001
+
+4.梁启超《饮冰室合集》 | 中华书局, 1989`,
+      wang_guowei: `哲学家 Philosopher #28
+姓名 Name: 王国维 Wang Guowei（字静安，号观堂）
+生卒年 Lifespan: 1877–1927 CE | 清末民初学术巨擘，现代学术奠基人
+学派 School: 实证史学·新史学派（融通中西，创“二重证据法”）
+
+生平与历史背景
+
+1. 从哲学困惑到史学巅峰
+
+  • 浙江海宁人，早年研习康德、叔本华哲学，著《〈红楼梦〉评论》《人间词话》，后因“哲学上之说，大都可爱者不可信，可信者不可爱”转向经史考据。
+
+  • 受罗振玉提携，东渡日本整理甲骨金石，历任北大研究所国学门导师、清华国学研究院“四大导师”之一，与陈寅恪、梁启超交游论学。
+
+2. 文化遗民的精神困境
+
+  • 辛亥革命后以遗老自居，1923年任溥仪南书房行走，1927年北伐军逼近北京时投昆明湖自沉，遗书“五十之年，只欠一死。经此世变，义无再辱”，死因引发世纪争论。
+
+  • 陈寅恪撰碑文“独立之精神，自由之思想”，将其自沉诠释为文化殉道；郭沫若则称其“被旧文化所杀”。
+
+核心思想体系
+
+1. 境界说的美学革命
+
+  • 词学三境界：“古今之成大事业者，必经过三种之境界”（《人间词话》），以晏欧词句喻治学心路，开现代文学批评新范式。
+
+  • 意境本体论：“有造境，有写境，此理想与写实二派之所由分”，融合叔本华美学与中国诗学传统。
+
+2. 二重证据法的史学突破
+
+  • 方法论创新：“取地下之实物与纸上之遗文互相释证”（《古史新证》），以甲骨金文考订商周史，推翻疑古派“东周以上无史”论。
+
+  • 实证典范：考释《殷卜辞中所见先公先王考》，证实《史记·殷本纪》世系可靠性，重建上古史信史框架。
+
+3. 中西学术的化合实验
+
+  • 哲学翻译：首译《辨学》《心理学概论》，引入西方逻辑学与心理学方法论。
+
+  • 戏曲研究：《宋元戏曲考》打破传统曲论，以“自然之文体”定义元杂剧价值，奠定现代戏曲学根基。
+
+思想传承与影响
+
+1. 现代学术范式奠基
+
+  • 傅斯年“史料学派”、顾颉刚“古史辨派”皆受其方法论启发，陈梦家《殷墟卜辞综述》承其甲骨学研究路径。
+
+  • 钱锺书《谈艺录》引境界说论诗，朱光潜《诗论》吸收其“隔与不隔”理论发展美学体系。
+
+2. 东亚汉学共同体构建
+
+  • 日本内藤湖南“唐宋变革论”受其宋元戏曲研究启发，白鸟库吉“尧舜禹抹杀论”激发其古史考证。
+
+  • 法国伯希和、瑞典高本汉将其甲骨学成果引入国际汉学界，推动全球商周史研究。
+
+3. 文化保守主义象征
+
+  • 新儒家牟宗三誉其“以生命证成学问”，余英时分析其自沉为“文化托命人”的终极抉择。
+
+  • 20世纪80年代“王国维热”重估其学术价值，李泽厚称其为“中国近代美学之父”。
+
+学术争议
+
+1. 自沉原因的多重阐释
+
+  • 罗振玉“殉清说”、梁启超“恐惧北伐说”、陈寅恪“文化殉节说”各执一词，叶嘉莹提出“性格悲剧论”，认为其“哲人的悲观本质”导致终极虚无。
+
+  • 新发现档案：2003年公开王国维与罗振玉绝交书，揭示经济纠纷对心理的冲击，死因解释更趋复杂化。
+
+2. 学术立场的矛盾性
+
+  • 胡适批评其晚年“倒退为遗老学术”，顾颉刚指其“用新方法证旧结论”；但张光直肯定其“为科学考古学开辟道路”。
+
+  • 政治书写争议：1924年代溥仪拟《敬陈管见折》，主张“皇帝宜专辟一大学”，被指“逆时代而动”。
+
+3. 甲骨文研究的真伪辩难
+
+  • 董作宾指其早期释读存在“过度联想”，如将“王亥”释为商先祖；但多数考证经科学发掘证实，如殷墟YH127坑甲骨印证其世系研究。
+
+  • 白川静质疑“二重证据法”忽视神话学维度，过于依赖文字实证，但饶宗颐发展出“三重证据法”补其不足。
+
+参考文献
+
+1. 王国维《观堂集林》 | 中华书局, 1959
+
+2. 陈寅恪《王观堂先生挽词并序》 | 《学衡》1928
+
+3. 叶嘉莹《王国维及其文学批评》 | 河北教育出版社, 1997
+
+4. 袁英光《王国维评传》 | 上海人民出版社, 1999
+
+5.李庆《日本汉学史》 | 上海外语教育出版社, 2002`,
+      chen_yinke: `哲学家 Philosopher #29
+姓名 Name: 陈寅恪 Chen Yinke
+生卒年 Lifespan: 1890–1969 CE | 现代史学大师，文化守成主义代表
+学派 School: 实证史学·文化史观（“独立之精神，自由之思想”）
+
+生平与历史背景
+
+1. 跨文明求索与学术坚守
+
+  • 江西义宁（今修水）人，陈宝箴之孙，陈三立之子。游学日、德、瑞士、美等国，精通20余种语言，却无学位，谓“求学为求真知，非为文凭”。
+
+  • 历任清华国学研究院导师、中央研究院史语所研究员，抗战期间失明仍口述著述，晚年栖身岭南大学，拒赴台湾，在政治运动中坚守“不宗奉马列”立场。
+
+2. 文化遗民的现代困境
+
+  • 1953年拒任中古史研究所所长，复信“思想囿于咸丰同治之世，议论近乎湘乡南皮之间”，以文化保守姿态对抗意识形态规训。
+
+  • 1964年《论再生缘》油印本流传海外，引发“陈寅恪热”，遗稿《柳如是别传》以“红妆”隐喻文化气节，自述“痛哭古人，留赠来者”。
+
+核心思想体系
+
+1. 种族文化史观
+
+  • 胡汉交融论：“李唐一族之所以崛兴，盖取塞外野蛮精悍之血，注入中原文化颓废之躯”（《李唐氏族之推测》），强调文化活力源于异质碰撞。
+
+  • 关陇集团说：提出北朝至隋唐的权力核心为“关陇胡汉集团”，颠覆传统王朝更迭叙事。
+
+2. 诗史互证方法论
+
+  • 以诗证史：“从史实中求史识，于诗词中窥心迹”，《元白诗笺证稿》以文人交往还原中唐政治网络。
+
+  • 隐微书写：借《柳如是别传》考证明清之际妓女、遗民交往，暗抒对文化断裂的悲悯。
+
+3. 文化本位论
+
+  • 精神自由论：“士之读书治学，盖将脱心志于俗谛之桎梏”（《清华大学王观堂先生纪念碑铭》），将学术独立视为文化存续根基。
+
+  • 中西体用辩：“窃疑中国自今日以后，即使能忠实输入北美或东欧之思想，其结局当亦等于玄奘唯识之学”，预言文化移植的失效。
+
+思想传承与影响
+
+1. 现代史学的精神标杆
+
+  • 弟子蒋天枢整理《陈寅恪文集》，余英时阐发其“文化遗民”隐喻，汪荣祖称其为“通儒最后的典范”。
+
+  • 季羡林、周一良承其语言考证方法，黄仁宇“大历史观”受其制度史研究启发。
+
+2. 文化保守主义符号
+
+  • 改革开放后陆键东《陈寅恪的最后二十年》引发知识界震动，其“独立精神”成为反思极左思潮的精神资源。
+
+  • 海外新儒家杜维明引其学说对话“文明冲突论”，主张儒学的现代转化需立足文化主体性。
+
+3. 跨学科方法论启示
+
+  • 文学界重审《柳如是别传》的叙事实验，王德威称其为“史笔与诗心的交响”。
+
+  • 人类学领域，王明珂以“边缘视角”研究族群认同，延续其“胡汉交融”范式。
+
+学术争议
+
+1. 政治立场的多义性
+
+  • 余英时指其“文化遗民”暗含反共倾向，冯友兰则称其“爱国学者”；胡文辉考证其1949年曾考虑赴港，最终选择留陆的复杂心态。
+
+  • 官方话语中，郭沫若批判其“资产阶级史观”，但1980年代后又被追认为“爱国主义典范”。
+
+2. 学术客观性质疑
+
+  • 严耕望指其考据存在“过度联想”，如《狐臭与胡臭》论证胡人体味影响文化偏见，缺乏实证支持。
+
+  • 田余庆批评关陇集团说“简化北朝权力结构”，但近年北朝墓志大量出土，部分佐证其理论。
+
+3. 晚年著述的价值评判
+
+  • 钱锺书讥《柳如是别传》为“冗长私史”，余英时则誉其为“文化托命之作”。
+
+  • 葛兆光指出其晚年“以血书史”的悲情叙事，可能削弱学术客观性，但强化了文化象征意义。
+
+参考文献
+
+1. 蒋天枢《陈寅恪先生编年事辑》 | 上海古籍出版社, 1981
+
+2. 陆键东《陈寅恪的最后二十年》 | 三联书店, 1995
+
+3. 余英时《陈寅恪晚年诗文释证》 | 东大图书公司, 1998
+
+4. 汪荣祖《史家陈寅恪传》 | 北京大学出版社, 2005
+
+5.王震邦《独立与自由：陈寅恪论学》 | 上海人民出版社, 2010`,
+      liang_shuming: `哲学家 Philosopher #30
+姓名 Name: 梁漱溟 Liang Shuming
+生卒年 Lifespan: 1893–1988 CE | 现代新儒家代表，乡村建设运动先驱
+学派 School: 新儒家·文化保守主义（融合儒佛，倡“伦理本位”）
+
+生平与历史背景
+
+1. 从佛学到儒学的精神转向
+
+  • 广西桂林人，生于北京官宦家庭，早年醉心佛学，著《究元决疑论》受蔡元培赏识，被聘为北大讲师。1921年发表《东西文化及其哲学》，公开宣布“归宗儒家”，与熊十力、冯友兰并称“现代新儒家三圣”。
+
+  • 投身乡村建设运动，在山东邹平创办乡村建设研究院（1931-1937），推行“政教合一”自治实验，主张“以农立国，以理性重建社会”。
+
+2. 政治浮沉与文化坚守
+
+  • 抗战期间发起“统一建国同志会”，调解国共矛盾；1953年政协会议上与毛泽东激烈争论“工农差距”，被毛斥为“用笔杆子杀人”。
+
+  • 文革中遭批斗仍坚持著述，晚年完成《人心与人生》，自述“三军可夺帅也，匹夫不可夺志”，被誉为“最后的儒家”（艾恺语）。
+
+核心思想体系
+
+1. 文化三路向说
+
+  • 文明类型学：西方“向前要求”（征服自然）、中国“调和持中”（伦理本位）、印度“反身向后”（宗教解脱），预言“世界未来文化必是中国文化复兴”（《东西文化及其哲学》）。
+
+  • 理性早启论：中国社会因“周孔教化”过早理性化，抑制团体生活与科学技术发展，形成“伦理本位，职业分途”的特殊结构。
+
+2. 乡村建设理论
+
+  • 社会组织创新：“乡学村学”取代基层政权，以儒家伦理重建“乡约”传统，培养“理性自治”的公民社会。
+
+  • 经济改良路径：推广合作经济，反对土地革命，主张“从农业引发工业”，避免资本主义剥削。
+
+3. 人心与人生的终极追问
+
+  • 生命哲学：“人心是宇宙生命的最髙表现”，通过“理性”（无私情感）超越“理智”（工具计算），达至“廓然大公，物来顺应”境界。
+
+  • 儒佛会通：晚年以佛教“无我”观补充儒家“成己成物”，提出“生命自然流畅即是道”的体用论。
+
+思想传承与影响
+
+1. 新儒家思潮的实践维度
+
+  • 牟宗三称其“开辟儒学现代化新路径”，唐君毅吸收其文化比较框架构建“人文精神论”；杜维明“儒学第三期发展”说承其文明对话视野。
+
+  • 当代新儒家推动“乡村儒学讲堂”，重拾邹平实验精神；温铁军“乡村建设学院”直接借鉴其理论。
+
+2. 国际汉学界的关注焦点
+
+  • 艾恺（Guy Alitto）著《最后的儒家》将其推向世界，称其为“文化守成主义的活化石”；德国汉学家罗哲海（Heiner Roetz）比较其伦理观与哈贝马斯交往理性。
+
+  • 日本沟口雄三以“乡约”研究呼应其乡村理论，韩国柳承国引入“伦理本位”说重构东亚现代性。
+
+3. 跨学科方法论启示
+
+  • 社会学领域，费孝通“乡土中国”论受其“伦理社会”启发；政治学视域下，其“软性宪政”构想为协商民主提供传统资源。
+
+  • 生态哲学领域，其“人与自然调和”观与深生态学形成对话，被视为东方生态智慧的代表。
+
+学术争议
+
+1. 文化保守主义的现实困境
+
+  • 胡适批评其乡村建设“以孔孟幻想对抗机枪大炮”，梁漱溟自承邹平实验“未能真正解决土地问题”；秦晖指其理论忽视阶级矛盾，属“儒家乌托邦”。
+
+  • 汪晖质疑其“伦理本位”美化传统社会，掩盖宗法压迫实质；甘阳则认为其揭示了中国现代化的另类可能。
+
+2. 中西融合的有效性质疑
+
+  • 李泽厚指其思想“情感认同压倒理性分析”，贺麟批评“佛学底色削弱儒学实践性”；景海峰反驳称其“体用不二”模式成功整合多元思想。
+
+  • 艾恺指出其早期《东西文化》与晚年《人心与人生》存在断裂：从文化决定论转向生命哲学，削弱社会实践指向。
+
+3. 历史定位的再审视
+
+  • 官方话语长期将其定位为“改良主义代表”，改革开放后重评为“爱国知识分子”；钱理群指其1953年与毛泽东争论是“独立知识人精神的最后闪光”。
+
+  • 新发现文献：2012年公开梁漱溟1950年代未刊手稿，显示其私下坚持“中国文化本位论”，公开表态存在策略性妥协。
+
+参考文献
+
+1. 梁漱溟《东西文化及其哲学》 | 商务印书馆, 1921
+
+2. 艾恺（Guy Alitto）《最后的儒家》 | 加州大学出版社, 1979
+
+3. 汪东林《梁漱溟问答录》 | 湖南人民出版社, 1988
+
+4. 景海峰《梁漱溟评传》 | 百花洲文艺出版社, 2010
+
+5. 熊吕茂《梁漱溟的文化思想与中国现代化》 | 湖南教育出版社, 2000`,
+      feng_youlan: `哲学家 Philosopher #31
+姓名 Name: 冯友兰 Feng Youlan（字芝生）
+生卒年 Lifespan: 1895–1990 CE | 现代新儒家代表，哲学史家
+学派 School: 新理学派（以逻辑分析法重构程朱理学）
+
+生平与历史背景
+
+1. 从留美博士到哲学史家
+
+  • 河南唐河人，1918年北大毕业，1924年获哥伦比亚大学博士，师从杜威。著《人生哲学》融合实用主义与儒家伦理，蔡元培誉其“兼通中西之义”。
+
+  • 历任清华文学院长、西南联大教授，抗战期间著《中国哲学史》（两卷本），首用“子学时代”“经学时代”分期，奠定学科范式。1948年当选中央研究院院士。
+
+2. 政治漩涡中的学术沉浮
+
+  • 建国后自我批判“资产阶级学术”，改写《中国哲学史》为《中国哲学史新编》，加入唯物史观框架。文革期间被批为“反动学术权威”，1973年参加“批林批孔”遭学界非议。
+
+  • 晚年重获学术自由，85岁完成七卷本《中国哲学史新编》，自比“贞元六书”续篇，临终遗言“中国哲学将来要大放光彩”。
+
+核心思想体系
+
+1. 新理学体系建构
+
+  • 理气新诠：“理是抽象的有，气是具体的存在”（《新理学》），以逻辑实证主义重构程朱“理在事先”，提出“真际”与“实际”二分。
+
+  • 四境界说：人生境界分自然、功利、道德、天地四层，最高境界“浑然与物同体”，融道家境界论与宋明心性之学。
+
+2. 哲学史方法论创新
+
+  • 抽象继承法：“哲学命题可分抽象意义与具体意义，前者可继承，后者须批判”，试图调和传统与现代。
+
+  • 共相殊相论：以柏拉图式“共相”解读公孙龙“白马非马”，用亚里士多德“四因说”诠释朱熹理气观。
+
+3. 中西哲学融通实验
+
+  • 正负方法：“负的方法”（直觉体悟）补足西方逻辑分析局限，主张“讲形而上学不能讲，亦是一种讲法”。
+
+  • 文化类型论：对比中国“农业文明”与西方“工业文明”，预言“生产家庭化”向“生产社会化”转型中，儒家伦理需创造性转化。
+
+思想传承与影响
+
+1. 现代中国哲学学科奠基
+
+  • 李泽厚称其《中国哲学史》为“中国哲学史研究的《圣经》”，任继愈、张岱年皆承其方法论；余英时评其“以史家眼光作哲学，以哲学意识写历史”。
+
+  • 国际汉学界标准教科书：卜德（Derk Bodde）英译本被哈佛、牛津沿用半世纪，史华慈（Benjamin Schwartz）誉其“中国哲学系统化第一人”。
+
+2. 新儒家的承启者
+
+  • 牟宗三批评其“只存有不活动”，唐君毅吸收“境界论”发展“生命存在与心灵九境”；杜维明“精神人文主义”受“天地境界”启发。
+
+  • 波士顿儒家（南乐山、白诗朗）以新理学对话过程哲学，推动儒学全球化诠释。
+
+3. 争议性思想遗产
+
+  • 80年代“文化热”中，《中国哲学简史》成为启蒙读物，影响新启蒙派；官方意识形态部分采纳“抽象继承法”作为传统文化政策理论依据。
+
+  • 人工智能伦理领域，其“觉解说”被用于机器伦理设计，主张“形式化伦理”需保留直觉维度。
+
+学术争议
+
+1. 新理学的逻辑漏洞
+
+  • 贺麟指其“理在事先”背离程朱“理在事中”，洪谦批评其混淆逻辑学与形而上学；张东荪称“新理学是用维也纳学派外衣包装的程朱残骸”。
+
+  • 陈来考证“真际”概念源自新实在论，非程朱本意；冯契指其忽视实践论，陷入“概念游戏”。
+
+2. 政治立场与学术客观性
+
+  • 海外学界诟病其1949年后“自我阉割”，余英时指《中国哲学史新编》为“政治投机之作”；但李泽厚肯定其晚年“回归学术本体”。
+
+  • 文革期间批孔文章真伪成谜，冯友兰自称“被迫表态”，但王浩披露其曾主动修改《论孔丘》迎合时政。
+
+3. 哲学史观的时代局限
+
+  • 劳思光批评其分期法“以西方框架切割中国思想”，葛兆光《中国思想史》另立“一般知识世界”突破其精英史观。
+
+  • 出土文献挑战：郭店楚简、上博简揭示先秦哲学多元性，动摇其“子学时代”线性叙事。
+
+参考文献
+
+1. 冯友兰《三松堂全集》 | 河南人民出版社, 2001
+
+2. 李泽厚《中国现代思想史论》 | 东方出版社, 1987
+
+3. 余英时《现代儒学论》 | 上海人民出版社, 1998
+
+4. 卜德（Derk Bodde）《冯友兰与西方哲学》 | 哈佛大学出版社, 1953
+
+5.史华慈（Benjamin Schwartz）《古代中国的思想世界》 | 哈佛大学出版社, 1985`,
+      xiong_shili: `哲学家 Philosopher #32
+姓名 Name: 熊十力 Xiong Shili（字子真，号漆园）
+生卒年 Lifespan: 1885–1968 CE | 现代新儒家开创者，新唯识论体系建构者
+学派 School: 新心学·新儒家（融合儒佛，创“体用不二”论）
+
+生平与历史背景
+
+1. 草莽志士到玄思哲人
+
+  • 湖北黄冈人，少年投身辛亥革命，任湖北都督府参议。后因军阀乱政弃政从学，入南京支那内学院师从欧阳竟无研习唯识学，1922年受蔡元培邀聘北大，以《新唯识论》震动学界。
+
+  • 抗战期间著《读经示要》，流寓四川著《十力语要》，晚年蛰居上海，文革中被抄家批斗，绝笔“中国文化亡了！中国文化亡了！”
+
+2. 学术孤旅与精神抗争
+
+  • 与吕澂“性寂性觉”之辩（1943），批判佛学“耽空滞寂”；与冯友兰“良知坎陷”之争，斥其“将活人讲成死理”。
+
+  • 门生牟宗三、唐君毅、徐复观承其学脉，形成港台新儒家学派，被尊为“现代新儒学三圣”之首。
+
+核心思想体系
+
+1. 新唯识论的本体论革命
+
+  • 体用不二：“即体即用，即用即体”（《新唯识论》），批判佛家“体用割裂”，主张“摄用归体”与“举体成用”的动态统一。
+
+  • 翕辟成变：“翕为物化之势，辟为心能之力”，以《周易》生生哲学改造唯识学“种子现行”说，构建宇宙生成论。
+
+2. 心性论的现代重构
+
+  • 本心即本体：“本心是虚寂而健动的生命本体”，融合阳明心学“良知”与柏格森“生命冲动”，提出“性智”与“量智”二分。
+
+  • 内在超越：“即人即天，即修养即本体”，主张“当下呈现良知”的道德实践论，反对宋儒“理气二元”架构。
+
+3. 文化批判与返本开新
+
+  • 中西之辨：“西方文化是‘逐物’的文化，中国文化是‘反己’的文化”，但主张“吸纳科学民主而不失本体”。
+
+  • 经学阐释：《原儒》重释六经，称孔子“托古改制”，以“大同”说为儒家社会主义张目。
+
+思想传承与影响
+
+1. 现代新儒学精神源头
+
+  • 牟宗三“道德形上学”承其“智的直觉”说，唐君毅“生命存在”论发展其心性哲学，徐复观“忧患意识”说受其文化批判启发。
+
+  • 杜维明“体知”概念、刘述先“理一分殊”论皆可溯至熊氏体用哲学。
+
+2. 东亚思想对话桥梁
+
+  • 日本西田几多郎“绝对无”哲学与其“体用不二”形成东方式本体论呼应；韩国李相殷引入新唯识论对抗基督教哲学。
+
+  • 西方过程哲学（怀特海）研究者科布（John Cobb）称其思想为“东方过程论”，与有机宇宙观形成跨文明对话。
+
+3. 争议性思想遗产
+
+  • 1950年代梁漱溟批评其“玄谈误国”，张岱年指其“混淆唯物唯心”；但李泽厚肯定其“高扬主体性的启蒙意义”。
+
+  • 改革开放后《熊十力论著集》出版引发“国学热”，新左派引《原儒》论证“儒家社会主义”，自由主义则重审其个体性学说。
+
+学术争议
+
+1. 佛学诠释的合法性
+
+  • 吕澂指其“不解唯识真义”，印顺法师斥《新唯识论》为“伪佛教”；但霍韬晦认为其“创造性误读”开辟儒佛新境界。
+
+  • 日本荒木见悟比较熊氏与道元禅学，发现二者同具“动态本体论”特质，但熊氏拒绝彻底空观。
+
+2. 体系建构的逻辑矛盾
+
+  • 冯友兰批评其“神秘主义不可言说”，劳思光指“体用不二”导致认识论缺环；但牟宗三以“两层存有论”补足体系漏洞。
+
+  • 林安梧揭示晚年《明心篇》存在“生命本体”与“道德主体”的张力，反映现代性语境下儒学转型困境。
+
+3. 政治立场的多面性
+
+  • 1949年拒赴台湾，致函董必武“中国文化不可绝于吾辈”，但1951年撰《与友人论张江陵》被指为法家张目。
+
+  • 汪荣祖考证其晚年书信，发现私下仍坚持“儒家民主”理想，与公开表态存在策略性差异。
+
+参考文献
+
+1. 熊十力《新唯识论》 | 中华书局, 1985
+
+2. 牟宗三《心体与性体》 | 正中书局, 1968
+
+3. 郭齐勇《熊十力思想研究》 | 天津人民出版社, 1993
+
+4. 墨子刻（Thomas Metzger）《摆脱困境：新儒学与中国政治文化的演进》 | 哥伦比亚大学出版社, 1977
+
+5.林安梧《存有·意识与实践：熊十力体用哲学之诠释与重建》 | 东大图书公司, 1993`,
+      mou_zongsan: `哲学家 Philosopher #33
+姓名 Name: 牟宗三 Mou Zongsan
+生卒年 Lifespan: 1909–1995 CE | 现代新儒家集大成者，新儒学体系化代表
+学派 School: 当代新儒家（道德形上学，良知坎陷说）
+
+生平与历史背景
+
+1. 从逻辑学到儒学的转向
+
+  • 山东栖霞人，早年就读北大哲学系，师从张申府、金岳霖研习逻辑学与西方哲学。抗战期间流寓西南，受熊十力“劈头棒喝”转向儒学，自谓“一生学问尽在消化康德与宋明理学”。
+
+  • 1949年赴台，任教台湾师大、东海大学；1960年移居香港，与唐君毅、徐复观创办新亚书院，合撰《为中国文化敬告世界人士宣言》，奠定港台新儒家国际地位。
+
+2. 体系建构与精神孤往
+
+  • 著《心体与性体》《现象与物自身》，以康德哲学重构儒家心性论，提出“良知自我坎陷”说解决民主科学难题。晚年译注康德三大批判，自比“玄奘译经”，完成中西哲学会通。
+
+  • 临终前手书“古今无两”四字，弟子李明辉解读为“对儒学现代转化的自信与悲愿”。
+
+核心思想体系
+
+1. 道德形上学的哲学突破
+
+  • 两层存有论：“现象界”（执的存有）与“物自身界”（无执的存有），以“智的直觉”打通康德不可知领域，确立儒家“既内在又超越”的形上维度。
+
+  • 圆善论：综合儒家“德福一致”与佛家“圆教”观，提出“无限智心”保证德福配称，完成儒家终极关怀的体系化。
+
+2. 良知坎陷说的现代性方案
+
+  • 自我否定辩证法：“良知（道德理性）必须自觉坎陷自身以开出知性主体”，为科学民主提供哲学依据。
+
+  • 三统并建说：道统（儒家心性之学）、政统（民主制度）、学统（科学知识）的辩证统一，主张“内圣开出新外王”。
+
+3. 判教理论与哲学史重构
+
+  • 儒家三期说：孔孟荀为第一期，宋明理学为第二期，当代新儒家为第三期，自承“接着宋明理学讲”。
+
+  • 佛道批判：判佛教为“纵贯横讲”（偏重解脱），道家为“横摄系统”（缺乏道德主体），唯儒家“纵贯纵讲”具创生性。
+
+思想传承与影响
+
+1. 新儒家的国际化学派
+
+  • 杜维明“儒学第三期发展”、刘述先“理一分殊”全球化诠释皆承其框架；成中英“本体诠释学”受其康德会通路径启发。
+
+  • 波士顿儒家（南乐山、白诗朗）将其思想引入过程哲学对话，推动儒学参与普世伦理建构。
+
+2. 东亚现代性理论资源
+
+  • 韩国金圣基以“良知坎陷”论解“汉江奇迹”中的传统转化，日本冈田武彦借“两层存有”调和京都学派与儒学。
+
+  • 李泽厚批评其“过度康德化”，但承认其“为儒学现代化建立严整体系”；余英时指其“哲学建构远超熊十力，然社会实践性不足”。
+
+3. 跨文明对话的典范
+
+  • 与哈贝马斯交往理性比较：李明辉揭示二者同具“主体间性”维度，但牟氏强调道德优先性。
+
+  • 查尔斯·泰勒（Charles Taylor）称其“现代性反思的东方版本”，麦金泰尔（Alasdair MacIntyre）借其德性论批判启蒙个人主义。
+
+学术争议
+
+1. 坎陷说的可行性质疑
+
+  • 劳思光指其“辩证转折实为诡辩”，傅伟勋批评“良知如何能自我否定”存在逻辑断裂；林安梧主张以“存有三态论”替代坎陷说。
+
+  • 刘述先承认其说“哲学精巧但历史解释力薄弱”，黄玉顺尝试以“生活儒学”消解主体性困境。
+
+2. 康德诠释的合法性
+
+  • 西方康德学者阿利森（Henry Allison）指其“误读物自身概念”，但安靖如（Stephen Angle）认为“创造性转化更具启发”。
+
+  • 杨祖汉辩护称“智的直觉”非知识论概念，而是实践体证，符合儒家工夫论传统。
+
+3. 文化保守主义困境
+
+  • 陈来批评其“心性论中心主义忽视制度建构”，干春松指“内圣开外王”实为“制度虚无主义”；贝淡宁（Daniel Bell）则肯定其“为东亚民主提供伦理根基”。
+
+  • 方克立指其学说“新儒学意识形态化”，但成中英认为“体系化恰是儒学参与现代哲学对话的前提”。
+
+参考文献
+
+1. 牟宗三《心体与性体》 | 正中书局, 1968
+
+2. 李明辉《儒家与康德》 | 联经出版公司, 1990
+
+3. 刘述先《牟宗三先生哲学思想论集》 | 学生书局, 2012
+
+4. 安靖如《圣境：宋明理学的现代意义》 | 牛津大学出版社, 2009
+
+5.成中英《世纪之交的抉择：中西哲学会通问题》 | 知识出版社, 1991`,
+      tang_junyi: `哲学家 Philosopher #34
+姓名 Name: 唐君毅 Tang Junyi
+生卒年 Lifespan: 1909–1978 CE | 现代新儒家代表，人文精神论建构者
+学派 School: 当代新儒家（心性哲学，文化哲学）
+
+生平与历史背景
+
+1. 乱世中的文化守夜人
+
+  • 四川宜宾人，幼承家学，早年就读中央大学哲学系，师从方东美、熊十力。抗战期间流寓重庆，著《人生之体验》《道德自我之建立》，奠定心性哲学根基。
+
+  • 1949年移居香港，与钱穆、张丕介创办新亚书院，任文学院长；1963年新亚并入香港中文大学后，因理念不合辞去教职，潜心著《中国哲学原论》《生命存在与心灵九境》。
+
+2. 花果飘零的文化悲情
+
+  • 1974年发表《中华文化与当今世界》，痛陈“中华文化花果飘零”，倡“灵根自植”以重建文化主体性。临终前口授《病里乾坤》，叹“人生之艰难与哀伤，非道德理性所能安顿”。
+
+  • 与牟宗三、徐复观并称“港台新儒家三圣”，钱穆赞其“当代文化意识最强烈之学者”。
+
+核心思想体系
+
+1. 心灵九境的生命哲学
+
+  • 境界分层论：从“万物散殊”到“天德流行”，九重境界涵盖客观境界（科学）、主观境界（艺术）、超主客境界（宗教），最终达至“天人合德”。
+
+  • 心通九境说：“生命存在即心灵活动”，以“感通”消解主客对立，融摄儒释道与西方哲学于一体。
+
+2. 人文精神的重建工程
+
+  • 文化哲学方法论：“即哲学史以言哲学”，通过诠释传统经典揭示中国哲学“重主体实践”的特质。
+
+  • 道德理性中心论：批判科学主义“以知识遮蔽价值”，主张“道德理性为文化创造之本源”。
+
+3. 中西文化比较与会通
+
+  • 文化形态学：中国“圆而神”的智慧 vs 西方“方以智”的理性，提出“纳方于圆”的文明对话路径。
+
+  • 儒家民主论：以“道德主体”转化西方民主制度，主张“依道德理性建立民主政治”，避免权利异化。
+
+思想传承与影响
+
+1. 新儒家文化哲学典范
+
+  • 刘述先承其“人文精神论”发展“理一分殊”全球化诠释，杜维明“精神人文主义”吸收其文化比较框架。
+
+  • 台湾学者曾昭旭以“感通哲学”重构爱情伦理，香港霍韬晦创“性情教育”践行其文化理念。
+
+2. 东亚现代性反思资源
+
+  • 韩国金忠烈引其“心灵九境”论批判物质主义，日本冈田武彦借“文化悲情”说反思近代化代价。
+
+  • 余英时《论文化超越》受其启发，但质疑“过分强调文化连续性可能遮蔽历史断裂”。
+
+3. 跨学科方法论启示
+
+  • 心理学领域，杨国枢以“感通”概念发展本土社会心理学；教育学领域，黄俊杰以“生命教育”实践其哲学理念。
+
+  • 比较宗教视域下，赖品超用“九境说”分析基督教神秘主义与禅宗顿悟的异同。
+
+学术争议
+
+1. 唯心论倾向的质疑
+
+  • 劳思光批评其“将历史文化化约为精神现象”，忽视物质基础；傅伟勋指其“泛道德主义”难以应对现代多元价值冲突。
+
+  • 林毓生指“灵根自植”说隐含文化本质主义，与全球化现实脱节；但李明辉辩护称其“文化认同论非排他性”。
+
+2. 体系建构的松散性
+
+  • 牟宗三认为《心灵九境》架构“博而寡要”，方东美指其“强纳诸家于己矩”；陈来则肯定其“以生命体验激活哲学史”的原创性。
+
+  • 黄勇指出“九境说”存在逻辑跳跃，如“道德实践”如何过渡到“天德流行”缺乏清晰理路。
+
+3. 政治立场的矛盾性
+
+  • 徐复观批评其“回避制度批判”，仅作“文化保守式呻吟”；但钱穆肯定其“在殖民地处境中坚守文化尊严”的现实意义。
+
+  • 晚年对文革的暧昧态度引发争议，汪荣祖考证其曾私下称“红卫兵破坏中有文化更新可能”，反映思想复杂性。
+
+参考文献
+
+1. 唐君毅《中国哲学原论》 | 新亚研究所, 1966
+
+2. 李明辉《儒家视野下的政治思想》 | 台大出版中心, 2005
+
+3. 刘述先《唐君毅的哲学》 | 学生书局, 2013
+
+4. 霍韬晦《唐君毅思想中的“感通”问题》 | 《法言》杂志, 1981
+
+5. 黄俊杰《唐君毅的人文精神与教育理念》 | 香港中文大学出版社, 1998`,
+      xu_fuguan: `哲学家 Philosopher #35
+姓名 Name: 徐复观 Xu Fuguan
+生卒年 Lifespan: 1903–1982 CE | 现代新儒家代表，思想史家
+学派 School: 当代新儒家（批判性儒学，政治哲学重构者）
+
+生平与历史背景
+
+1. 从军政幕僚到文化斗士
+
+  • 湖北浠水人，早年投身国民革命军，任蒋介石侍从室秘书，亲历西安事变与抗战。1949年赴台后退出政坛，任教东海大学，创办《民主评论》杂志，与唐君毅、牟宗三合撰《为中国文化敬告世界人士宣言》。
+
+  • 以《两汉思想史》《中国人性论史》颠覆传统学术范式，晚年旅居香港，临终前自述“我是中国文化大地上的流浪者，也是它的守墓人”。
+
+2. 学术转型与政治批判
+
+  • 受熊十力“亡国族者常先亡其文化”警示，转向思想史研究。批判国民党威权统治，因反对白色恐怖遭东海大学解聘，自嘲“以学术为剑，刺破专制铁幕”。
+
+  • 1980年代支持大陆改革开放，致信邓小平建言“以民主法治补儒家伦理之不足”，成为两岸思想交流的桥梁。
+
+核心思想体系
+
+1. 忧患意识与人性论重构
+
+  • 文化基因论：“中国人文精神始于殷周之际的忧患意识”（《中国人性论史》），以“敬”“仁”等概念揭示道德主体觉醒。
+
+  • 心性史观：梳理孟子“性善论”至宋明理学脉络，强调“人性是历史实践中展开的文化存在”，反对抽象形上学建构。
+
+2. 专制政治批判理论
+
+  • 双重主体性：“政治主体（民）与政治权力（君）的永恒紧张”，指斥秦汉以降形成“专制政体—士人妥协”共生结构。
+
+  • 儒家抗议精神：发掘董仲舒“天人感应”、黄宗羲《明夷待访录》中的制衡思想，重构儒家的政治批判传统。
+
+3. 现代民主的儒学诠释
+
+  • 德治转化论：“德治思想应转化为责任政治，民本精神需落实为民主制度”，主张以“道德主体性”滋养公民社会。
+
+  • 文化乡愁辩证：既批判传统士大夫“道德虚骄”，又警惕现代化导致“精神失根”，提出“传统的创造性转化”路径。
+
+思想传承与影响
+
+1. 新儒家的社会批判维度
+
+  • 李明辉承其政治哲学，发展“儒家民主理论”；林安梧提出“后新儒学”吸收其制度批判意识。
+
+  • 大陆新左派引其“专制分析”反思文革，自由主义阵营借其“民本转化”论证儒家与民主兼容性。
+
+2. 东亚现代性反思资源
+
+  • 韩国金容沃以“忧患意识”解朝鲜半岛近代史，日本沟口雄三“中国基体论”受其历史方法论启发。
+
+  • 余英时《朱熹的历史世界》继承其思想史研究路径，王泛森考证明清思想转型亦受其问题意识影响。
+
+3. 公共知识分子的典范意义
+
+  • 创办《华侨日报》推动香港民主运动，钱理群称其“在威权夹缝中坚守知识人批判精神”。
+
+  • 李泽厚评其为“新儒家最具现实关怀者”，杜维明誉其“打通学术与社会的血脉”。
+
+学术争议
+
+1. 历史解释的主观性争议
+
+  • 劳思光批评其“以价值预设剪裁史料”，如刻意凸显董仲舒限制君权而淡化“天人三策”的专制逻辑。
+
+  • 阎步克指其“两汉研究”忽视制度史维度，黄留珠考证汉代宰相权力变迁，质疑“专制铁板一块论”。
+
+2. 儒家民主的可行性质疑
+
+  • 牟宗三指其“政治批判未达形上高度”，林毓生批评“民本转民主”缺乏制度设计，属“浪漫主义想象”。
+
+  • 但贝淡宁（Daniel Bell）认为其“责任伦理”可为东亚贤能政治提供理论支持，具有现实操作性。
+
+3. 文化认同的悖论性
+
+  • 李欧梵指其“既反传统又恋传统”的矛盾心态，汪晖批评“文化乡愁”易蜕变为本质主义话语。
+
+  • 黄俊杰揭示其晚年思想转向：从“传统批判”到“传统再发现”，强调“在现代化中守护精神家园”。
+
+参考文献
+
+1. 徐复观《中国艺术精神》 | 台湾学生书局, 1966
+
+2. 徐复观《两汉思想史》 | 香港中文大学出版社, 1975
+
+3. 李明辉《徐复观与民主政治》 | 中央研究院文哲所, 2006
+
+4. 黄俊杰《东亚儒学史的新视野》 | 台大出版中心, 2004
+
+5.李泽厚《中国现代思想史论》 | 东方出版社, 1987`,
+      fang_dongmei: `哲学家 Philosopher #36
+姓名 Name: 方东美 Fang Dongmei（原名方珣，字东美）
+生卒年 Lifespan: 1899–1977 CE | 现代新儒家诗哲，比较哲学先驱
+学派 School: 生命哲学·新儒家（融贯中西，倡“生生之德”）
+
+生平与历史背景
+
+1. 金陵才俊与哲海遨游
+
+  • 安徽桐城人，幼承桐城派家学，早年就读金陵大学，师从刘伯明、梅光迪。1924年留学威斯康辛大学，获哲学博士学位，精研柏格森、怀特海生命哲学。
+
+  • 历任中央大学、台湾大学哲学系主任，创办《哲学与文化》月刊，以英文讲授中国哲学，学生包括陈鼓应、成中英等，被誉为“东方诗哲”。
+
+2. 文化传灯与美学启蒙
+
+  • 抗战期间著《科学哲学与人生》，批判科学主义异化人性；晚年以《中国哲学之精神及其发展》英文演讲震动夏威夷东西哲学家会议，被诺斯罗普（F.S.C. Northrop）赞为“东方智慧化身”。
+
+  • 临终前手书“宇宙心香”，遗嘱“遗体火化，骨灰撒入海峡，沟通两岸文化断裂”。
+
+核心思想体系
+
+1. 生命本体论的诗性建构
+
+  • 生生之德：“宇宙是普遍生命流行的境界”（《生生之德》），以《周易》“生生”哲学统摄儒释道，提出“万物有生论”对抗西方机械宇宙观。
+
+  • 情理圆融：主张“哲学智慧生于悲情，终于诗境”，以华严宗“理事无碍”调和希腊理性与中国诗性传统。
+
+2. 文化哲学的三层架构
+
+  • 哲学三慧说：希腊“如实慧”、欧洲“方便慧”、中国“平等慧”，预言未来哲学应“超化中西界限，直叩形上奥义”。
+
+  • 中国哲学四阶段：原始儒家道家（生命体验）→ 新儒家（理气二元）→ 佛学（空有之辩）→ 现代新儒家（返本开新），强调回归“天人合德”的原始精神。
+
+3. 比较哲学方法论
+
+  • 超越进路：“从形上学穿透，自价值论凝合”，主张以“机体主义”消解中西哲学对立，反对黑格尔式“中国哲学幼稚论”。
+
+  • 神话思维重估：发掘《尚书·洪范》《庄子》中的象征系统，提出“神话即哲学前身”，为比较宗教学开新径。
+
+思想传承与影响
+
+1. 新儒家的美学维度拓展
+
+  • 成中英承其比较视域创“本体诠释学”，傅伟勋吸收其“生命情调”说发展生死学；刘述先称其“为新儒家注入诗性光辉”。
+
+  • 台湾学者孙智燊译介其英文著作，推动“中国哲学的世界化”；大陆学者蒋国保重估其“文化哲学”对马克思主义的对话意义。
+
+2. 跨文明对话的桥梁构建
+
+  • 国际汉学界视其为“中国哲学系统化阐释者”，李约瑟（Joseph Needham）《中国科学技术史》多次引用其有机宇宙论。
+
+  • 过程哲学（怀特海）研究者科布（John Cobb）称其思想为“东方过程论”，与生态哲学形成深层共鸣。
+
+3. 文化复兴的精神符号
+
+  • 台湾“鹅湖学派”奉其学为精神源头，大陆新道家（陈鼓应）引其“原始道家论”重构黄老学派。
+
+  • 生态美学领域，曾繁仁以“生生美学”对接当代环境伦理；比较文学界乐黛云用其“文化共命慧”理论推动文明互鉴。
+
+学术争议
+
+1. 体系庞杂性与逻辑严谨性
+
+  • 牟宗三批评其“哲学如诗，体系松散”，劳思光指“生命本体论”混淆存在论与价值论；但傅佩荣肯定其“以审美直觉突破概念桎梏”。
+
+  • 李泽厚指其“过分美化原始儒家”，忽视荀子、王充等理性传统；陈来则辩护称“价值重估恰是其方法论突破”。
+
+2. 中西比较的均衡性问题
+
+  • 余英时质疑其“以华严释怀特海”存在比附之嫌，刘笑敢指“机体主义”概念未脱离西方哲学框架；但成中英认为“创造性误读恰是跨文化阐释真义”。
+
+  • 夏威夷学者安乐哲（Roger Ames）对比其与唐君毅的中西比较路径，指前者更具“诗性统合”特质。
+
+3. 宗教立场的暧昧性
+
+  • 晚年转向佛学，著《华严宗哲学》，被印顺法师指“以哲学消解宗教神圣性”；但冉云华肯定其“为佛学现代化开辟哲学路径”。
+
+  • 基督教学者谢扶雅称其“未解决终极关怀问题”，方克立则指其“生生哲学”暗含泛神论倾向。
+
+参考文献
+
+1. 方东美《生生之德》 | 黎明文化, 1979
+
+2. 方东美《中国哲学之精神及其发展》 | 联经出版公司, 1981
+
+3. 成中英《方东美先生的哲学境界》 | 《哲学与文化》杂志, 1984
+
+4. 蒋国保《方东美思想研究》 | 台湾学生书局, 1991
+
+5.科布（John Cobb）《过程思想与东方智慧》 | 宗教文化出版社, 2006`,
+      qian_mu: `哲学家 Philosopher #37
+姓名 Name: 钱穆 Qian Mu（字宾四，号未学斋主）
+生卒年 Lifespan: 1895–1990 CE | 现代史学泰斗，新儒家文化守成者
+学派 School: 新儒家·史学派（以史证儒，倡“温情与敬意”）
+
+生平与历史背景
+
+1. 自学成才的学术传奇
+
+  • 江苏无锡人，幼年家贫辍学，自学考入南京钟英中学。历任燕京、北大、清华、西南联大教授，1949年赴港创办新亚书院，晚年定居台湾，居素书楼著述终老。
+
+  • 自述“一生为故国招魂”，临终前于病榻聆听《黄帝内经》录音，遗言“天人合一观是中国文化对人类最大贡献”。
+
+2. 文化孤忠与历史重构
+
+  • 抗战期间著《国史大纲》，扉页题“凡读本书请先具下列信念：当信任何一国之国民，对其本国历史应怀温情与敬意”。
+
+  • 与胡适“疑古派”论战，反对全盘否定传统；晚年撰《晚学盲言》，目盲心明，以口述完成80万字巨著。
+
+核心思想体系
+
+1. 文化生命史观
+
+  • 整体史观：“政治只是历史表面，文化才是历史本体”（《国史大纲》），主张从制度、学术、社会交互中把握文明演进。
+
+  • 士人精神论：以“士”为文化载体，梳理从孔孟到宋明儒者的精神谱系，强调“士志于道”的超越性价值。
+
+2. 儒学实践论
+
+  • 心性政治学：提出“中国传统政治非专制论”，认为科举制、相权、谏官系统构成权力制衡，反驳“封建专制”定论。
+
+  • 礼治社会说：以“礼”为社会组织原则，区分西方“法治”与中国“礼治”，主张“礼外无法”的文化特性。
+
+3. 中西文化比较框架
+
+  • 类型差异论：西方“外倾型”文明重征服，中国“内倾型”文明重协调，预言“中国文化可济西方之弊”。
+
+  • 天人合一论：晚年系统阐释“天命与人生合一”“鬼神与人心合一”，视其为儒家终极关怀。
+
+思想传承与影响
+
+1. 新亚书院与现代儒学教育
+
+  • 创建新亚书院（香港中文大学前身），培养余英时、严耕望等大家，余英时称其“为中华文化留读书种子”。
+
+  • 台湾“素书楼学派”延续其治学路径，弟子戴景贤、逯耀东等承其史学方法论。
+
+2. 文化保守主义旗帜
+
+  • 余英时《钱穆与新儒家》揭示其与新儒家差异，钱穆自谓“非新儒家，乃史学家”，但被公认为文化保守主义精神领袖。
+
+  • 大陆改革开放后，《国史大纲》重印引发“国学热”，李泽厚评其“为传统辩护的史学巨擘”。
+
+3. 国际汉学界的对话者
+
+  • 与英国李约瑟论“中国古代科技”，与美国狄百瑞（Wm. T. de Bary）辩“宋明理学现代性”，推动汉学研究的范式更新。
+
+  • 法国汉学家汪德迈（Léon Vandermeersch）称其“为中华文明辩护的司马迁式史家”。
+
+学术争议
+
+1. 历史解释的客观性质疑
+
+  • 费正清批评其“以文化理想替代历史实证”，黄仁宇指《中国历代政治得失》美化科举制，忽视制度僵化弊端。
+
+  • 阎步克考证指出“相权制衡”在帝制后期名存实亡，钱说存在时代错置。
+
+2. 新儒家身份争议
+
+  • 牟宗三指其“仅述史而未建哲学体系”，刘述先称其“以史证儒，实为新儒家另类”；余英时强调其与熊十力、唐君毅的学术分野。
+
+  • 杜维明认为其“文化保守主义与新儒家殊途同归”，皆致力于传统现代转化。
+
+3. 传统政治再评价的争议
+
+  • 萧公权指其“忽视皇权绝对性”，王汎森以明清密折制度反驳“君臣共治”说；但徐复观肯定其“打破西方中心史观”。
+
+  • 秦晖批评“科举非智力测验”说，举证八股取士的思维禁锢；何怀宏则部分肯定其“制度与文化互动论”。
+
+参考文献
+
+1. 钱穆《国史大纲》 | 商务印书馆, 1940
+
+2. 钱穆《中国历代政治得失》 | 三联书店, 1952
+
+3. 余英时《钱穆与现代中国学术》 | 东大图书公司, 1991
+
+4. 汪荣祖《史家陈寅恪传》 | 北京大学出版社, 2005（比较研究专章）
+
+5.狄百瑞（Wm. T. de Bary）《东亚文明：五个阶段的对话》 | 哥伦比亚大学出版社, 1988`,
+      yu_yingshih: `哲学家 Philosopher #38
+姓名 Name: 余英时 Yu Yingshih
+生卒年 Lifespan: 1930–2021 CE | 当代思想史泰斗，新儒家国际化学者
+学派 School: 新儒家·思想史学派（“内在理路”说，文化转型论）
+
+生平与历史背景
+
+1. 从燕京到哈佛的学术长旅
+
+  • 安徽潜山人，生于天津，师从钱穆、杨联陞。燕京大学肄业后赴港，1955年入哈佛大学，师从费正清、史华慈，博士论文《东汉生死观》融合社会史与思想史。
+
+  • 历任密歇根大学、耶鲁大学、普林斯顿大学教授，2006年获克鲁格人文终身成就奖，成为首位获奖华裔学者。晚年居美，仍心系故土，临终前嘱托“把骨灰撒入长江，流向大海”。
+
+2. 跨文明的学术对话者
+
+  • 以英文著《汉代中外经济交通》打开国际汉学界大门，中文代表作《士与中国文化》《朱熹的历史世界》重写儒学叙事。
+
+  • 冷战期间参与“中国中心观”论战，批判费正清“冲击-反应”模式，主张“从中国发现历史”。
+
+核心思想体系
+
+1. 内在理路的历史方法论
+
+  • 思想自主性：“文化变迁必须从其内在脉络理解”（《论戴震与章学诚》），反对机械唯物论与西方中心论。
+
+  • 心理史学转向：分析王阳明“龙场顿悟”、黄宗羲《明夷待访录》的心理动因，揭示思想与处境的互动。
+
+2. 士人精神的现代诠释
+
+  • 知识人转型论：从传统“士”到现代“知识分子”，提出“新士林”概念，强调文化承当与社会批判的双重使命。
+
+  • 儒家伦理实践：重探明清商人与儒学关系，证明“士魂商才”的伦理经济传统，修正韦伯“儒家阻碍资本主义”论。
+
+3. 文化中国的现代困境
+
+  • 传统与现代的辩证：“反传统者的思想资源仍来自传统”（《五四新论》），揭示近代转型的内在连续性。
+
+  • 民主的文化根基：提出“儒家民本思想可转化为民主资源”，但反对简单比附，主张“制度创新需文化自觉”。
+
+思想传承与影响
+
+1. 思想史研究的范式革新
+
+  • 王汎森承其“内在理路”发展“思想的生活史”，葛兆光《中国思想史》吸收其“中层理论”建构“一般知识世界”。
+
+  • 国际学界称其与史华慈、孔飞力构成“汉学三杰”，推动中国研究摆脱“西方理论框架依赖”。
+
+2. 新儒家的国际代言人
+
+  • 与杜维明共倡“文化中国”理念，为波士顿儒学提供历史依据；刘述先赞其“打通考据与义理，超迈新儒家诸老”。
+
+  • 在大陆引发“余英时热”，《士与中国文化》成为1980年代文化启蒙读本，影响甘阳、刘小枫等学者。
+
+3. 文明对话的桥梁构建
+
+  • 以英文论著向西方阐释朱熹、王阳明，史景迁称其“让中国思想真正进入西方哲学对话”。
+
+  • 日本岛田虔次、韩国金容沃皆引其学说重审本国儒学史，沟口雄三“中国基体论”受其方法论启发。
+
+学术争议
+
+1. 文化保守主义标签之争
+
+  • 汪晖批评其“以文化认同遮蔽政治批判”，属“冷战自由主义”；但余自辩“只作历史判断，拒贴意识形态标签”。
+
+  • 李泽厚指其“过度强调内在理路”，忽视社会经济基础；朱维铮则以乾嘉学派研究反驳，证明“考据背后有现实关怀”。
+
+2. 新儒家身份疑云
+
+  • 自谓“钱穆门徒，非新儒家”，牟宗三弟子李明辉指其“缺乏哲学建构”；但杜维明肯定其“以史家身份成就新儒学高峰”。
+
+  • 陈来比较其与徐复观：同重思想史，但余更强调“非意图结果”，徐侧重“精神抗争”。
+
+3. 现代性叙事的局限性
+
+  • 黄进兴指其“明清转型论”低估西学冲击，彭慕兰（Kenneth Pomeranz）以大分流理论质疑“江南内生现代性”。
+
+  • 王德威重审晚清文学，揭示其“没有晚清，何来五四”说对余氏“内在理路”的超越与补充。
+
+参考文献
+
+1. 余英时《士与中国文化》 | 上海人民出版社, 1987
+
+2. 余英时《朱熹的历史世界》 | 三联书店, 2004
+
+3. 王汎森《中国近代思想与学术的谱系》 | 河北教育出版社, 2001
+
+4. 杜维明《现代精神与儒家传统》 | 三联书店, 1997
+
+5.葛兆光《中国思想史》 | 复旦大学出版社, 2001`,
+      du_weiming: `哲学家 Philosopher #39
+姓名 Name: 杜维明 Du Weiming
+生卒年 Lifespan: 1940–至今 | 当代新儒家领军者，文明对话倡导者
+学派 School: 新儒家·全球化儒学（倡“精神人文主义”，推“文明对话”）
+
+生平与历史背景
+
+1. 从东海到哈佛的儒学传灯
+
+  • 云南昆明人，早年就读台湾东海大学，师从徐复观、牟宗三。1962年赴哈佛大学师从史华慈，博士论文《王阳明：行动中的儒者》开创英语世界宋明理学研究新范式。
+
+  • 历任普林斯顿大学、加州大学伯克利分校、哈佛大学讲座教授，2009年任北京大学高等人文研究院院长，推动“文化中国”全球论坛，促成联合国“世界文明对话年”（2001）。
+
+2. 儒学国际化的摆渡人
+
+  • 1980年代起巡回欧美亚非讲学，与查尔斯·泰勒、哈贝马斯等对话，将儒学引入“轴心文明”讨论。
+
+  • 创办《哈佛亚洲研究学报》《文化中国》等期刊，主持“儒学与生态”“儒学与女性主义”跨学科项目，重塑儒学现代形象。
+
+核心思想体系
+
+1. 儒学第三期发展论
+
+  • 历史分期：先秦两汉（第一期）→ 宋明理学（第二期）→ 全球化时代（第三期），主张儒学须回应生态、性别、民主等现代议题。
+
+  • 创造性转化：“从‘封建意识形态’转为‘精神人文主义’”，以“仁学”整合启蒙价值，构建“天人合一”的生态伦理。
+
+2. 精神人文主义架构
+
+  • 四个维度：自我（修身）、社群（齐家）、自然（天人）、天道（终极关怀），突破人类中心主义，提出“存有的连续性”宇宙观。
+
+  • 全球伦理贡献：参与起草《世界伦理宣言》（1993），将“己所不欲，勿施于人”列为黄金法则，推动儒家伦理普世化。
+
+3. 文明对话方法论
+
+  • 对话三原则：“承认他者性”“尊重差异性”“寻求共通性”，主张以“听德”超越“文明冲突论”。
+
+  • 多元现代性：批判西方现代性单一模式，提出“儒家现代性”可能，强调“传统资源可转化现代价值”。
+
+思想传承与影响
+
+1. 新儒学的全球化转向
+
+  • 弟子黄勇发展“儒家角色伦理学”，安靖如（Stephen Angle）提出“进步儒学”，贝淡宁（Daniel Bell）构建“贤能政治”模型，皆承其问题意识。
+
+  • 影响日本沟口雄三“中国基体论”、韩国崔在穆“东亚儒学论”，促成“文化中国”学术共同体的形成。
+
+2. 国际组织的文化顾问
+
+  • 担任联合国“文明对话”专家组成员，推动《地球宪章》纳入儒家生态思想；在达沃斯论坛宣讲“儒家商业伦理”，重塑全球化文化议程。
+
+  • 哈佛燕京学社在其主导下，从汉学重镇转型为文明对话平台，培养数百名国际儒学研究者。
+
+3. 中国现代化的思想资源
+
+  • 大陆“国学热”理论推手，央视《百家讲坛》多次邀其开讲；台湾“文化基本法”起草参考其“精神人文主义”框架。
+
+  • 生态领域，与环保组织合作开发“儒家生态教育”课程；教育领域，推动中小学读经运动与通识教育改革。
+
+学术争议
+
+1. 实用性质疑与乌托邦批判
+
+  • 甘阳指其学说“学院化过重，缺乏制度设计”，朱学勤批评“用儒学包装普世价值，回避政治改革”。
+
+  • 女性主义者李木兰质疑“儒家家庭伦理难以兼容性别平等”，但罗思文（Henry Rosemont）辩护称“仁学具有内在解放性”。
+
+2. 文化中国概念的泛化风险
+
+  • 汪晖批评“文化中国”淡化主权争议，沦为“去政治化的文化想象”；石之瑜指其“学术话语服务于统战叙事”。
+
+  • 杜维明回应称“文化认同与政治认同可分层次讨论”，主张“精神共同体超越地缘政治”。
+
+3. 儒学普遍性的限度之争
+
+  • 列文森（Joseph Levenson）传人田浩（Hoyt Tillman）质疑“儒学第三期”的可行性，认为“现代性已消解儒学土壤”；但安乐哲（Roger Ames）通过“儒家民主论”支持其转化可能。
+
+  • 新儒家内部争议：蒋庆斥其“西化儒学”，刘述先则肯定“国际化是儒学存续必经之路”。
+
+参考文献
+
+1. 杜维明《儒家思想：创造性转化的自我》 | 江苏人民出版社, 1996
+
+2. 杜维明《仁与修身》 | 哈佛大学出版社, 1979
+
+3. 安乐哲（Roger Ames）《儒家角色伦理学》 | 夏威夷大学出版社, 2011
+
+4. 贝淡宁（Daniel Bell）《中国新儒家》 | 普林斯顿大学出版社, 2008
+
+5. 黄勇《全球化时代的儒家伦理》 | 哥伦比亚大学出版社, 2016`,
+      li_zehou: `哲学家 Philosopher #40
+姓名 Name: 李泽厚 Li Zehou
+生卒年 Lifespan: 1930–2021 CE | 中国现代思想家，新启蒙派代表
+学派 School: 实践美学·历史本体论（融马克思主义、康德哲学与中国传统）
+
+生平与历史背景
+
+1. 从美学论争到思想启蒙
+
+  • 湖南宁乡人，1954年毕业于北大哲学系，参与1950年代美学大讨论，以“客观性与社会性统一”论挑战蔡仪、朱光潜，崭露头角。
+
+  • 1980年代主编《美学》丛刊，著《美的历程》《中国近代思想史论》，成为“文化热”精神领袖；1989年后旅居美国，晚年提出“情本体”论，自述“思想在边缘处生长”。
+
+2. 学术转型与思想突围
+
+  • 改造康德哲学：1979年《批判哲学的批判》以马克思主义重构康德认识论，提出“主体性实践哲学”框架。
+
+  • 文化战略家角色：1986年“文化：中国与世界”编委会核心，译介海德格尔、萨特等西方现代哲学，推动思想解放运动。
+
+核心思想体系
+
+1. 历史本体论建构
+
+  • 工具本体论：“人类通过制造-使用工具脱离动物界”（《人类学历史本体论》），以物质实践为历史发展基础。
+
+  • 心理本体论：“文化-心理结构”积淀说，强调伦理、审美等精神形态在历史实践中的生成与传承。
+
+2. 实践美学体系
+
+  • 美在自由形式：“美是自由的形式，是合规律性与合目的性的统一”（《美的历程》），将马克思主义实践观与康德美学结合。
+
+  • 儒道互补论：以“乐感文化”概括中国文化特质，认为儒家（强调社会规范）与道家（追求自然自由）共同塑造民族心理。
+
+3. 西体中用论
+
+  • 现代化路径：“以‘社会存在的本体’——生产力发展为‘体’，以中国传统文化为‘用’”（《中国现代思想史论》），主张“转换性创造”而非全盘西化。
+
+  • 伦理学转向：晚年提出“情本体”，以“人活着”为第一命题，强调“天地国亲师”的情感信仰替代宗教超越。
+
+思想传承与影响
+
+1. 80年代新启蒙精神图腾
+
+  • 《美的历程》销量逾百万，影响顾城、北岛等朦胧诗人；刘再复称其为“思想界的贝多芬”，甘阳、刘小枫等皆受其启发。
+
+  • 海外新左派引其“西体中用”论，汪晖《现代中国思想的兴起》继承其历史本体论框架。
+
+2. 国际学术对话桥梁
+
+  • 与哈贝马斯对谈“现代性”，与罗蒂（Richard Rorty）讨论“历史与偶然”，推动中国思想参与全球话语。
+
+  • 美国学者安乐哲（Roger Ames）称其“打通中西哲学经脉”，德国汉学家顾彬（Wolfgang Kubin）誉其为“中国最后一位体系哲学家”。
+
+3. 当代文化批判资源
+
+  • 对“实用理性”的剖析成为分析国民性的理论工具；近年“情本体”论被用于反思技术异化与精神危机。
+
+  • 生态美学领域，曾繁仁借鉴其“自然人化”说；教育学领域，朱永新以“文化心理积淀”论重审传统教育价值。
+
+学术争议
+
+1. 理论杂糅性质疑
+
+  • 牟宗三批评其“将康德马克思炖成一锅”，赵汀阳指“历史本体论”存在决定论倾向；但刘悦笛肯定其“创造性综合的哲学实验”。
+
+  • 朱学勤指其“西体中用”实为“中体西用”变体，缺乏制度设计；李回应称“体用论非政治方案，乃文化战略”。
+
+2. 启蒙叙事的双重性
+
+  • 新左派汪晖批评其“启蒙话语隐含现代化霸权”，自由主义徐友渔则指其“对自由价值论证不足”；李泽厚自辩“超越左右，走自己的路”。
+
+  • 后现代学者张旭东指其“宏大叙事”忽视碎片化现实，但承认其“为当代中国提供思想坐标系”。
+
+3. 晚年转向的诠释分歧
+
+  • 刘再复称“情本体”是“哲学诗学”，高全喜指其“从历史决定论退守情感乌托邦”；弟子赵士林则认为“情本体”深化了实践论的人学维度。
+
+  • 宗教界质疑其“以审美代宗教”的可行性，何光沪指“终极关怀不可还原为情感体验”；但李坚持“一人一生，即是中国式的超越”。
+
+参考文献
+
+1. 李泽厚《批判哲学的批判》 | 人民出版社, 1979
+
+2. 李泽厚《美的历程》 | 文物出版社, 1981
+
+3. 刘再复《李泽厚美学概论》 | 三联书店, 2010
+
+4. 安乐哲（Roger Ames）《李泽厚与儒学复兴》 | 《东西方哲学》杂志, 2012
+
+5. 汪晖《现代中国思想的兴起》 | 三联书店, 2004`,
+      liu_xiaofeng: `哲学家 Philosopher #41
+姓名 Name: 刘小枫 Liu Xiaofeng
+生卒年 Lifespan: 1956–至今 | 中国当代思想史家、古典学研究者
+学派 School: 政治哲学·古典学（融基督教神学、施特劳斯学派与中国传统）
+
+生平与历史背景
+
+1. 从西学先锋到古典转向
+
+  • 重庆人，1982年毕业于四川外语学院，1985年进入北京大学哲学系，师从熊伟。1980年代参与“文化：中国与世界”编委会，译介尼采、海德格尔、施特劳斯等西方思想，推动“西学东渐”浪潮。
+
+  • 1993年赴瑞士巴塞尔大学攻读神学博士，研究早期基督教思想。2002年归国后任教于中国人民大学，创办《经典与解释》辑刊，倡导“重启古典诗学”，提出“古典学何为”的学术转向。
+
+2. 思想轨迹的两次裂变
+
+  • 现代性批判期：1988年著《拯救与逍遥》，以基督教“拯救”精神批判中国文化的“逍遥”传统，引发学界“神学转向”大讨论。
+
+  • 古典政治哲学期：2000年后聚焦施特劳斯学派，译注《柏拉图注疏集》，提出“阅读古典即政治行动”，主张通过古典文本解读破解现代性危机。
+
+核心思想体系
+
+1. 现代性诊断与救赎路径
+
+  • 双重祛魅论：“科学祛魅自然，历史主义祛魅价值”（《现代性社会理论绪论》），指出现代性导致终极意义丧失。
+
+  • 神学政治学：以卡尔·施米特“政治神学”框架重释中国问题，提出“世俗化并未终结神圣维度”，主张重返“政治秩序的神圣根基”。
+
+2. 古典学方法论革命
+
+  • 隐微写作说：继承施特劳斯“显白/隐微”诠释学，认为古代经典包含双重教诲，需通过字里行间解读哲人深意。
+
+  • 经学复兴论：提出“新经学”概念，主张以古典注疏传统对抗现代学术专业化，重建“为往圣继绝学”的学术伦理。
+
+3. 中西文明的结构对勘
+
+  • 文质之辨：以《春秋》“文质论”对比希腊“自然与礼法”之争，揭示中西文明对政治正当性的不同求解。
+
+  • 礼乐与律法：比较周礼传统与摩西律法，提出“礼乐文明缺乏神圣约法维度，导致政教关系松散”。
+
+思想传承与影响
+
+1. 中国施特劳斯学派奠基
+
+  • 弟子陈建洪、林国华等承其政治哲学路径，推动施特劳斯学派在华语学界传播；《经典与解释》系列成为古典学研究标杆。
+
+  • 甘阳“通三统”论、吴飞“神圣家庭”研究皆受其问题意识启发，形成“古典学运动”思想集群。
+
+2. 神学与政治学跨界对话
+
+  • 基督教研究领域，曾庆豹、孙毅等学者延续其“汉语神学”建构；政治学界任剑涛、谭安奎等引入其现代性批判视角。
+
+  • 引发“古典与当代”大讨论：汪晖质疑其“复古主义”，李猛则尝试以“伦理现实主义”调和古今张力。
+
+3. 文化保守主义新范式
+
+  • 提出“文化战争”概念，主张“通过古典教育重建文明主体性”，影响中小学读经运动与大学通识教育改革。
+
+  • 国际学界关注：美国学者斯蒂芬·史密斯（Steven B. Smith）称其“将施特劳斯问题意识引入中国语境”，德国汉学家苏费翔（Christian Soffel）比照其与伽达默尔诠释学差异。
+
+学术争议
+
+1. 学术转向的动机质疑
+
+  • 徐友农批评其从“西学先锋”到“古典保守”的转变是“智识机会主义”；钱永祥指其思想“缺乏内在连贯性”。
+
+  • 刘小枫自辩“思想转折源于现代性批判的深化”，甘阳辩护称“古典学研究恰恰是最激进的现代性批判”。
+
+2. 政治神学的适用性争议
+
+  • 许纪霖质疑“施米特理论嫁接中国问题”导致“学术审美化政治”；周濂指其“政治决断论”隐含威权主义倾向。
+
+  • 回应称“神学政治学是分析工具，非现实方案”，但《国父论》等文对孙中山的诠释仍被指“重构政治神学叙事”。
+
+3. 古典学方法论的边界
+
+  • 李零批评其“隐微解读”沦为“过度诠释”，葛兆光指“新经学”混淆历史考据与哲学建构；陈少明则认为其“激活了古典的问题性”。
+
+  • 方朝晖对比其与民国“古史辨”学派，指出“疑古”与“信古”的现代性悖论。
+
+参考文献
+
+1. 刘小枫《拯救与逍遥》 | 上海人民出版社, 1988
+
+2. 刘小枫《凯若斯：古希腊语文教程》 | 华东师范大学出版社, 2005
+
+3. 刘小枫《设计共和》 | 华夏出版社, 2013
+
+4. 甘阳《通三统》 | 三联书店, 2007
+
+5.斯蒂芬·史密斯（Steven B. Smith）《施特劳斯论现代性》 | 耶鲁大学出版社, 2006`,
+      wang_hui: `哲学家 Philosopher #42
+姓名 Name: 汪晖 Wang Hui
+生卒年 Lifespan: 1959–至今 | 中国当代思想史家，新左派理论代表
+学派 School: 批判性知识群体·新左派（重审现代性，倡“反现代的现代性”）
+
+生平与历史背景
+
+1. 从文学研究到思想批判
+
+  • 江苏扬州人，1981年考入扬州师院中文系，1985年进入中国社会科学院，师从唐弢研究鲁迅，1996年获哈佛大学博士学位。
+
+  • 1990年代任《读书》杂志执行主编，推动“新左派”与“自由主义”论战；2002年转入清华大学人文学院，创办《区域》期刊，构建跨学科批判平台。
+
+2. 全球视野下的中国问题
+
+  • 提出“中国现代性的独特路径”，参与“北京共识”国际讨论，与阿瑞吉（Giovanni Arrighi）、沃勒斯坦（Immanuel Wallerstein）对话世界体系理论。
+
+  • 2020年当选美国艺术与科学院外籍院士，成为继费孝通后第二位获此殊荣的中国人文社科学者。
+
+核心思想体系
+
+1. 现代性重审与另类叙事
+
+  • 反现代的现代性：指中国现代化是“在反抗帝国主义中形成的现代性”，具有自我否定的辩证特质（《现代中国思想的兴起》）。
+
+  • 跨体系社会：以“亚洲”为方法论单位，分析中国多民族、多文明的交融共生，挑战欧洲中心主义的民族国家范式。
+
+2. 后殖民理论的本土转化
+
+  • 去政治化的政治：批判1980年代“去政治化”思潮导致公共领域萎缩，主张重建“政治性”的社会动员（《去政治化的政治》）。
+
+  • 短二十世纪：将1911-1976年定义为“短二十世纪”，强调革命传统对当代中国的复杂遗产，反对简单否定或肯定。
+
+3. 生态马克思主义转向
+
+  • 新山水论：借传统山水画意境批判发展主义，提出“生态危机本质是文明危机”，主张重构“天人关系”（《世纪的诞生》）。
+
+  • 乡村建设再出发：重提梁漱溟、晏阳初传统，将生态保护与基层民主结合，探索“后增长时代”的社会实验。
+
+思想传承与影响
+
+1. 新左派的理论旗舰
+
+  • 与崔之元、甘阳等形成“新左翼知识群体”，推动“三农问题”“国企改革”公共讨论；《读书》时期刊发的“新自由主义批判”系列奠定思想史坐标。
+
+  • 国际新左翼学界将其与萨米尔·阿明、大卫·哈维并列，视为“南方理论”的重要建构者。
+
+2. 全球左翼思想对话者
+
+  • 与印度庶民研究（Subaltern Studies）学派对话，共同解构殖民现代性；在拉丁美洲与加莱亚诺（Eduardo Galeano）探讨“被切开的血管”的亚洲版本。
+
+  • 欧洲左翼期刊《新左翼评论》多次专题讨论其理论，佩里·安德森（Perry Anderson）称其“重构了社会主义的可能性边界”。
+
+3. 人文研究的范式革新
+
+  • 创立“区域研究”方法论，打破文学、历史、政治学的学科壁垒；《亚洲视野：中国历史的展开》被哈佛、莱顿大学列为必读书目。
+
+  • 生态批评领域，王铭玉、王晓明等学者发展其“新山水论”；思想史界章永乐、白永瑞承其“跨体系社会”说重释边疆史。
+
+学术争议
+
+1. 新左派立场的意识形态批判
+
+  • 自由主义学者徐友渔指其“用后现代理论包装反改革立场”，朱学勤批评“反现代性叙事忽视个体自由价值”。
+
+  • 汪晖回应称“批判现代性不等于反对现代”，主张“在资本全球化中寻找另类实践”。
+
+2. 概念原创性的学术质疑
+
+  • 林毓生指“反现代的现代性”概念逻辑混乱，黄宗智质疑“跨体系社会”缺乏实证支撑；但杜赞奇（Prasenjit Duara）肯定其“对欧洲中心论的有效解构”。
+
+  • 历史学界杨念群批评其“以论代史”，罗志田则承认其“激活了思想史的问题意识”。
+
+3. 学术与政治的边界之争
+
+  • 李泽厚指其“将学术政治化”，钱永祥质疑“去政治化的政治”概念本身存在悖论；刘擎认为其贡献在于“重建批判性知识分子的公共角色”。
+
+  • 国际学界亦存分歧：傅高义（Ezra Vogel）称其“过度强调中国特殊性”，而酒井直树（Naoki Sakai）赞其“开辟了比较现代性的新路径”。
+
+参考文献
+
+1. 汪晖《现代中国思想的兴起》 | 三联书店, 2004
+
+2. 汪晖《去政治化的政治》 | 三联书店, 2008
+
+3. 汪晖《世纪的诞生》 | 三联书店, 2020
+
+4. 佩里·安德森《新的旧世界》 | Verso出版社, 2009（专章讨论汪晖）
+
+5.酒井直树《翻译与主体性》 | 明尼苏达大学出版社, 1997（理论对话）`,
+      gan_yang: `哲学家 Philosopher #43
+姓名 Name: 甘阳 Gan Yang
+生卒年 Lifespan: 1952–至今 | 中国当代思想史家，新左派理论家，通识教育倡导者
+学派 School: 文化保守主义·新左派（倡“通三统”，融传统、革命与改革）
+
+生平与历史背景
+
+1. 从知青到学术旗手
+
+  • 浙江杭州人，早年经历知青岁月，1978年考入北京大学哲学系，1985年赴美国芝加哥大学社会思想委员会深造，师从列奥·施特劳斯学派传人阿兰·布鲁姆。
+
+  • 1989年后旅居香港，历任香港大学亚洲研究中心研究员、清华大学人文学院教授，2009年创办清华大学新雅书院，2014年南下中山大学创办博雅学院，推动中国高校通识教育改革。
+
+2. 思想转型的三次突围
+
+  • 80年代启蒙期：参与“文化：中国与世界”编委会，译介卡西尔《人论》、韦伯《新教伦理》，推动西学东渐。
+
+  • 90年代反思期：提出“反反传统的现代化”，批判激进自由主义，主张文化守成（《将错就错》）。
+
+  • 21世纪实践期：以“通三统”论重构传统合法性，在教育领域实践“中西会通”的博雅教育模式。
+
+核心思想体系
+
+1. 通三统的文化政治学
+
+  • 文明连续体：“孔夫子的传统、毛泽东的传统、邓小平的传统”（《通三统》），主张三大传统共同构成当代中国合法性基础。
+
+  • 儒家社会主义：提出“儒家传统可为社会主义提供伦理根基”，批判市场原教旨主义对文化共同体的破坏。
+
+2. 自由主义的中国式批判
+
+  • 启蒙反思论：指“中国自由主义缺乏对传统的同情的理解”，主张以“文化自觉”超越“启蒙与救亡的二元对立”。
+
+  • 政治成熟说：呼吁建立“政治民族”，强调国家能力与文化认同的辩证统一，反对“去政治化的学术”。
+
+3. 通识教育的实践哲学
+
+  • 经典阅读运动：设计“从荷马到鲁迅”的经典课程体系，主张通过“伟大书籍”培育文化主体性。
+
+  • 书院制实验：在清华、中大推行住宿书院制，以“师生共同体”对抗大学教育的专业化与碎片化。
+
+思想传承与影响
+
+1. 新左派的理论实践者
+
+  • 与汪晖、崔之元构成“新左翼三剑客”，推动“三农问题”“国企改革”的公共讨论；《中国当代思想史论》被译介为多国语言，成为国际理解中国思想转型的关键文本。
+
+  • 弟子刘瑜、李猛等学者承其问题意识，分别发展出“政治学本土化”“历史社会学重构”等路径。
+
+2. 通识教育的中国化先锋
+
+  • 清华新雅书院模式被复旦、浙大等校效仿，2015年教育部《关于深化高校创新创业教育改革的实施意见》间接吸收其理念。
+
+  • 国际学界关注：芝加哥大学社会思想委员会将其教育实践视为“施特劳斯学派在东亚的创造性转化”，哈佛燕京学社多次邀其研讨人文教育。
+
+3. 中西文明的摆渡人
+
+  • 主持翻译《施特劳斯文集》，推动政治哲学在华语学界传播；与查尔斯·泰勒对谈“世俗时代的精神困境”，尝试以儒家伦理回应现代性危机。
+
+  • 在《21世纪资本论》中文版序言中提出“中国道路可能为全球资本主义提供替代方案”，引发国际左翼学界热议。
+
+学术争议
+
+1. 文化保守主义的现实困境
+
+  • 自由主义学者徐友渔批评“通三统”是“意识形态拼盘”，朱学勤指其“用文化乡愁掩盖制度缺陷”；甘阳回应称“传统的断裂比延续更危险”。
+
+  • 教育界质疑书院制“精英化倾向”，学生抗议博雅学院“课程过载”，但何怀宏肯定其“重塑大学精神的实验勇气”。
+
+2. 政治哲学的本土化争议
+
+  • 刘小枫指其“施特劳斯解读过于实用主义”，林毓生批评“通三统论缺乏历史严谨性”；但李猛认为“理论旅行必然伴随创造性误读”。
+
+  • 国际施派学者罗森（Stanley Rosen）质疑其“将古典学工具化”，但布鲁姆遗孀称其“延续了社会思想委员会的精神血脉”。
+
+3. 学术与政治的暧昧性
+
+  • 汪晖指其“以文化议题回避政治经济学批判”，钱永祥批评“政治民族概念隐含威权风险”；甘阳自辩“文化重建是政治重建的前提”。
+
+  • 香港时期与内地体制的互动引发“学术投机”争议，但陈来辩护称“其教育实践证明知行合一的学术担当”。
+
+参考文献
+
+1. 甘阳《通三统》 | 三联书店, 2007
+
+2. 甘阳《将错就错》 | 牛津大学出版社, 2000
+
+3. 李猛《理性化及其传统：对韦伯的中国观察》 | 三联书店, 2010
+
+4. 阿兰·布鲁姆《美国精神的封闭》 | 中国社会科学出版社, 1994（甘阳译）
+
+5.刘瑜《可能性的艺术：比较政治学笔记》 | 广西师范大学出版社, 2022`,
+      thales: `哲学家 Philosopher #44
+姓名 Name: 泰勒斯 Thales of Miletus（Θαλῆς ὁ Μιλήσιος）
+生卒年 Lifespan: 约公元前624–546年 | 古希腊“七贤”之首，西方哲学之父
+学派 School: 米利都学派（自然哲学先驱，主张万物源于单一物质）
+
+生平与历史背景
+
+1. 科学与哲学的交汇
+
+  • 生于小亚细亚的米利都城（今土耳其），身兼数学家、天文学家与工程师。据传曾准确预测公元前585年日食，利用几何学原理测量金字塔高度，提出“尼罗河洪水与天狼星运行周期相关”。
+
+  • 打破神话宇宙论，首次以自然原因（非神意）解释世界，被亚里士多德尊为“第一位自然哲学家”。
+
+2. 商人-哲人的双重身份
+
+  • 传说通过橄榄油期货交易致富，证明哲学家可兼具智慧与财富；第欧根尼·拉尔修记载其名言：“万物皆充满神，但神是内在的自然法则”。
+
+  • 终身未婚，被梭伦问及缘由时答：“因爱人类胜过爱个人”。
+
+核心思想体系
+
+1. 水本原说（Arche）
+
+  • 本体论革命：“万物源于水，复归于水”，认为水是构成宇宙的基本元素，通过凝聚（冰）与稀释（蒸汽）形成万物。
+
+  • 宇宙论模型：地球漂浮于水上，地震因水的动荡导致，星辰由水蒸气点燃形成。
+
+2. 数学与天文学奠基
+
+  • 几何定理：首个证明“圆被直径平分”“等腰三角形底角相等”等命题，奠定演绎推理传统。
+
+  • 天文学观察：识别小熊星座为航海导航星，确立一年为365天，推测月亮反射日光。
+
+3. 泛灵论与理性萌芽
+
+  • 认为磁石有灵魂（因其能移动铁），但拒绝拟人化神学，将灵魂视为物质的内在动力。
+
+  • 提出“认识自己是最难的智慧”，影响德尔斐神庙箴言“认识你自己”。
+
+思想传承与影响
+
+1. 米利都学派的开启
+
+  • 直接启发阿那克西曼德（“无定论”）、阿那克西美尼（“气本原说”），形成早期自然哲学谱系。
+
+  • 赫拉克利特继承其流动宇宙观，提出“万物皆流”；亚里士多德《形而上学》以其为哲学史起点。
+
+2. 科学方法的先驱
+
+  • 弗朗西斯·培根赞其为“实验科学精神萌芽”，爱因斯坦称其“首次以理性挑战神秘主义”。
+
+  • 现代生态哲学回溯其“万物一体论”，如深生态学的“内在关联性”思想。
+
+3. 东西方哲学对话
+
+  • 与老子“上善若水”说形成跨文明呼应；印度遮婆迦派“四大元素说”可能受其间接影响。
+
+  • 尼采在《希腊悲剧时代的哲学》中称其“以孩童般的天真直面宇宙之谜”。
+
+学术争议
+
+1. 哲学身份的现代质疑
+
+  • 康福德（F. M. Cornford）认为其思想更近“原始科学”而非哲学，但伯奈特（John Burnet）辩护称“追问本质即哲学”。
+
+  • 水本原说是否隐喻“生命之源”？卡恩（Charles Kahn）指其可能受埃及神话（努恩水神）影响。
+
+2. 史料真实性问题
+
+  • 现存记载皆来自后世纪录（亚里士多德、希罗多德等），原始著作佚失，思想可能被后世重构。
+
+  • 日食预测被疑为巧合，橄榄油垄断传说或为第欧根尼的寓言式写作。
+
+参考文献
+
+1. 亚里士多德《形而上学》 | 第一卷第三章
+
+2. 第欧根尼·拉尔修《名哲言行录》 | 第一卷
+
+3. 基尔克&拉文《前苏格拉底哲学家》 | 剑桥大学出版社, 1957
+
+4. 罗素《西方哲学史》 | 商务印书馆, 1963
+
+5.帕特里夏·库尔《泰勒斯：第一个哲学家？》 | 《哲学史》期刊, 2000`,
+      anaximander: `哲学家 Philosopher #45
+姓名 Name: 阿那克西曼德 Anaximander（Ἀναξίμανδρος）
+生卒年 Lifespan: 约公元前610–546年 | 米利都学派第二代，首提“无定”概念
+学派 School: 米利都学派（自然哲学，主张万物源于“ἄπειρον/无定”）
+
+生平与历史背景
+
+1. 科学制图与宇宙论革命
+
+  • 泰勒斯弟子，首位绘制世界地图的希腊人，提出地球悬于虚空无需支撑。发明日晷测定节气，观测天体运行周期。
+
+  • 著《论自然》（西方首部哲学散文），提出“无定”（ἄπειρον）为万物本原，认为宇宙由永恒运动生成。
+
+2. 进化论的远古先驱
+
+  • 推测生命起源于潮湿元素，人由鱼类演化而来，首倡生物适应环境理论，比达尔文早2500年提出演化思想碎片。
+
+  • 名言：“万物生灭皆依必然性，因其互付赔偿与惩罚”（最早的自然法思想表述）。
+
+核心思想体系
+
+1. 无定说（Apeiron）
+
+  • 超越具象本原：“无定”是无限、无形、永恒的物质，非水非气，包含对立面（冷热/干湿）的分离与平衡。
+
+  • 宇宙循环论：世界从无定分离，终将回归无定，此过程无限循环（“无数世界”说）。
+
+2. 对立物辩证法
+
+  • 冲突与补偿：“万物在对立中生成，如热侵冷需补偿”（《论自然》残篇），影响赫拉克利特“战争是万物之父”思想。
+
+  • 时间观革新：引入抽象时间（χρόνος）概念，取代神话时序，成为自然过程的度量尺度。
+
+思想传承与影响
+
+1. 自然哲学谱系奠基
+
+  • 直接影响阿那克西美尼（气本原说）、阿那克萨戈拉（种子论），启发毕达哥拉斯学派数学宇宙观。
+
+  • 亚里士多德批判其“无定”过于抽象，但承认其“首次使用本原（ἀρχή）术语”。
+
+2. 科学精神的早期典范
+
+  • 日晷与地图技术推动希腊航海文明；演化论猜测被现代古生物学重新评估（如寒武纪生命大爆发假说）。
+
+  • 海德格尔在《阿那克西曼德之箴言》中重释其“补偿”思想，视为存在论的时间性原型。
+
+3. 跨文明思想对话
+
+  • 与老子“道可道非常道”形成形上呼应；印度数论派“自性”（Prakriti）概念与其“无定”存在类比可能。
+
+  • 怀特海《过程与实在》称其“首次系统表述宇宙过程哲学”。
+
+学术争议
+
+1. “无定”性质的千年辩难
+
+  • 辛普里丘认为“无定”是混合物质，伯奈特主张其为“无限延伸的未知元素”；卡恩（C. H. Kahn）考证为“超越具体元素的抽象基体”。
+
+  • 尼采在《希腊悲剧时代的哲学》中称其“用晦涩对抗泰勒斯的直观”，体现哲学思辨的深化。
+
+2. 演化论记载的真实性
+
+  • 艾修斯《哲学家的意见》所传“人鱼起源说”被疑为后世附会；但亚里士多德《动物志》明确记载其生物观察方法。
+
+  • 现代学者劳埃德（G. E. R. Lloyd）认为其演化观属“逻辑推论而非实证观察”。
+
+参考文献
+
+1. 第欧根尼·拉尔修《名哲言行录》 | 第二卷
+
+2. 辛普里丘《亚里士多德〈物理学〉注释》 | 柏林本, 1882
+
+3. 卡恩《阿那克西曼德与古希腊宇宙论的起源》 | 哥伦比亚大学出版社, 1960
+
+4. 海德格尔《阿那克西曼德之箴言》 | 商务印书馆, 1996
+
+5.劳埃德《早期希腊科学》 | 剑桥大学出版社, 1970`,
+      anaximenes: `哲学家 Philosopher #46
+姓名 Name: 阿那克西美尼 Anaximenes（Ἀναξιμένης）
+生卒年 Lifespan: 约公元前585–528年 | 米利都学派第三代，确立“气本原说”
+学派 School: 米利都学派（自然哲学，主张“气”为万物本原，通过稀薄与凝聚转化）
+
+一、生平与历史背景
+
+1.1 米利都学派的最后传人
+
+阿那克西美尼出生于小亚细亚的米利都城，是阿那克西曼德的直系弟子。作为米利都学派的第三代哲人，他继承了前两代对自然本原（ἀρχή）的探索，但选择了一条更具实证色彩的路径。据第欧根尼·拉尔修记载，阿那克西美尼的著作《论自然》以伊奥尼亚方言写成，风格简明直白，与阿那克西曼德的晦涩抽象形成鲜明对比。他的哲学实践深深植根于米利都城邦的海洋文明：通过对航海气象的观察（如风的形成、云层的凝结），他发展出以“气”（πνεῦμα）为核心的宇宙论体系。
+
+1.2 科学与政治的桥梁
+
+不同于泰勒斯的神秘主义倾向和阿那克西曼德的形上思辨，阿那克西美尼展现出早期哲学家的实用主义面向。他曾参与米利都对抗吕底亚王国的军事防御工程，设计了一种通过压缩空气原理运作的城防装置。这种将自然知识转化为技术应用的实践，体现了希腊哲学从“观星者”到“工程师”的转变。普鲁塔克在《名人传》中记载，阿那克西美尼曾向执政官提出“通过调节城市通风系统预防瘟疫”的公共卫生方案，将气的流动性与生命健康直接关联。
+
+二、核心思想体系
+
+2.1 气本原说的物质辩证法
+
+阿那克西美尼的核心命题是：“气是万物的本原，其通过稀薄化（μάνωσις）与凝聚化（πύκνωσις）生成一切。”这一理论包含三层革新：
+
+1. 动态本原观：气并非静态实体，而是永恒流动的过程。稀薄化为火，中等状态为普通气体，凝聚化依次生成风、云、水、土和石头。
+
+2. 量化转化机制：首次用“密度变化”解释质变，如“气被压缩时温度降低形成水”（与现代气体液化理论有惊人相似）。
+
+3. 生命关联性：提出“呼吸的气（πνεῦμα）是灵魂的本质”，将宇宙论与生理学统一，认为人类呼吸与宇宙气息循环同构。
+
+2.2 宇宙模型的机械论转向
+
+阿那克西美尼构建了一个完全机械化的宇宙图景：
+
+• 扁平圆盘地球：地球由凝聚的气形成，漂浮在气之海洋上，星辰是钉在晶态气层上的火团。
+
+• 天体运动机制：太阳和月亮并非神性存在，而是被宇宙气流推动的火球。月食被解释为“气幕暂时遮挡”。
+
+• 气象学生理学统一：认为人体疾病源于体内气的失衡，与暴风雨的形成共享同一物理原理。
+
+三、思想传承与影响
+
+3.1 自然哲学谱系的关键环节
+
+阿那克西美尼的“气论”为古希腊哲学开辟了新的可能性：
+
+• 赫拉克利特的火本原说：继承其动态本原观，将“气-火”转化发展为“万物皆流”。
+
+• 毕达哥拉斯数的宇宙论：其量化方法影响后者用数学比例解释自然。
+
+• 原子论的前奏：气的微粒化倾向为留基伯的原子论埋下伏笔。
+
+3.2 跨学科的历史回响
+
+• 医学传统：希波克拉底学派的“四体液说”吸收其气-生命关联理论，盖伦将πνεῦμα发展为“生命灵气”概念。
+
+• 基督教神学：斐洛将“神圣气息”（πνεῦμα θεῖον）与上帝创世关联，《约翰福音》的“圣灵”（πνεῦμα）概念受其影响。
+
+• 近代科学：伽利略研究气体压力时引用其凝聚理论，莱布尼茨在《单子论》中重提“气的精微物质性”。
+
+3.3 东方哲学的镜像对话
+
+• 中国哲学：与《黄帝内经》“气一元论”高度相似，《庄子·逍遥游》的“大块噫气”说可视为诗意化呼应。
+
+• 印度哲学：数论派的“风大”（Vāyu）元素论与其气论存在结构相似性，但缺乏量化转化机制。
+
+四、学术争议与现当代重估
+
+4.1 古代文献的阐释困境
+
+由于著作全佚，现代研究严重依赖二手资料：
+
+• 辛普里丘的转述可靠性：6世纪新柏拉图主义者可能用新术语改写其理论。
+
+• 希波吕托斯的记载矛盾：在《驳一切异端》中将阿那克西美尼归为“唯物论者”，但米利都学派的“气”包含精神维度。
+
+4.2 现代哲学的重构争议
+
+• 海德格尔的存在论解读：在《什么是哲学？》中将“πνεῦμα”与“存在之气息”关联，引发古典学者强烈反对。
+
+• 科学革命再评价：科学史家林德伯格（D.C. Lindberg）指其理论包含“原始实验精神”，但劳埃德（G.E.R. Lloyd）认为仍是思辨产物。
+
+4.3 生态哲学的新启示
+
+21世纪生态思想家蒂莫西·莫顿（Timothy Morton）重新发现其价值：
+
+• 非人类中心主义：气的流动性打破生物/非生物界限，预表“万物互联”的生态观。
+
+• 过程本体论：将存在理解为动态关系网络，为气候危机提供哲学资源。
+
+五、参考文献与原始文献
+
+1. 基础史料
+
+  • 希波吕托斯《驳一切异端》 | 第一卷第七章
+
+  • 普鲁塔克《柏拉图问题》 | 1006F
+
+  • 艾修斯《哲学家意见集成》 | Ⅰ.3.4
+
+2. 现代研究
+
+  • 格思里《希腊哲学史》第一卷 | 剑桥大学出版社, 1962（P.115-140）
+
+  • 巴恩斯《前苏格拉底哲学家》 | 罗德里奇出版社, 1982（第二章）
+
+  • 格雷厄姆《阿那克西美尼的气论新解》 | 《古代哲学》期刊, 2003
+
+3. 跨学科研究
+
+  • 栗山茂久《身体的语言》 | 商务印书馆, 2016（比较希腊与中国气论）
+
+  • 莫顿《生态本体论》 | 哈佛大学出版社, 2021（第五章）`,
+      pythagoras: `哲学家 Philosopher #47
+姓名 Name: 毕达哥拉斯 Pythagoras（Πυθαγόρας）
+生卒年 Lifespan: 约公元前570–495年 | 古希腊数学家、哲学家，毕达哥拉斯学派创始人
+学派 School: 毕达哥拉斯学派（主张“万物皆数”，融合数学、宗教与哲学）
+
+一、生平与历史背景
+
+1.1 神秘主义与科学精神的交融
+
+毕达哥拉斯出生于萨摩斯岛，早年游历埃及、巴比伦，学习数学与神秘宗教。约公元前530年，因反对波吕克拉底僭主统治，迁居南意大利的克罗顿，建立兼具学术团体与宗教教派性质的秘密组织。该团体实行财产共有、素食主义与沉默修行，成员需通过长达五年的考验期才能聆听其数学教义。第欧根尼·拉尔修记载，毕达哥拉斯首次使用“哲学家”（φιλόσοφος，爱智者）一词，取代传统的“σοφός”（智者）称谓。
+
+1.2 政治实践与学术乌托邦
+
+毕达哥拉斯学派不仅追求理论真理，更试图构建理想城邦。他们在克罗顿建立“贤人政治”，通过数学教育培养公民德性，制定法律禁止食用豆类（因相信豆子承载灵魂转世）。这一实验最终因平民暴动失败，毕达哥拉斯被迫流亡梅塔蓬图姆并在此去世。其学派持续两个世纪，影响了柏拉图学园的教学模式。
+
+二、核心思想体系
+
+2.1 数本体论与宇宙和谐
+
+毕达哥拉斯学派的核心教义是：“数是万物的本原”（ἀριθμὸς εἶναι τὰ πάντα）。其理论包含三个维度：
+
+1. 形式本体论：数构成事物的本质结构，如“1”代表点，“2”代表线，“3”代表面，“4”代表体，几何图形由数生成。
+
+2. 音乐宇宙论：发现弦长比例与音程关系（八度1:2，五度2:3），提出天体运行产生“天球音乐”，宇宙是按数学比例排列的和谐整体。
+
+3. 灵魂净化论：通过数学研究使灵魂脱离轮回，达到与宇宙秩序的合一。
+
+2.2 宗教与科学的双重遗产
+
+• 灵魂转世说：主张灵魂不朽与轮回转生，动物与人类灵魂平等，奠定西方素食主义伦理基础。
+
+• 禁忌体系：制定严格生活戒律（如禁食豆类、不可跨越秤杆），将数学规律神圣化为宗教仪式。
+
+• 科学发现：证明毕达哥拉斯定理（勾股定理），发现无理数（√2），研究黄金分割比例与正多面体。
+
+三、思想传承与影响
+
+3.1 西方理性传统的奠基
+
+• 柏拉图主义：柏拉图《蒂迈欧篇》的几何宇宙论直接继承毕达哥拉斯学说，学园入口刻有“不懂几何者不得入内”。
+
+• 数学物理学：开普勒用“天球音乐”解释行星运动定律，爱因斯坦称“宇宙最不可理解之处是其可被数学理解”。
+
+• 符号逻辑：莱布尼茨受其数理神秘主义启发，发展二进制与符号逻辑系统。
+
+3.2 跨文明的思想对话
+
+• 中国易学：邵雍《皇极经世》将易卦与数学结合，与毕达哥拉斯“数象宇宙”形成跨时空共鸣。
+
+• 印度哲学：耆那教“宇宙结构论”中的几何分形思想，与其正十二面体宇宙模型存在可比性。
+
+• 伊斯兰苏菲派：伊本·阿拉比的“存在单一论”吸收其数学象征主义，用几何图形表达神性流溢。
+
+3.3 现代科学与神秘主义的交织
+
+• 量子力学：海森堡受“宇宙数学设计”启发，提出“数学形式先于物理实在”。
+
+• 计算机科学：图灵机理论暗合毕达哥拉斯“数是宇宙程序”的理念，算法本质被视为数的操作。
+
+• 新时代运动：将黄金分割与斐波那契数列神秘化，形成“神圣几何”灵修实践。
+
+四、学术争议与批判
+
+4.1 历史真实性问题
+
+• 学说归属争议：现存“毕达哥拉斯思想”多为学派集体成果，本人著作尽失，第欧根尼记载可能掺杂后世伪作。
+
+• 神秘主义污名化：启蒙运动时期，伏尔泰批评其“用数学外衣包装迷信”，忽视其科学贡献。
+
+4.2 哲学内在矛盾
+
+• 数学与经验断裂：亚里士多德批判其“将抽象数学实体等同于物理实在”，如数无法解释颜色、痛苦等质性经验。
+
+• 民主与精英主义冲突：平等灵魂观与秘密教阶制的矛盾，暴露乌托邦实践的专制倾向。
+
+4.3 现代科学再评估
+
+• 数学实在论复兴：20世纪物理学的数学化（如杨-米尔斯方程）部分验证其本体论预言。
+
+• 认知科学挑战：神经科学揭示数学能力源于生物进化，质疑“数是独立实在”的柏拉图主义立场。
+
+五、参考文献与原始文献
+
+1. 基础史料
+
+  • 第欧根尼·拉尔修《名哲言行录》 | 第八卷
+
+  • 杨布利柯《毕达哥拉斯传》 | 洛布古典丛书, 1939
+
+  • 亚里士多德《形而上学》 | 第一卷第五章
+
+2. 现代研究
+
+  • 伯克特《古代毕达哥拉斯主义》 | 哈佛大学出版社, 1972
+
+  • 卡恩《毕达哥拉斯与毕达哥拉斯学派》 | 哈克特出版社, 2001
+
+  • 弗格森《宇宙的数学化》 | 芝加哥大学出版社, 2018
+
+3. 跨学科研究
+
+  • 李约瑟《中国科学技术史》第三卷 | 剑桥大学出版社, 1959（比较章节）
+
+  • 侯世达《哥德尔、艾舍尔、巴赫》 | 商务印书馆, 1996（数理神秘主义分析）`,
+      heraclitus: `哲学家 Philosopher #48
+姓名 Name: 赫拉克利特 Heraclitus（Ἡράκλειτος ὁ Ἐφέσιος）
+生卒年 Lifespan: 约公元前535–475年 | 古希腊辩证哲学先驱，爱菲斯学派创始人
+学派 School: 爱菲斯学派（主张“万物皆流”，以“火”为宇宙本原，提出“逻各斯”概念）
+
+一、生平与历史背景
+
+1.1 孤独的晦涩哲人
+
+赫拉克利特出生于小亚细亚的爱菲斯城（今土耳其以弗所），出身王族却放弃继承权，隐居神庙附近研究哲学。因其思想深奥、语言晦涩，被冠以“晦涩者”（ὁ Σκοτεινός）之称。据第欧根尼·拉尔修记载，他将著作《论自然》藏于阿尔忒弥斯神庙，仅以残篇形式流传后世。他蔑视大众与先贤，宣称“博学不教人智慧”，甚至嘲讽荷马“应被逐出赛会并鞭笞”。
+
+1.2 政治批判与自我流放
+
+赫拉克利特激烈反对爱菲斯的民主制，称“市民应吊死自己，将城邦交给孩童”。在贵族派失势后，他退居山林，以草根树皮为食，最终因水肿病去世。其思想与米利都学派形成对立，拒绝单一物质本原论，转而关注变化与矛盾的普遍性。斯特拉波记载，赫拉克利特曾拒绝波斯王大流士的邀请，称“畏惧显赫，满足于卑微”。
+
+二、核心思想体系
+
+2.1 火本原与永恒流变
+
+赫拉克利特提出：“这个世界……过去、现在、未来永远是一团永恒的活火（πῦρ ἀείζωον），在一定的分寸上燃烧，在一定的分寸上熄灭。”其理论包含三重维度：
+
+1. 动态本原论：火象征永恒的运动与转化，通过“上升之路”（稀薄化为气、灵魂）与“下降之路”（凝聚为水、土）生成万物。
+
+2. 量度法则（μέτρον）：火的转化受“逻各斯”（λόγος）支配，宇宙在燃烧与熄灭的循环中保持整体平衡。
+
+3. 万物皆流：“人不能两次踏入同一条河流”——强调变化的绝对性，静止仅是表象。
+
+2.2 对立统一与辩证逻辑
+
+赫拉克利特构建了最早的矛盾辩证法体系：
+
+• 战争之父：“战争是万物之父，也是万物之王”，对立面的冲突是生成的根本动力。
+
+• 潜在同一性：“善与恶是同一的”，生与死、昼与夜、健康与疾病相互依存并转化。
+
+• 和谐张力：“弓琴的和谐源于琴弦的紧张”，宇宙统一性建立在内在张力之上。
+
+2.3 逻各斯与灵魂学说
+
+• 逻各斯（λόγος）：宇宙运行的普遍理性法则，人需通过理性（ξυνὸς λόγος）把握。
+
+• 灵魂的火性：“干燥的灵魂是最智慧、最优秀的”，灵魂由火构成，与宇宙之火同质。
+
+• 认识论：感官经验有限，真正的智慧在于“听从逻各斯”，认识“一切是一”。
+
+三、思想传承与影响
+
+3.1 西方哲学的传统重构
+
+• 柏拉图：吸收“万物皆流”批判巴门尼德的存在论，在《克拉底鲁篇》中探讨语言与流变的关系。
+
+• 斯多葛学派：将“逻各斯”发展为宇宙理性神，成为自然法思想的源头。
+
+• 黑格尔辩证法：直接继承其对立统一思想，称“没有一个赫拉克利特的命题未被纳入我的逻辑学”。
+
+3.2 现代哲学与科学的重估
+
+• 尼采：在《希腊悲剧时代的哲学》中赞其为“辩证法的父亲”，视其思想为酒神精神的哲学表达。
+
+• 怀特海过程哲学：以“流动的宇宙”呼应其流变观，提出“现实即生成”。
+
+• 量子力学：海森堡引用“万物皆流”解释粒子不确定性，玻尔用对立互补原理致敬其辩证法。
+
+3.3 跨文明的对话与比较
+
+• 道家思想：与老子“反者道之动”高度契合，《周易》的变易观亦呈现相似辩证思维。
+
+• 佛教缘起论：其“流变”说可比拟“诸行无常”，但缺乏“无我”的终极解构。
+
+• 伊斯兰苏菲派：鲁米的“燃烧之爱”诗歌暗合火本原论，强调灵魂与神圣之火的合一。
+
+四、学术争议与批判
+
+4.1 残篇解释的多样性
+
+• 逻各斯的神学化：早期教父（如克莱门特）将其解释为“基督道成肉身”的前兆，现代学者卡恩（C. H. Kahn）则强调其非人格化法则属性。
+
+• 火的象征性争议：康福德认为火是隐喻变化的符号，而非物质本原；格思里（W. K. C. Guthrie）坚持其物理学意义。
+
+4.2 哲学体系的内在张力
+
+• 相对主义风险：柏拉图在《泰阿泰德篇》批评其流变论导致“一切皆真”，摧毁真理标准。
+
+• 精英主义困境：主张“多数人像牲畜般饱食”，与其“逻各斯普遍性”形成矛盾。
+
+4.3 现代误读与重构
+
+• 存在主义挪用：海德格尔在《林中路》中过度诠释“逻各斯”为“存在之澄明”，被指偏离历史语境。
+
+• 生态哲学引申：深层生态学将其“火-宇宙”论类比能量循环，但忽略其人类中心主义倾向（“人为万物尺度”）。
+
+五、参考文献与原始文献
+
+1. 基础史料
+
+  • 第欧根尼·拉尔修《名哲言行录》 | 第九卷
+
+  • 柏拉图《克拉底鲁篇》 | 402a
+
+  • 亚里士多德《形而上学》 | 第一卷第六章
+
+2. 现代研究
+
+  • 卡恩《赫拉克利特的艺术与思想》 | 剑桥大学出版社, 1979
+
+  • 格思里《希腊哲学史》第一卷 | 剑桥大学出版社, 1962（P.403-492）
+
+  • 尼采《希腊悲剧时代的哲学》 | 商务印书馆, 1996（第四章）
+
+3. 跨学科研究
+
+  • 海德格尔《赫拉克利特》 | 商务印书馆, 2014
+
+  • 李约瑟《中国科学技术史》第二卷 | 剑桥大学出版社, 1956（比较章节）
+
+  • 普利高津《从存在到演化》 | 上海科技教育出版社, 1986（热力学第二定律与流变哲学）`,
+      parmenides: `哲学家 Philosopher #49
+姓名 Name: 巴门尼德 Parmenides（Παρμενίδης ὁ Ἐλεάτης）
+生卒年 Lifespan: 约公元前515–450年 | 爱利亚学派奠基人，存在论哲学先驱
+学派 School: 爱利亚学派（主张“存在唯一、不动、永恒”，以逻辑否定生成与变化）
+
+一、生平与历史背景
+
+1.1 立法者-哲人的双重身份
+
+巴门尼德出生于南意大利的爱利亚城（今韦利亚），身兼城邦立法者与哲学家。据柏拉图《巴门尼德篇》记载，他曾在65岁高龄携弟子芝诺访问雅典，与青年苏格拉底论辩。第欧根尼·拉尔修称其受毕达哥拉斯学派影响，但最终开创独立思想体系。其著作《论自然》以六韵步诗体写成，分为“真理之路”与“意见之路”，现存19条残篇。
+
+1.2 哲学与政治的交织实践
+
+作为爱利亚的立法者，巴门尼德将哲学原则注入法律：规定公民宣誓效忠“存在”（τὸ ἐόν），禁止在公共辩论中使用“生成”“毁灭”等词汇。这一实践暴露其哲学的排他性——将逻辑必然性强加于经验世界。斯特拉波记载，爱利亚城因他的法律长期稳定，成为希腊殖民地中少有的无内战城邦。
+
+二、核心思想体系
+
+2.1 存在论的三重规定
+
+巴门尼德借女神之口揭示真理之路：
+
+1. 存在者存在，非存在者不存在（ἔστιν τε καὶ ὡς οὐκ ἔστι μὴ εἶναι）：否定虚空与虚无的可能性，奠定西方存在论基石。
+
+2. 存在者不可分、不动、永恒：批判赫拉克利特的流变观，主张变化是感官幻象，真实世界是均质连续的球体（σφαῖρος）。
+
+3. 思维与存在的同一（τὸ γὰρ αὐτὸ νοεῖν ἐστίν τε καὶ εἶναι）：真理只能通过理性（νόος）把握，感官经验通向虚妄的意见（δόξα）。
+
+2.2 逻辑法则的首次确立
+
+• 排中律雏形：“存在或不存在，无中间可能”，摧毁相对主义认知基础。
+
+• 无限可分性的否定：存在者无部分，芝诺悖论由此发展，挑战数学连续统概念。
+
+• 时间观的革命：取消过去与未来，主张“存在者现在整体存在”，预表爱因斯坦块状宇宙论。
+
+2.3 真理与意见的二元分裂
+
+《论自然》第二部分描述“凡人的意见世界”，以火与土的对立解释现象界：
+
+• 光明与黑暗的隐喻：火代表稀薄主动的阳性原理，土象征稠密被动的阴性原理。
+
+• 宇宙论的解构：日月星辰只是“火带环绕土圈”的错觉，天体运动本质是逻辑不可能。
+
+• 认识论的困境：凡人将“生成混合”误作真实，唯有哲学家能超越现象达至真理。
+
+三、思想传承与影响
+
+3.1 西方形而上学的奠基
+
+• 柏拉图理念论：《巴门尼德篇》借其逻辑训练辩证法，理念世界的永恒性承袭其存在观。
+
+• 亚里士多德实体说：批判其否定运动，但继承“存在作为存在”的研究纲领。
+
+• 基督教神学：奥古斯丁将“存在者”等同于上帝，安瑟伦本体论证明暗含其逻辑结构。
+
+3.2 现代科学与哲学的再发现
+
+• 斯宾诺莎实体论：“神即自然”的一元论直接继承存在不可分的教义。
+
+• 分析哲学：弗雷格将“存在者存在”转化为量词逻辑（∃x），罗素以摹状词理论消解非存在难题。
+
+• 相对论宇宙学：爱因斯坦静态宇宙模型（1917）与其球状存在者惊人相似，后虽被膨胀理论否定，仍显其思想预见性。
+
+3.3 跨文明的哲学对话
+
+• 印度吠檀多派：商羯罗“梵我一如”说与其存在唯一性形成平行，但梵具有意识属性。
+
+• 道家思想：老子“道恒无名”接近其不可言说的存在，但道包含生成变化的可能。
+
+• 伊斯兰凯拉姆学派：穆尔太齐赖派用逻辑论证神之单一，方法论类似巴门尼德。
+
+四、学术争议与批判
+
+4.1 残篇诠释的千年分歧
+
+• 存在者是否物质：康福德（F. M. Cornford）视其为抽象本体，卡恩（C. H. Kahn）考证其物理属性（如有限球体）。
+
+• 真理与意见的关系：海德格尔认为两部分构成辩证整体，欧文（G. E. L. Owen）主张意见篇纯属讽刺。
+
+4.2 哲学困境的现代表述
+
+• 语言与存在的鸿沟：维特根斯坦在《逻辑哲学论》中指出其悖论：“可说者”与“不可说者”的分裂。
+
+• 现象学的挑战：胡塞尔“回到事物本身”否定其真理-意见二分，主张现象即本质。
+
+4.3 科学革命的再审视
+
+• 量子真空涨落：现代物理学发现虚空充满量子涨落，颠覆“非存在者不存在”的绝对性。
+
+• 生物进化论：物种生成变化的证据与其静态存在观直接冲突，引发形而上学与经验科学的永恒张力。
+
+五、参考文献与原始文献
+
+1. 基础史料
+
+  • 第尔斯-克兰茨《前苏格拉底残篇》 | 巴门尼德残篇B1-B19
+
+  • 柏拉图《巴门尼德篇》 | 洛布古典丛书, 1926
+
+  • 辛普里丘《亚里士多德〈物理学〉注释》 | 柏林本, 1882
+
+2. 现代研究
+
+  • 卡恩《巴门尼德与爱利亚学派》 | 耶鲁大学出版社, 1973
+
+  • 格思里《希腊哲学史》第二卷 | 剑桥大学出版社, 1965（P.1-80）
+
+  • 海德格尔《巴门尼德》 | 商务印书馆, 2018
+
+3. 跨学科研究
+
+  • 爱因斯坦《相对论的意义》 | 普林斯顿大学出版社, 1922（静态宇宙模型）
+
+  • 霍金《时间简史》 | 湖南科技出版社, 2002（宇宙创生与存在论）
+
+  • 徐梵澄《陆王学述》 | 上海远东出版社, 1994（比较吠檀多与存在论）`,
+      zeno_elea: `哲学家 Philosopher #50
+姓名 Name: 芝诺 Zeno of Elea（Ζήνων ὁ Ἐλεάτης）
+生卒年 Lifespan: 约公元前490–430年 | 爱利亚学派代表，悖论大师，辩证术先驱
+学派 School: 爱利亚学派（捍卫巴门尼德存在论，以悖论否定运动与多元）
+
+一、生平与历史背景
+
+1.1 巴门尼德的忠实门徒
+
+芝诺出生于南意大利的爱利亚城，是巴门尼德最杰出的弟子与思想捍卫者。据柏拉图《巴门尼德篇》记载，他年轻时随老师访问雅典，与青年苏格拉底展开论辩，展示其锐利的逻辑技艺。第欧根尼·拉尔修称芝诺著《论自然》一书，包含40个悖论，现存9个残篇。他因参与反对叙拉古僭主的密谋被捕，受酷刑而死，临终前咬断舌头吐向暴君，以行动实践其“不可分割的存在”信念。
+
+1.2 辩证术的政治应用
+
+芝诺的悖论不仅是哲学工具，更是政治武器。他通过揭露对手逻辑矛盾，捍卫爱利亚城邦的“存在唯一”法统。普鲁塔克记载，芝诺曾在公民大会上用“谷堆悖论”驳斥民主派的分权主张：“若一粒谷不成堆，两粒也不成堆……何时算‘堆’？民主的多数决同样无法定义‘人民意志’。”这种将哲学论辩嵌入公共事务的策略，使其成为西方最早的政治修辞学家之一。
+
+二、核心思想体系
+
+2.1 运动悖论：否定经验世界的真实性
+
+芝诺提出四大运动悖论，旨在证明运动与多元在逻辑上不可能：
+
+1. 二分法：运动者需先达中点，但中点之前仍有无限中点，故运动无法开始。
+
+2. 阿基里斯追龟：快者永远无法超越慢者，因需先达对方起点，而后者已前进新距离。
+
+3. 飞矢不动：每一瞬间箭占等于自身的空间，故静止；时间由瞬间构成，故总静止。
+
+4. 运动场：两列物体以相反方向等速移动，相对于彼此的速度加倍，导致时间量度矛盾。
+
+2.2 多元悖论：解构数量与空间的常识
+
+• 大小悖论：若存在多，则事物既无限大（因可无限分割）又无限小（因由无限部分构成）。
+
+• 相似与不相似：事物若彼此相似则同一，若不相似则无法共存，故多元自相矛盾。
+
+• 谷堆悖论：模糊性论证，挑战“堆”的定义，揭示语言与实在的断裂。
+
+2.3 方法论革新：归谬法的首次系统运用
+
+芝诺开创“辩证术”（διαλεκτική）的论证范式：
+
+1. 假设对手观点为真（如“存在多”或“运动真实”）。
+
+2. 推导出逻辑矛盾（如无限分割导致无体积）。
+
+3. 结论：原假设必假，故巴门尼德“存在唯一”为真。
+亚里士多德称其为“辩证法的发明者”，黑格尔视其悖论为“否定的辩证法”源头。
+
+三、思想传承与影响
+
+3.1 哲学与科学的千年激荡
+
+• 古代怀疑论：皮浪学派借其悖论质疑知识的可能性，塞克斯都·恩披里克称其为“怀疑论先驱”。
+
+• 中世纪经院哲学：托马斯·阿奎那用“飞矢不动”论证上帝作为第一推动者的必要性。
+
+• 近代数学革命：牛顿-莱布尼茨微积分通过极限概念解决无限分割问题，柯西的ε-δ语言严格化无穷小分析。
+
+3.2 现代逻辑与物理学的重构
+
+• 集合论与实数连续性：康托尔用超限数处理无限，希尔伯特称“芝诺悖论是数学严谨化的原动力”。
+
+• 量子力学：海森堡测不准原理揭示运动在微观层面的非连续性，部分验证“飞矢不动”的洞见。
+
+• 时空哲学：麦克塔加特（J.M.E. McTaggart）的时间非实在论与芝诺静态存在观形成呼应。
+
+3.3 跨学科的文化隐喻
+
+• 文学艺术：博尔赫斯在《阿莱夫》中重构“大小悖论”，埃舍尔版画以视觉呈现无限递归。
+
+• 计算机科学：“停机问题”与芝诺悖论共享自指结构，图灵证明某些问题逻辑无解。
+
+• 经济学：阿罗不可能定理揭示集体决策的悖论性，呼应“谷堆悖论”的模糊性困境。
+
+四、学术争议与批判
+
+4.1 古代诠释的多样性
+
+• 亚里士多德的误解：《物理学》将芝诺悖论简化为数学错误，忽视其本体论意图。
+
+• 新柏拉图主义曲解：普罗克洛斯将悖论视为灵魂上升的神秘训练，偏离逻辑批判本质。
+
+4.2 现代哲学的分歧
+
+• 分析哲学解悖：罗素用“逻辑类型论”区分语言层级，维特根斯坦称“悖论是语言游戏的误用”。
+
+• 现象学批判：梅洛-庞蒂在《知觉现象学》中主张运动是身体经验，无需逻辑还原。
+
+• 实用主义消解：杜威认为悖论是“抽象逻辑脱离实践的产物”，应通过实验探究超越。
+
+4.3 科学革命的再诠释
+
+• 相对论时空观：爱因斯坦证明同时性相对，否定“飞矢不动”的绝对时间预设。
+
+• 量子场论：费曼路径积分将运动视为所有可能轨迹的叠加，转化芝诺的无限分割难题。
+
+• 混沌理论：洛伦兹的“蝴蝶效应”显示微小变化颠覆确定性，挑战其静态宇宙模型。
+
+五、参考文献与原始文献
+
+1. 基础史料
+
+  • 柏拉图《巴门尼德篇》 | 127d-128e
+
+  • 亚里士多德《物理学》 | 第六卷第九章
+
+  • 辛普里丘《亚里士多德〈物理学〉注释》 | 柏林本, 1882
+
+2. 现代研究
+
+  • 罗素《西方哲学史》 | 商务印书馆, 1963（第一卷第九章）
+
+  • 格吕恩鲍姆《现代科学与芝诺悖论》 | 纽约大学出版社, 1967
+
+  • 萨拉斯《芝诺的悖论》 | 牛津大学出版社, 2001
+
+3. 跨学科研究
+
+  • 霍金《时间简史》 | 湖南科技出版社, 2002（时空连续体分析）
+
+  • 侯世达《哥德尔、艾舍尔、巴赫》 | 商务印书馆, 1996（自指与递归结构）
+
+  • 纳西姆·塔勒布《黑天鹅》 | 中信出版社, 2011（模糊性与预测极限）`,
+      empedocles: `哲学家 Philosopher #51
+姓名 Name: 恩培多克勒 Empedocles（Ἐμπεδοκλῆς ὁ Ἀκραγαντῖνος）
+生卒年 Lifespan: 约公元前495–435年 | 古希腊自然哲学家、诗人、宗教改革家
+学派 School: 多元论学派（主张四元素说与“爱-争”动力论，融合科学与神秘主义）
+
+一、生平与历史背景
+
+1.1 科学与宗教的双重先知
+
+恩培多克勒出生于西西里岛的阿克拉伽斯（今阿格里真托），身兼哲学家、医生、政治领袖与祭司多重身份。据第欧根尼·拉尔修记载，他自称为“不朽的神明”，宣称能呼风唤雨、起死回生。其著作《论自然》与《净化》以六韵步诗体写成，现存约150行残篇。他拒绝接受城邦王位，投身民主改革，制定法律禁止屠宰动物（因灵魂轮回信仰），最终传说为证明神性跳入埃特纳火山口，仅留一只青铜凉鞋为证。
+
+1.2 跨学科实践的典范
+
+恩培多克勒的实验精神开创古希腊科学传统：
+
+• 医学革新：建立体液平衡理论，认为健康源于四元素（火、气、水、土）的恰当比例，直接影响希波克拉底医学体系。
+
+• 光学研究：提出光线传播需要时间，推测月光为反射日光，发明“暗箱”实验研究视觉成像。
+
+• 地质观察：通过西西里火山活动推断地球内部存在“火元素”，解释地震与喷发现象。
+
+二、核心思想体系
+
+2.1 四元素说（ριζώματα）与宇宙循环论
+
+恩培多克勒提出万物由四种“根”（火、气、水、土）构成，受“爱”（Φιλία）与“争”（Νεῖκος）两种力量驱动：
+
+1. 元素论：四元素永恒不灭，不可相互转化，仅通过混合分离形成万物。
+
+2. 动力论：“爱”促使元素结合，“争”导致元素分离，二者交替主导宇宙进程。
+
+3. 循环模型：宇宙在“爱的完全统一”（σφαῖρος）与“争的彻底分裂”间无限循环，当前处于“爱-争”共存阶段。
+
+2.2 灵魂轮回与宗教净化
+
+• 灵魂堕落说：灵魂因沾染鲜血被逐出极乐世界，需经历三万年的动植物轮回方可回归神界。
+
+• 禁忌体系：禁止食肉（因动物可能承载人类灵魂）与食用豆类（认为豆子连接冥界），主张素食主义净化灵魂。
+
+• 秘仪实践：创立神秘教派，传授“记忆女神”谟涅摩叙涅（Mnemosyne）的咒语，帮助信徒唤醒前世记忆。
+
+2.3 认识论与感知理论
+
+• 孔道学说：物体发射“流出物”（ἀπόρροια），通过感官孔道（πόροι）与体内同类元素共振产生知觉。
+
+• 血液思维论：心脏周围的血液是思维中心，因其中四元素完美混合，“人类以血认识世界”。
+
+• 理性局限：感官虽有限，但通过“神圣灵感”可超越经验，把握元素与动力的永恒法则。
+
+三、思想传承与影响
+
+3.1 自然哲学与医学传统
+
+• 亚里士多德元素论：吸收四元素说，但将其降格为“可相互转化的基本性质”。
+
+• 盖伦医学：发展体液平衡理论为“四体液说”，主导西方医学至文艺复兴。
+
+• 化学萌芽：炼金术士将四元素对应于硫、汞、盐、水银，直至拉瓦锡确立现代元素概念。
+
+3.2 科学与神秘主义的交织
+
+• 达尔文进化论：恩培多克勒提及“奇异生命形式的灭绝”（如人头牛身怪物），被赫胥黎视为进化思想雏形。
+
+• 生态哲学：深层生态学将其“万物关联”思想与“爱的结合力”作为生态整体论资源。
+
+• 心理学：荣格将“爱-争”原型化为“结合”与“分离”的集体无意识动力。
+
+3.3 跨文明对话
+
+• 印度哲学：四元素说与佛教“四大”（地、水、火、风）高度契合，但缺乏轮回的伦理维度。
+
+• 中国五行说：比四元素多出“木”，且强调相生相克而非机械混合，反映不同宇宙观。
+
+• 诺斯替主义：灵魂堕落与光明碎片说受其净化论启发，但转向更极端的灵肉对立。
+
+四、学术争议与批判
+
+4.1 文献真伪与诠释分歧
+
+• 著作归属：《净化》是否出自同一作者存疑，部分学者认为其宗教思想与《论自然》的科学倾向矛盾。
+
+• 神化叙事：跳火山传说被疑为敌对者诽谤，但尼采在《悲剧的诞生》中赞其为“酒神精神的哲学献祭”。
+
+4.2 理论的内在张力
+
+• 元素永恒与循环的矛盾：若元素不灭，宇宙循环如何重置？亚里士多德批判其模型缺乏物理逻辑。
+
+• 理性与信仰的冲突：感官经验论与灵魂转世说难以调和，卢克莱修在《物性论》中斥其“用神话污染物理学”。
+
+4.3 现代科学再审视
+
+• 生态批评：四元素说被重新解读为环境哲学原型，但人类中心主义倾向遭生态女性主义批判。
+
+• 物理学的隐喻：量子纠缠的“不可分关联”类比“爱的结合”，但属概念移植非实质继承。
+
+五、参考文献与原始文献
+
+1. 基础史料
+
+  • 第尔斯-克兰茨《前苏格拉底残篇》 | 恩培多克勒残篇B1-B153
+
+  • 亚里士多德《形而上学》 | 第一卷第八章
+
+  • 卢克莱修《物性论》 | 第一卷716-733行
+
+2. 现代研究
+
+  • 格思里《希腊哲学史》第二卷 | 剑桥大学出版社, 1965（P.122-265）
+
+  • 赖特《恩培多克勒：现存残篇》 | 布里斯托古典出版社, 1981
+
+  • 金斯利《古代哲学、神秘主义与魔法》 | 加州大学出版社, 1995
+
+3. 跨学科研究
+
+  • 荣格《原型与集体无意识》 | 中国社会科学出版社, 1999（原型理论章节）
+
+  • 拉图尔《自然的政治》 | 南京大学出版社, 2019（生态哲学比较）
+
+  • 卡普拉《物理学之道》 | 商务印书馆, 2000（四元素与量子理论）`,
+      anaxagoras: `哲学家 Philosopher #52
+姓名 Name: 阿那克萨戈拉 Anaxagoras（Ἀναξαγόρας ὁ Κλαζομένιος）
+生卒年 Lifespan: 约公元前500–428年 | 古希腊自然哲学家，首位将哲学引入雅典者
+学派 School: 多元论学派（主张“种子论”与“努斯/心灵”说，融合理性与科学观察）
+
+一、生平与历史背景
+
+1.1 伊奥尼亚哲人的雅典启蒙
+
+阿那克萨戈拉出生于小亚细亚的克拉佐美尼（今土耳其），早年师从米利都学派哲学家。约公元前480年移居雅典，成为伯里克利（Pericles）的导师与密友，将自然哲学引入雅典，打破传统神话世界观。其思想深刻影响了雅典黄金时代的文化氛围，被誉为“首位科学理性主义者”。据普鲁塔克记载，他通过解释日食的自然成因（“月球遮蔽太阳”），帮助伯里克利消除士兵对天象的恐惧，展现哲学的现实效用。
+
+1.2 政治迫害与流亡生涯
+
+因主张“太阳是燃烧的石头”“月亮反射日光”等理论，阿那克萨戈拉被指控“不敬神”（ἀσέβεια）。在伯里克利保护下，他逃离雅典，隐居小亚细亚的兰普萨库斯，建立哲学学校直至逝世。其审判标志着雅典哲学与宗教传统的首次公开冲突，预示苏格拉底之死的悲剧。
+
+二、核心思想体系
+
+2.1 种子论（σπέρματα）与无限可分性
+
+阿那克萨戈拉提出万物由无限小的“种子”构成，每个种子包含一切事物的成分：
+
+1. 万物混合理念：“一切存在于一切之中”（πάντα ἐν πᾶσι），如面包中的血液成分通过消化转化为人体血液。
+
+2. 主导原则：事物的性质由某类种子占主导决定，如“黄金中黄金种子居多，但亦含其他成分”。
+
+3. 无限分割性：物质可无限细分而不失本质，否定原子论的不可分单元。
+
+2.2 努斯（νοῦς）作为宇宙动力
+
+• 心灵启动论：努斯是纯粹、自主的理性力量，最初引发原始混沌的旋转运动（δίνη），分离出天体与万物。
+
+• 非人格化神性：努斯不创造世界，仅启动物理过程，自身独立于物质之外（“最精微稀薄者”）。
+
+• 人类理性之光：人因拥有努斯而能认识世界，但需通过感官经验逐步揭示真理。
+
+2.3 科学解释的理性化
+
+• 天体现象：日月食源于天体遮挡，银河是远处星光被暗云反射，星辰为炽热石块。
+
+• 气象学：雷由云层碰撞产生，闪电是火的撕裂，地震因地下气体积聚爆发。
+
+• 生物学：植物具有感知与情感，人类因手脑协作而超越动物。
+
+三、思想传承与影响
+
+3.1 自然哲学与形而上学的桥梁
+
+• 原子论先驱：留基伯与德谟克利特吸收其物质混合论，但以原子取代种子。
+
+• 苏格拉底的转向：苏格拉底因阿那克萨戈拉未用努斯解释具体事物而失望，转向目的论研究。
+
+• 亚里士多德批判：批评其“努斯”沦为机械因，但继承其“潜在与现实”的区分。
+
+3.2 科学理性的启蒙遗产
+
+• 天文学革命：其日食理论影响阿那斯塔克（Aristarchus）的日心说萌芽。
+
+• 医学理论：希波克拉底学派吸收其体液混合说，发展四体液病理学。
+
+• 心理学基础：斯多葛学派将“努斯”发展为遍及宇宙的“逻各斯”，新柏拉图主义视其为“神圣理智”。
+
+3.3 跨文明的哲学对话
+
+• 印度顺世论：与种子论的唯物倾向相似，但缺乏动力因的超越维度。
+
+• 中国气论：与张载“太虚即气”说均主张物质连续性，但气论强调内在动力，无需外在“努斯”。
+
+• 伊斯兰哲学：伊本·西那（阿维森纳）将努斯转化为“主动理智”，影响中世纪经院哲学。
+
+四、学术争议与批判
+
+4.1 古代诠释的多元性
+
+• 努斯的本质争议：柏拉图《斐多篇》批评其未贯彻心灵目的论，亚里士多德则肯定其“第一推动者”地位。
+
+• 种子论与原子论关系：伊壁鸠鲁派指责其种子无限混合导致不可知论，但现代科学史家康福德（F.M. Cornford）视其为连续物质观代表。
+
+4.2 现代哲学的重构挑战
+
+• 科学实在论困境：其“潜在包含一切”理论预示量子叠加态，但难以解释宏观确定性。
+
+• 心灵哲学难题：努斯如何与物质互动？笛卡尔心物二元论与其有相似困境。
+
+• 生态哲学启示：种子论可解读为生态互依性原型，但人类中心主义倾向遭批判。
+
+4.3 历史地位的再评价
+
+• 启蒙先驱还是神秘主义者：尼采在《希腊悲剧时代的哲学》中赞其理性勇气，但指出其保留“努斯”神性残余。
+
+• 跨学科影响：怀特海过程哲学吸收其“过程先于实体”思想，但否定不动之努斯的存在。
+
+五、参考文献与原始文献
+
+1. 基础史料
+
+  • 第尔斯-克兰茨《前苏格拉底残篇》 | 阿那克萨戈拉残篇B1-B21
+
+  • 柏拉图《斐多篇》 | 97b-99d
+
+  • 亚里士多德《形而上学》 | 第一卷第三章
+
+2. 现代研究
+
+  • 格思里《希腊哲学史》第二卷 | 剑桥大学出版社, 1965（P.266-338）
+
+  • 曼斯菲尔德《阿那克萨戈拉的物理理论》 | 莱顿出版社, 1980
+
+  • 格雷厄姆《阿那克萨戈拉与努斯的诞生》 | 《古代哲学》期刊, 1994
+
+3. 跨学科研究
+
+  • 库恩《科学革命的结构》 | 北京大学出版社, 2003（范式转换分析）
+
+  • 劳埃德《早期希腊科学》 | 剑桥大学出版社, 1970（科学方法论章节）
+
+  • 汉金森《古希腊的哲学与科学》 | 罗德里奇出版社, 1998（比较研究）`,
+      leucippus: `哲学家 Philosopher #53
+姓名 Name: 留基伯 Leucippus（Λεύκιππος ὁ Μιλήσιος）
+生卒年 Lifespan: 约公元前5世纪中叶 | 古希腊原子论奠基者，物质主义先驱
+学派 School: 阿布德拉学派（创立原子论，主张万物由不可分粒子与虚空构成）
+
+一、生平与历史背景
+
+1.1 神秘身影与历史迷雾
+
+留基伯的生平笼罩在传说与争议中。据第欧根尼·拉尔修记载，他可能出生于米利都或阿布德拉，活跃于公元前440年左右。亚里士多德在《形而上学》中称其为德谟克利特的老师，但伊壁鸠鲁派学者质疑其真实性，认为“留基伯”是德谟克利特的化名。唯一确证其存在的文献是伊壁鸠鲁致希罗多德的信，提到“留基伯的伟大发现”。其著作《大宇宙系统》全佚，仅通过后世纪录保存思想片段。
+
+1.2 原子论革命的隐秘起点
+
+留基伯在爱利亚学派与恩培多克勒思想交锋中提出原子论：
+
+• 对巴门尼德的反叛：承认“非存在”（虚空）的存在，调和存在与运动的矛盾。
+
+• 对多元论的超越：以同质原子取代恩培多克勒的异质元素，简化物质本原。
+
+• 科学方法奠基：首次用几何结构（原子形状）解释感官性质（如苦味来自钩状原子）。
+
+二、核心思想体系
+
+2.1 原子与虚空的本体论
+
+留基伯构建了首个机械论宇宙模型：
+
+1. 原子（ἄτομος）特性：
+
+  • 不可分、不可毁、永恒运动
+
+  • 仅有形状、大小、位置差异，无性质区别
+
+  • 数量无限，在虚空中随机碰撞结合
+
+2. 虚空（κενόν）的必要性：
+
+  • 为原子运动提供空间
+
+  • 否定巴门尼德“存在充满”的静态宇宙
+
+3. 必然性（ἀνάγκη）法则：
+
+  • 宇宙无目的，运动由原子机械作用决定
+
+  • “万物因必然性生成，漩涡（δίνη）是万物成因”
+
+2.2 感知与知识的物质基础
+
+• 流射说（ἀπόρροια）：物体发射原子流冲击感官，引起知觉（如视觉由表层原子脱落导致）。
+
+• 次级性质主观性：颜色、味道等非原子固有属性，而是感官与原子结构的互动结果。
+
+• 真理标准：理性修正感官错觉，如太阳实为“燃烧的巨石”而非神话中的赫利俄斯。
+
+2.3 宇宙生成与生命起源
+
+• 漩涡理论：原子在虚空中形成漩涡，重原子聚为大地，轻原子形成天体与火焰。
+
+• 自然发生说：潮湿泥土受热产生生命，原始生物无性别，适应环境者存活（原始进化论）。
+
+• 灵魂原子论：灵魂由最圆滑的原子构成，死亡即原子团解散，否定来世与神意裁判。
+
+三、思想传承与影响
+
+3.1 科学唯物主义的源头
+
+• 德谟克利特体系化：弟子德谟克利特发展原子论，提出“影像（εἴδωλα）说”完善感知理论。
+
+• 伊壁鸠鲁主义：吸收原子论但引入“偏斜运动”（παρέγκλισις）解释自由意志。
+
+• 近代科学革命：伽桑狄复兴原子论对抗经院哲学，道尔顿化学原子论实现科学转化。
+
+3.2 哲学范式的颠覆性创新
+
+• 决定论困境：机械因果链引发自由意志争论，影响斯宾诺莎与拉普拉斯恶魔理论。
+
+• 现象与实在二分：启发现象学（颜色非客体属性）与量子力学（波粒二象性）。
+
+• 无神论传统：马克思博士论文研究德谟克利特与伊壁鸠鲁，称原子论为“唯物主义大宪章”。
+
+3.3 跨文明的物质观对话
+
+• 印度胜论派：毗奢迦波提出的“极微（paramāṇu）”说与原子论惊人相似，但赋予道德属性。
+
+• 中国墨家：“端”概念接近原子不可分性，但缺乏虚空理论与机械论框架。
+
+• 伊斯兰凯拉姆学派：原子论被穆尔太齐赖派用于论证真主创世的瞬间性。
+
+四、学术争议与批判
+
+4.1 历史真实性的百年论战
+
+• 虚构人物说：19世纪学者罗德（E. Rohde）质疑留基伯存在，认为其是德谟克利特的文学虚构。
+
+• 考古证据：1904年发现伊壁鸠鲁学派碑文提及留基伯，支持其历史真实性。
+
+• 思想归属争议：西塞罗称“留基伯与德谟克利特思想无区别”，但亚里士多德明确区分二人贡献。
+
+4.2 理论的内在矛盾
+
+• 原子属性的悖论：若原子不可变，形状差异如何产生？柏拉图在《蒂迈欧篇》批评其几何原子论缺乏形上根基。
+
+• 虚空概念的困境：巴门尼德学派质疑“非存在如何存在”，牛顿绝对空间观部分解决此难题。
+
+• 生命解释的简化论：卢克莱修承认原子论难以说明意识与情感的产生。
+
+4.3 现代科学的重构挑战
+
+• 量子力学颠覆：海森堡测不准原理否定原子的确定性轨迹，但夸克不可分说呼应“原子”本义。
+
+• 弦理论隐喻：高维震动弦代替固体原子，但保留几何解释物质性质的核心思路。
+
+• 热力学批判：玻尔兹曼证明原子论可解释熵增，却因学界抵制自杀，印证机械论的文化阻力。
+
+五、参考文献与原始文献
+
+1. 基础史料
+
+  • 亚里士多德《论生灭》 | 第一卷第八章
+
+  • 第欧根尼·拉尔修《名哲言行录》 | 第九卷第三十章
+
+  • 卢克莱修《物性论》 | 第二卷62-332行
+
+2. 现代研究
+
+  • 贝利《希腊原子论者与伊壁鸠鲁》 | 牛津大学出版社, 1928
+
+  • 弗拉斯托斯《柏拉图对原子论者的批评》 | 《哲学研究》期刊, 1975
+
+  • 塞德利《留基伯的复活》 | 《古典季刊》, 2008
+
+3. 跨学科研究
+
+  • 薛定谔《生命是什么》 | 商务印书馆, 1973（物质基础与生命本质）
+
+  • 道金斯《盲眼钟表匠》 | 中信出版社, 2014（机械进化论溯源）
+
+  • 卡普拉《物理学之道》 | 商务印书馆, 2000（原子论与量子物理比较）`,
+      democritus: `哲学家 Philosopher #54
+姓名 Name: 德谟克利特 Democritus（Δημόκριτος ὁ Ἀβδηρίτης）
+生卒年 Lifespan: 约公元前460–370年 | 古希腊原子论集大成者，"欢笑的哲人"
+学派 School: 阿布德拉学派（发展原子论，提出"影像说"与幸福伦理学）
+
+一、生平与历史背景
+
+1.1 游历求知的科学先驱
+
+德谟克利特出生于色雷斯阿布德拉城，据第欧根尼·拉尔修记载，他耗尽继承的巨额财富，游历埃及、波斯、巴比伦与埃塞俄比亚，学习数学、天文学与巫术。传说为潜心研究自盲双目，称"宁可发现一个因果律，也不愿做波斯王"。其著作涵盖物理、伦理、美学等72部，仅存300余条残篇，被西塞罗赞为"前苏格拉底哲学巅峰"。
+
+1.2 原子论体系的完成者
+
+在老师留基伯的原子-虚空框架上，德谟克利特构建了首个完备的机械唯物主义体系：
+
+• 宇宙无限论：存在无数世界，各自经历生成与毁灭，地球因湿润物质下沉形成。
+
+• 决定论修正：承认原子运动存在轻微随机性（"倾斜运动"雏形），为自由意志预留空间。
+
+• 文化相对主义：通过考察各邦习俗，提出"法律是权宜，真理在自然"，挑战雅典民主制根基。
+
+二、核心思想体系
+
+2.1 原子论的物质科学
+
+1. 原子属性深化：
+
+  • 形状差异解释性质（锯齿原子→苦味，光滑原子→甜味）
+
+  • 运动速度决定温度（快速原子→热，慢速原子→冷）
+
+  • 排列组合解释物态（紧密→固体，松散→液体）
+
+2. 感知理论革命：
+
+  • 影像说（εἴδωλα）：物体持续发射原子膜，经空气压印传入感官，如视觉是瞳孔接收影像。
+
+  • 次级性质主观论：颜色、味道等是原子与感官互动的产物，"真理隐藏在深渊"。
+
+3. 生命科学假说：
+
+  • 灵魂由最精细的球形原子构成，思维是灵魂原子的振动。
+
+  • 疾病源于器官原子失衡，倡导饮食与运动疗法。
+
+2.2 幸福伦理学体系
+
+• 精神宁静（ἀθαμβία）：至善非享乐，而是通过节制欲望达到"灵魂的晴朗"。
+
+• 智慧等级论：
+
+  ◦ 身体之善（健康）
+
+  ◦ 政治之善（公正）
+
+  ◦ 灵魂之善（智慧）
+
+• 世界公民观："智者以宇宙为祖国"，批判城邦狭隘主义，主张普世伦理。
+
+2.3 美学与社会哲学
+
+• 模仿说雏形：艺术通过选择自然影像的和谐形式创造美，悲剧是"净化恐惧的良药"。
+
+• 语言起源论：最初为情感叫喊，后随理性发展形成约定符号。
+
+• 技术文明观：人类从动物模仿起步（蜘蛛教纺织，燕子教筑巢），通过经验积累进步。
+
+三、思想传承与影响
+
+3.1 科学传统的奠基
+
+• 伊壁鸠鲁主义：继承原子论但引入自由意志，将"快乐"重新定义为德谟克利特的灵魂宁静。
+
+• 文艺复兴科学：伽利略区分第一性质（原子属性）与第二性质（感官效应），牛顿力学延续机械论范式。
+
+• 现代心理学：赫尔姆霍茨的知觉无意识推论说受影像说启发，弗洛伊德承认其影响梦的理论。
+
+3.2 哲学史的隐秘主线
+
+• 怀疑论先驱：感官局限论影响皮浪，塞克斯都称其"为怀疑论铺路"。
+
+• 马克思博士论文：比较德谟克利特与伊壁鸠鲁，揭示原子论对辩证法的潜在贡献。
+
+• 分析哲学：罗素赞其"以逻辑建构世界的首次尝试"，维特根斯坦的"图像论"呼应影像说。
+
+3.3 跨文明对话
+
+• 印度顺世论：与原子论共享无神论立场，但主张极端享乐主义。
+
+• 中国墨家逻辑：原子-影像说与墨经"知，接也"的认知论形成技术性呼应。
+
+• 伊斯兰精诚兄弟会：10世纪将原子论融入新柏拉图主义，影响阿拉伯医学发展。
+
+四、学术争议与批判
+
+4.1 古代批判的焦点
+
+• 柏拉图封杀：《理想国》焚烧德谟克利特著作，指责其否定理念的永恒性。
+
+• 亚里士多德矛盾：既赞其"系统化自然研究"，又斥原子论无法解释目的因。
+
+• 斯多葛派反击：克律西波斯用"宇宙理性"批判机械论，称其摧毁道德责任。
+
+4.2 现代哲学再审视
+
+• 自由意志难题：卡尔·波普尔指原子决定论与知识增长矛盾，需"开放宇宙"修正。
+
+• 量子力学冲击：海森堡认为其"真理在深渊"预言了量子不确定性，但爱因斯坦坚持决定论立场。
+
+• 伦理相对主义：麦金泰尔批评其将道德简化为原子运动，丧失价值客观性。
+
+4.3 文献学的未解之谜
+
+• 残篇真伪：19世纪第尔斯质疑部分残篇属新柏拉图主义伪造，21世纪计算机文体分析支持大部分真实性。
+
+• 著作遗失之谜：基督教镇压或原子论与目的论冲突导致著作散佚？剑桥学派倾向后者。
+
+五、参考文献与原始文献
+
+1. 基础史料
+
+  • 第尔斯-克兰茨《前苏格拉底残篇》 | 德谟克利特残篇B1-B300
+
+  • 亚里士多德《生灭论》 | 第一卷第二至八章
+
+  • 塞克斯都·恩披里克《反数学家》 | 第七卷135-140节
+
+2. 现代研究
+
+  • 格思里《希腊哲学史》第二卷 | 剑桥大学出版社, 1965（P.383-507）
+
+  • 弗拉斯托斯《德谟克利特的宇宙》 | 《哲学研究》期刊, 1955
+
+  • 卡恩《德谟克利特与原子论起源》 | 哈佛大学出版社, 1985
+
+3. 跨学科研究
+
+  • 道尔顿《化学哲学新体系》 | 1808（科学原子论奠基）
+
+  • 弗洛伊德《梦的解析》 | 商务印书馆, 1986（知觉理论影响）
+
+  • 丹内特《自由的进化》 | 中信出版社, 2022（决定论与自由意志）`,
+      protagoras: `哲学家 Philosopher #55
+姓名 Name: 普罗泰戈拉 Protagoras（Πρωταγόρας ὁ Ἀβδηρίτης）
+生卒年 Lifespan: 约公元前490–420年 | 古希腊智者学派领袖，相对主义先驱
+学派 School: 智者学派（主张“人是万物的尺度”，发展修辞学与怀疑论）
+
+一、生平与历史背景
+
+1.1 游历智者的知识商人
+
+普罗泰戈拉出生于色雷斯阿布德拉城，早年师从德谟克利特学习自然哲学。后以职业教师身份周游希腊，传授辩论术与公民技艺，按学生进度收费，开创知识商品化先例。据柏拉图《普罗泰戈拉篇》记载，他在雅典传授“使较弱论证变强”的技艺，培养出伯里克利的政敌克里提亚。因著作《论神》开篇质疑神灵可知性，公元前415年被雅典法庭以“不敬神”罪名驱逐，著作当众焚毁，逃亡途中溺亡于西西里海峡。
+
+1.2 智者运动的精神旗帜
+
+作为首位自称“智者”（σοφιστής）的哲人，普罗泰戈拉推动哲学从自然研究转向人文领域：
+
+• 雅典民主的产物：公民诉讼与政治辩论需求催生修辞学教育。
+
+• 文化相对主义实践：通过观察不同城邦法律，提出“道德无绝对标准”。
+
+• 辩证术革新：发明“正反论证”（ἀντιλογία）训练法，奠定西方辩论传统。
+
+二、核心思想体系
+
+2.1 认识论相对主义
+
+普罗泰戈拉提出哲学史上首个系统相对主义命题：
+
+1. “人是万物的尺度”（πάντων χρημάτων μέτρον ἐστὶν ἄνθρωπος）：
+
+  • 个体感知即真理，冷热、美丑等性质取决于主体感受。
+
+  • 否定巴门尼德“真理唯一”，主张“每个现象都有两个相反逻各斯”。
+
+2. 真理的双重性：
+
+  • 强论证与弱论证皆可能合理，智者任务是展示观点的多面性。
+
+  • “关于神，我无法知道他们是否存在，因为问题晦涩而人生短暂”（《论神》残篇）。
+
+2.2 政治哲学与社会契约论
+
+• 法律人工性：法律（νόμος）非神授亦非自然，而是人类为避免互相毁灭的约定产物。
+
+• 德性可教论：政治德性（δικαιοσύνη）像制陶术一样可通过训练获得，贵族血统无先天优势。
+
+• 民主技艺：主张公民应掌握“谨慎”（εὐβουλία）——权衡短期利益与长期后果的能力。
+
+2.3 语言学与教育理论
+
+• 语法学奠基：区分名词性别与动词时态，分析句子成分的逻辑功能。
+
+• 记忆训练法：发明“位置记忆术”，通过将信息与空间场景关联增强记忆。
+
+• 教育平等观：天赋差异可通过努力弥补，“教育能在自然禀赋上创造第二自然”。
+
+三、思想传承与影响
+
+3.1 哲学史的双刃遗产
+
+• 怀疑论先驱：皮浪主义继承其真理相对性，但走向更极端的悬置判断。
+
+• 实用主义萌芽：威廉·詹姆斯称其为“原始实用主义者”，真理有效性在于生活后果。
+
+• 解构主义先声：德里达在《柏拉图的药》中重读普罗泰戈拉，视其为逻各斯中心主义的挑战者。
+
+3.2 社会科学的方法论启示
+
+• 人类学相对主义：博厄斯学派受其启发，主张文化价值不可跨文明评判。
+
+• 法律现实主义：霍姆斯“法律的生命在于经验而非逻辑”呼应其法律约定论。
+
+• 行为主义心理学：华生“环境塑造人性”承袭其德性可教论。
+
+3.3 跨文明对话与比较
+
+• 庄子“齐物论”：均强调认知相对性，但庄子主张“丧我”超越对立，普罗泰戈拉肯定主体性。
+
+• 佛教中观学派：龙树“八不中道”否定极端判断，与其“双重逻各斯”形成方法共鸣。
+
+• 波斯智者传统：琐罗亚斯德教“善恶二元”被其转化为相对视角下的选择问题。
+
+四、学术争议与批判
+
+4.1 古代哲学家的围攻
+
+• 柏拉图真理批判：《泰阿泰德篇》指责其理论导致“猪猡也是尺度”，摧毁客观知识基础。
+
+• 亚里士多德伦理批判：《尼各马可伦理学》批评相对主义使德性教育失去标准。
+
+• 斯多葛学派反击：克里西波斯用“共同理性”（κοινὸς λόγος）重建普遍道德律。
+
+4.2 现代哲学的重估
+
+• 相对主义悖论：若“一切皆相对”，该命题自身是否绝对？罗素指其自毁逻辑基础。
+
+• 民主政治困境：施特劳斯批评其理论助长民粹主义，使真理屈从多数人意见。
+
+• 后现代主义辩护：罗蒂认为其揭示“知识永远处于再语境化中”，为多元社会提供哲学支持。
+
+4.3 文本复原与历史重构
+
+• 焚书后的残篇困境：现存思想多经柏拉图戏剧化改写，尼采质疑对话录的客观性。
+
+• 智者形象污名化：19世纪格罗特（G. Grote）考证发现，智者实为民主制教育先锋。
+
+• 考古新证：1890年埃及出土纸草文献《匿名氏辩术》，显示其辩证法更近苏格拉底式探究。
+
+五、参考文献与原始文献
+
+1. 基础史料
+
+  • 柏拉图《普罗泰戈拉篇》 | 320c-328d
+
+  • 第欧根尼·拉尔修《名哲言行录》 | 第九卷第五十章
+
+  • 塞克斯都·恩披里克《皮浪学说纲要》 | 第一卷216-219节
+
+2. 现代研究
+
+  • 格思里《希腊哲学史》第三卷 | 剑桥大学出版社, 1971（P.262-333）
+
+  • 柯费尔德《智者运动》 | 加州大学出版社, 1981
+
+  • 罗米伊《普罗泰戈拉：相对主义的挑战》 | 芝加哥大学出版社, 1992
+
+3. 跨学科研究
+
+  • 格尔茨《文化的解释》 | 上海人民出版社, 1999（文化相对主义章节）
+
+  • 罗蒂《哲学与自然之镜》 | 商务印书馆, 2003（实用主义重估）
+
+  • 德里达《柏拉图的药》 | 吉林人民出版社, 2011（解构主义解读）`,
+      gorgias: `哲学家 Philosopher #56
+姓名 Name: 高尔吉亚 Gorgias（Γοργίας ὁ Λεοντῖνος）
+生卒年 Lifespan: 约公元前483–375年 | 古希腊修辞学之父，怀疑论智者
+学派 School: 智者学派（提出虚无主义三命题，发展修辞术为"说服的艺术"）
+
+一、生平与历史背景
+
+1.1 西西里诡辩家的雅典征服
+
+高尔吉亚出生于西西里莱昂蒂尼城，师从恩培多克勒学习修辞与哲学。公元前427年作为母邦使节出使雅典，以一场即兴演说震动雅典公民大会，成功争取对抗叙拉古的军事援助。其华丽辞藻与韵律节奏开创阿提卡修辞新风，被狄奥尼修斯称为"将语言炼金术带入野蛮的雅典"。晚年定居色萨利拉里萨，百岁高龄仍公开讲学，据卢奇安记载，他因厌食症自愿绝食而死，践行"灵魂不应受肉体奴役"的信条。
+
+1.2 修辞术的哲学化转型
+
+高尔吉亚将西西里法庭辩论术升华为普世性知识工具：
+
+• 修辞情境理论：区分政治演说（议会）、典礼演说（葬礼）与司法演说（法庭），制定不同说服策略。
+
+• 情感操控术：提出"悲剧净化"（κάθαρσις）概念，通过引发恐惧与怜悯操控观众判断。
+
+• 语言本体论：在《海伦颂》中宣称"语言是强大的君主，能以最小可见体完成最神圣工作"。
+
+二、核心思想体系
+
+2.1 虚无主义三命题（《论非存在》）
+
+1. 无物存在：
+
+  • 若存在者存在，则其或为永恒或为生成，但永恒者无始违背存在，生成者需从存在或非存在产生，两者皆不可能。
+
+  • 结论：存在与非存在皆不成立，故无物存在。
+
+2. 即使存在亦不可知：
+
+  • 思想与存在不同质（如想到飞马不等于飞马存在），故思想不能触及存在本身。
+
+  • "认知如同视觉，只能感知对象表象而非本质"。
+
+3. 即使可知亦不可传达：
+
+  • 语言符号（λόγος）与经验对象（πρᾶγμα）永远分离，听者只能理解词语的约定意义而非言者原意。
+
+  • "语言传达的只是语言本身，正如泻药排出的只是自身"。
+
+2.2 修辞术的四维结构
+
+1. 时机（καιρός）：把握最佳说服时刻，如雅典远征西西里前的危机感营造。
+
+2. 风格（λέξις）：首创排比、反诘、谐音等技巧，演说词如"你们赞美野兽的力量，却贬低智慧的力量！"
+
+3. 人格（ἦθος）：塑造可信赖的演说者形象，如自称为"真理的助产士"。
+
+4. 情感（πάθος）：利用恐惧（如波斯威胁）与希望（如民主理想）操控集体心理。
+
+2.3 怀疑论美学
+
+• 幻象哲学：在《海伦颂》中为特洛伊海伦辩护，称其被语言/爱欲/暴力所迫，揭示人类行为的非理性本质。
+
+• 相对主义伦理：主张"高尚与卑劣取决于观者立场"，否定柏拉图式绝对美德。
+
+• 虚无主义治疗：通过极端怀疑消解形而上焦虑，认为"承认无知是智慧的起点"。
+
+三、思想传承与影响
+
+3.1 修辞学传统的奠基
+
+• 伊索克拉底：继承其修辞教育体系，创办雅典第一所修辞学校。
+
+• 西塞罗：《论演说家》吸收其情境理论，发展出罗马修辞五艺（取材、布局、表达、记忆、呈现）。
+
+• 尼采：在《悲剧的诞生》中赞其为"古希腊酒神精神的修辞学化身"。
+
+3.2 哲学怀疑论的先声
+
+• 皮浪主义：塞克斯都·恩披里克称其三命题为"怀疑论的完美公式"。
+
+• 休谟：因果不可知论与高尔吉亚的存在不可知形成认识论呼应。
+
+• 解构主义：德里达在《论文字学》中引用其三命题，解构逻各斯中心主义。
+
+3.3 现代传播学的源头
+
+• 宣传理论：李普曼《公众舆论》中的"拟态环境"说受其幻象哲学启发。
+
+• 广告心理学：霍普金斯"恐惧诉求法"承袭其情感操控术。
+
+• 政治公关：伯奈斯《舆论的结晶》将修辞术转化为现代舆论引导技术。
+
+四、学术争议与批判
+
+4.1 古代道德批判
+
+• 柏拉图：在《高尔吉亚篇》中斥修辞术为"烹调术"，制造虚假共识腐蚀青年。
+
+• 亚里士多德：承认其修辞学贡献，但批评"过度强调风格忽视逻辑论证"。
+
+• 斯多葛学派：克里西波斯指责其三命题破坏社会道德根基。
+
+4.2 现代哲学重估
+
+• 实用主义辩护：罗蒂视其为"反本质主义英雄"，揭示语言游戏的约定性。
+
+• 分析哲学批判：蒯因称其"存在不可知论混淆语义与本体论层面"。
+
+• 存在主义解读：海德格尔弟子卡尔·洛维特认为其三命题预示"存在主义焦虑"。
+
+4.3 后现代主义的双重接受
+
+• 鲍德里亚：在《拟像与仿真》中发展其幻象理论，提出"超真实"概念。
+
+• 罗蒂：肯定其反基础主义，但反对"彻底虚无导致的公共话语瓦解"。
+
+• 女性主义：巴特勒借《安提戈涅》重读《海伦颂》，探讨性别话语的建构性。
+
+五、参考文献与原始文献
+
+1. 基础史料
+
+  • 《高尔吉亚残篇》DK 82 | B3（论非存在）、B11（海伦颂）
+
+  • 柏拉图《高尔吉亚篇》 | 447a-527e
+
+  • 亚里士多德《修辞学》 | 第三章1-9节
+
+2. 现代研究
+
+  • 昂格尔《高尔吉亚与怀疑论的诞生》 | 普林斯顿大学出版社, 2001
+
+  • 沃迪《高尔吉亚的哲学修辞学》 | 牛津大学出版社, 1999
+
+  • 康福特《智者运动》 | 加州大学出版社, 1988
+
+3. 跨学科研究
+
+  • 伯克《动机修辞学》 | 加州大学出版社, 1969（戏剧五位论分析）
+
+  • 麦克卢汉《理解媒介》 | 商务印书馆, 2000（修辞作为人的延伸）
+
+  • 巴特勒《安提戈涅的诉求》 | 三联书店, 2009（性别话语解构）`,
+      socrates: `哲学家 Philosopher #57
+姓名 Name: 苏格拉底 Socrates（Σωκράτης ὁ Ἀθηναῖος）
+生卒年 Lifespan: 公元前470–399年 | 古希腊哲学转折点，西方伦理哲学奠基者
+学派 School: 苏格拉底学派（以“无知之知”为核心，开创辩证问答法）
+
+一、生平与历史背景
+
+1.1 雅典石匠与哲学殉道者
+
+苏格拉底生于雅典阿洛佩克区，父亲为雕刻匠，母亲为助产妇。早年学习自然哲学，后转向人类事务研究。伯罗奔尼撒战争期间（公元前431-404年），他作为重装步兵参战，因在波提狄亚战役中救出阿尔西比亚德斯而闻名。战后拒绝参与三十僭主集团的暴政，坚持“宁受不义，不行不义”原则。公元前399年，被雅典公民法庭以“腐化青年”和“不敬城邦神”罪名判处死刑，饮鸩而亡，临终遗言：“分手的时候到了，我去死，你们去活，谁的去路好，唯有神知道。”
+
+1.2 城邦危机的哲学镜像
+
+苏格拉底的活动期正值雅典民主制衰落：
+
+• 伯里克利时代的终结：瘟疫与战争摧毁雅典道德自信，智者学派相对主义盛行。
+
+• 三十僭主暴政（公元前404-403年）：暴露民主制脆弱性，引发对政治德性的深刻反思。
+
+• 宗教权威解体：传统神谕体系受自然哲学冲击，公民信仰出现真空。
+
+在此背景下，苏格拉底将哲学从“天上”拉回“人间”，追问“人应该如何生活”。
+
+二、核心思想体系
+
+2.1 认识论的革命性转向
+
+1. 无知之知（ἡ εἰδὼς ὅτι οὐκ οἶδεν）：
+
+  • 德尔斐神谕称其为“最智慧者”，因他自知“人的智慧微不足道”。
+
+  • 通过诘问法暴露政治家、诗人、工匠的认知局限，揭示“真知需经理性检验”。
+
+2. 精神助产术（μαιευτική）：
+
+  • 继承母亲的助产技艺，通过问答引导对话者“生产”真理。
+
+  • 典型步骤：反讽（揭露矛盾）→ 定义（寻求本质）→ 归纳（提炼普遍）。
+
+3. 灵魂优先论：
+
+  • “未经省察的人生不值得活”，主张灵魂完善高于肉体享乐。
+
+  • 区分“意见”（δόξα）与“知识”（ἐπιστήμη），前者流变，后者永恒。
+
+2.2 伦理学的理性奠基
+
+1. 德性即知识（ἀρετὴ ἐπιστήμη ἐστί）：
+
+  • 无人自愿为恶，恶行源于无知，真知必导向善行。
+
+  • 勇敢、节制、正义等德性本质是智慧的不同面向。
+
+2. 知行合一说：
+
+  • “明知吸烟有害仍吸烟”在苏格拉底体系中不可能，因真知必引发行动。
+
+  • 意志薄弱（ἀκρασία）是认知缺陷的体现。
+
+3. 公民义务论：
+
+  • 在《克里同篇》中论证越狱非法，因公民默许法律即需服从判决。
+
+  • 主张“守法即正义”，即使面对不公判决。
+
+2.3 神学观的理性改造
+
+1. 内在神性（δαιμόνιον）：
+
+  • 自称受“神圣声音”指引，在关键抉择时发出否定性警告。
+
+  • 不同于传统神谕，强调内在道德直觉的理性维度。
+
+2. 目的论宇宙观：
+
+  • 批评阿那克萨戈拉未贯彻“努斯”目的论，主张宇宙为人类福祉设计。
+
+  • 眼睛有睫毛保护、人类直立行走等皆证明神意安排。
+
+3. 死亡观的超越：
+
+  • 或为无梦长眠（伊壁鸠鲁式解脱），或为灵魂不朽（柏拉图式轮回），二者皆善。
+
+三、思想传承与影响
+
+3.1 哲学传统的分水岭
+
+• 柏拉图主义：对话录将苏格拉底转化为理念论载体，构建两重世界体系。
+
+• 小苏格拉底学派：
+
+  ◦ 昔兰尼派（享乐主义）发展“善即快乐”说。
+
+  ◦ 犬儒派（安提斯泰尼）实践苦行主义，主张“德性自足”。
+
+  ◦ 麦加拉派（欧几里得）创立逻辑悖论传统。
+
+• 亚里士多德实践哲学：《尼各马可伦理学》继承德性可教论，发展中庸学说。
+
+3.2 西方文明的灵魂印记
+
+• 基督教思想：德尔图良称其为“雅典的基督”，奥古斯丁借鉴灵魂优先论。
+
+• 启蒙运动：康德“理性批判”延续其自知无知精神，伏尔泰借其批判宗教狂热。
+
+• 存在主义：克尔凯郭尔视其为“个体真理”的典范，加缪在《堕落》中重构审判场景。
+
+3.3 全球思想对话
+
+• 儒家对照：与孔子皆强调“知行合一”“启发式教学”，但苏氏拒绝对话者称师。
+
+• 印度禅宗：公案问答法类似苏氏诘问术，但目标在顿悟而非逻辑推演。
+
+• 阿拉伯哲学：阿尔法拉比在《柏拉图哲学》中融合苏格拉底与伊斯兰苏菲主义。
+
+四、学术争议与批判
+
+4.1 古代雅典的审判疑云
+
+• 真实指控原因：
+
+  ◦ 传统解释：报复其与阿尔西比亚德斯、克里提亚等争议人物的关联。
+
+  ◦ 新解（斯通《苏格拉底的审判》）：反对其质疑民主制根本原则。
+
+• 历史重构难题：
+
+  ◦ “两个苏格拉底”问题：柏拉图笔下的哲人 vs 阿里斯托芬《云》中的诡辩家。
+
+  ◦ 色诺芬《回忆录》的辩护是否弱化其思想锋芒？
+
+4.2 现代哲学的重审
+
+• 理性主义批判：尼采在《悲剧的诞生》中指责其用逻辑扼杀希腊悲剧精神。
+
+• 民主理论争议：波普尔《开放社会及其敌人》赞其为“个体理性守护者”，而芬利（M.I. Finley）认为其精英主义倾向危险。
+
+• 女性主义解读：沃斯通克拉夫特批评其对话排斥女性，但迪奥蒂玛（《会饮篇》）显示潜在包容性。
+
+4.3 方法论困境
+
+• 产婆术的暴力性：罗蒂指出诘问法可能导致对话者自尊受损，阻碍真理性探索。
+
+• 德性统一论漏洞：伯纳德·威廉姆斯质疑“知识必然导向善行”的经验有效性。
+
+• 历史真实性问题：格雷戈里·弗拉斯托斯（Gregory Vlastos）区分“历史苏格拉底”与“文学苏格拉底”。
+
+五、参考文献与原始文献
+
+1. 基础史料
+
+  • 柏拉图《申辩篇》《克里同篇》《斐多篇》 | 洛布古典丛书
+
+  • 色诺芬《回忆苏格拉底》《苏格拉底的申辩》 | 牛津世界经典版
+
+  • 阿里斯托芬《云》 | 罗布古典文库
+
+2. 现代研究
+
+  • 弗拉斯托斯《苏格拉底：讽刺家与道德哲学家》 | 剑桥大学出版社, 1991
+
+  • 泰勒《苏格拉底》 | 牛津大学出版社, 1998
+
+  • 内哈马斯《生活的艺术：苏格拉底的反讽与哲学》 | 哈佛大学出版社, 1998
+
+3. 跨学科研究
+
+  • 波普尔《开放社会及其敌人》第一卷 | 中国社会科学出版社, 1999
+
+  • 阿伦特《论暴力》 | 上海人民出版社, 2013（对话语暴力的分析）
+
+  • 纳斯鲍姆《善的脆弱性》 | 译林出版社, 2018（德性论比较）`,
+      plato: `哲学家 Philosopher #58
+姓名 Name: 柏拉图 Plato（Πλάτων ὁ Ἀθηναῖος）
+生卒年 Lifespan: 公元前428/427–348/347年 | 古希腊哲学巅峰，理念论创立者，学园派创始人
+学派 School: 柏拉图学派（理念论哲学，构建“两个世界”体系，奠定西方形而上学传统）
+
+一、生平与历史背景
+
+1.1 贵族青年的哲学觉醒
+
+柏拉图出生于雅典贵族世家，母系可溯至梭伦，父系据传为海神波塞冬后裔。青年时期热衷诗歌与政治，二十岁师从苏格拉底后焚毁诗稿，转向哲学。伯罗奔尼撒战争末期亲历雅典战败与三十僭主暴政（其舅父克里提亚为僭主之一），对民主制彻底失望。公元前399年苏格拉底之死成为其思想转折点，开始长达十二年的游历生涯，先后赴埃及、南意大利（接触毕达哥拉斯学派）与西西里（三访叙拉古试图实现“哲人王”理想未果）。
+
+1.2 学园派的建立与思想传播
+
+公元前387年，柏拉图在雅典城外创立学园（Ἀκαδήμεια），成为西方首个系统化高等教育机构。学园门楣刻“不懂几何者不得入内”，课程涵盖数学、辩证法、天文学与政治学，持续运作900余年直至529年被查士丁尼关闭。其弟子包括亚里士多德、色诺克拉底等，形成“老学园派”思想传统。晚年著《法律篇》，从理想国转向法治设计，标志思想从激进乌托邦向现实政治妥协。
+
+二、核心思想体系
+
+2.1 理念论（Theory of Forms）
+
+1. 两个世界划分：
+
+  • 可感世界：流动的现象界，通过感官感知的影像（εἰκόνες）。
+
+  • 可知世界：永恒的理念界，通过理性把握的原型（παραδείγματα）。
+
+2. 分有与模仿：
+
+  • 具体事物因分有（μέθεξις）理念而存在，如美的事物分有“美本身”。
+
+  • 工匠造床模仿“床的理念”，诗人写床模仿工匠，故艺术是“模仿的模仿”。
+
+3. 知识阶梯论：
+
+  • 认知从影像（εἰκασία）→信念（πίστις）→数理推论（διάνοια）→理性直观（νόησις）逐级上升，最终把握至善（τὸ ἀγαθόν）。
+
+2.2 政治哲学与灵魂学说
+
+1. 理想国三阶层：
+
+  • 统治者（理性）→智慧德性，哲学家通过“洞穴教育”摆脱蒙昧。
+
+  • 护卫者（激情）→勇敢德性，接受共产共妻的集体主义训练。
+
+  • 生产者（欲望）→节制德性，私有财产受严格限制。
+
+2. 灵魂三分说：
+
+  • 理性（λογιστικόν）追求真理，位于头部。
+
+  • 激情（θυμοειδές）追求荣誉，位于胸部。
+
+  • 欲望（ἐπιθυμητικόν）追求享乐，位于腹部。
+
+  • 正义即三部分各司其职，由理性统摄。
+
+3. 哲人王悖论：
+
+  • 真正的哲学家不愿统治，故需强制其返回洞穴执政，实现权力与智慧的痛苦结合。
+
+2.3 宇宙论与神学建构
+
+1. 《蒂迈欧篇》的宇宙模型：
+
+  • 造物主（δημιουργός）以理念为范型，将混沌物质（χώρα）塑造成有序宇宙。
+
+  • 世界灵魂（ψυχὴ κόσμου）由“同”与“异”混合而成，推动天体和谐运转。
+
+  • 时间作为“永恒的运动影像”，行星运动校准人类历法。
+
+2. 厄洛斯（Ἔρως）哲学：
+
+  • 在《会饮篇》中借第俄提玛之口，提出爱欲是从肉体美升华至理念美的阶梯。
+
+  • 哲学即“对智慧的爱欲”，通过辩证术实现灵魂的羽化登仙。
+
+3. 不朽论与轮回说：
+
+  • 《斐多篇》论证灵魂不朽：灵魂参与理念故永恒，学习即回忆（ἀνάμνησις）。
+
+  • 《理想国》末卷“厄尔神话”描述灵魂转世，业报法则影响来世命运。
+
+三、思想传承与影响
+
+3.1 哲学传统的塑造
+
+• 新柏拉图主义：普罗提诺将理念论发展为“太一流溢说”，影响奥古斯丁神学。
+
+• 基督教哲学：奥利金用理念论解释三位一体，托马斯·阿奎那整合亚里士多德时保留理念论框架。
+
+• 德国观念论：黑格尔辩证法继承柏拉图对话传统，谢林称“整个哲学史是对柏拉图的注脚”。
+
+3.2 科学人文的范式奠基
+
+• 数学哲学：学园强调几何训练，欧几里得《几何原本》成书于学园时期。
+
+• 政治乌托邦：莫尔《乌托邦》、康帕内拉《太阳城》皆受理想国启发。
+
+• 精神分析：弗洛伊德“本我-自我-超我”对应灵魂三分，拉康镜像阶段理论呼应洞穴比喻。
+
+3.3 跨文明的思想对话
+
+• 新儒家心学：王阳明“心即理”与理念论共享本体内在性，但拒斥两个世界划分。
+
+• 印度吠檀多：商羯罗“梵我如一”说与理念界的纯粹性形成形而上共鸣。
+
+• 伊斯兰哲学：法拉比《理想国释义》融合柏拉图政治学与伊斯兰教法，影响阿尔法拉比的政治哲学。
+
+四、学术争议与批判
+
+4.1 古代思想交锋
+
+• 亚里士多德批判：
+
+  ◦ 理念论导致“第三者悖论”：若具体人分有“人理念”，需预设更高理念解释人与理念的关系，无限倒退。
+
+  ◦ 理念作为实体无法解释运动变化，《物理学》用四因说取代理念因果论。
+
+• 智者学派反驳：高尔吉亚在《论非存在》中质疑理念可知性，普罗泰戈拉相对主义否定绝对理念存在。
+
+4.2 现代哲学重审
+
+• 分析哲学解构：罗素指理念论混淆谓词与实体，维特根斯坦《逻辑哲学论》称“可说的说清楚，不可说的保持沉默”暗讽理念界。
+
+• 存在主义挑战：克尔凯郭尔批评理念论压抑个体生存，萨特称“存在先于本质”颠覆理念优先性。
+
+• 后现代解构：德里达在《哲学的边缘》中揭示柏拉图“语音中心主义”，认为书写是对理念的堕落模仿。
+
+4.3 政治哲学的当代反思
+
+• 极权主义指控：波普尔《开放社会及其敌人》批判理想国压制自由，哲人王统治导致“知识暴力”。
+
+• 女性主义批判：沃斯通克拉夫特指理想国女性平等是工具性设计，未挑战性别本质主义。
+
+• 生态哲学审视：深层生态学批评理念论贬低自然，但怀特海过程哲学改造理念为“永恒客体”。
+
+五、参考文献与原始文献
+
+1. 基础史料
+
+  • 柏拉图全集（《理想国》《会饮篇》《斐多篇》《巴门尼德篇》《蒂迈欧篇》等） | 洛布古典丛书
+
+  • 第欧根尼·拉尔修《名哲言行录》 | 第三卷
+
+  • 亚里士多德《形而上学》 | 第一卷第六章
+
+2. 现代研究
+
+  • 康福德《柏拉图的宇宙论》 | 剑桥大学出版社, 1937
+
+  • 弗拉斯托斯《柏拉图研究》 | 普林斯顿大学出版社, 1973
+
+  • 泰勒《柏拉图：生平及其著作》 | 伦敦出版社, 1926
+
+3. 跨学科研究
+
+  • 波普尔《开放社会及其敌人》第一卷 | 中国社会科学出版社, 1999
+
+  • 沃格林《柏拉图与亚里士多德》 | 路易斯安那州立大学出版社, 1957
+
+  • 哈多特《作为生活方式的哲学》 | 哈佛大学出版社, 1995（学园派精神修炼研究）`,
+      aristotle: `哲学家 Philosopher #59
+姓名 Name: 亚里士多德 Aristotle（Ἀριστοτέλης ὁ Σταγειρίτης）
+生卒年 Lifespan: 公元前384–322年 | 古希腊百科全书式学者，逻辑学与实证科学奠基者
+学派 School: 逍遥学派（批判理念论，建立经验主义方法论，开创多学科体系化研究）
+
+一、生平与历史背景
+
+1.1 从马其顿宫廷到雅典学园
+
+亚里士多德出生于马其顿斯塔吉拉城，父亲为阿敏塔斯三世的御医。17岁进入柏拉图学园学习20年，被称为“学园之脑”。柏拉图逝世后游历小亚细亚，受赫尔米亚斯邀请建立阿索斯哲学圈。公元前343年应腓力二世之邀担任亚历山大导师，编写《荷马史诗》教材，灌输征服与文明的辩证思想。公元前335年重返雅典创办吕克昂学园，因惯于漫步讲学得名“逍遥学派”。亚历山大猝死后遭反马其顿势力迫害，逃亡优卑亚岛病逝，临终遗言“让雅典人再犯一次反哲学的罪”。
+
+1.2 知识体系的革命性重构
+
+面对柏拉图理念论与智者怀疑论的双重危机，亚里士多德开创知识分类学：
+
+• 理论科学（形而上学、数学、物理学）
+
+• 实践科学（伦理学、政治学）
+
+• 创制科学（诗学、修辞学）
+
+其方法论强调从现象（φαινόμενα）出发，通过归纳（ἐπαγωγή）与演绎（συλλογισμός）探求本质，奠定西方科学范式。
+
+二、核心思想体系
+
+2.1 形而上学：实体论与四因说
+
+1. 第一哲学（πρώτη φιλοσοφία）：
+
+  • 研究“作为存在的存在”（ὂν ᾗ ὄν），区分偶性（συμβεβηκός）与实体（οὐσία）。
+
+  • 实体分为个别实体（如苏格拉底）与次级实体（如“人”的种属）。
+
+2. 四因理论：
+
+  • 质料因（ὕλη）：青铜（雕像材料）
+
+  • 形式因（εἶδος）：雕像的设计理念
+
+  • 动力因（κίνησις）：雕刻家的动作
+
+  • 目的因（τέλος）：雕像的审美功能
+
+3. 潜能与现实（δύναμις-ἐνέργεια）：橡子潜在地是橡树，需经历现实化过程。
+
+2.2 自然哲学与宇宙模型
+
+1. 元素运动论：
+
+  • 月下世界由土、水、气、火构成，各有天然位置（土→中心，火→外围）。
+
+  • 天体由第五元素“以太”（αἰθήρ）构成，做完美圆周运动。
+
+2. 生物学贡献：
+
+  • 解剖50余种动物，发现鲸为胎生，提出“灵魂是身体的形式因”。
+
+  • 分类540种生物，按形态复杂度构建“自然阶梯”（Scala Naturae）。
+
+2.3 伦理学与政治学
+
+1. 幸福论（εὐδαιμονία）：
+
+  • 至善是“合乎德性的灵魂活动”，中庸（μεσότης）为美德核心，如勇敢介于鲁莽与怯懦之间。
+
+  • 沉思生活（βίος θεωρητικός）是最高幸福。
+
+2. 政体分类学：
+
+  • 正宗政体：君主制→贵族制→共和制
+
+  • 变态政体：僭主制→寡头制→民主制
+
+  • 主张混合政体（πολιτεία）平衡阶级利益。
+
+3. 悲剧净化说：
+
+  • 悲剧通过引发恐惧与怜悯（ἔλεος καὶ φόβος），实现情感净化（κάθαρσις）。
+
+三、思想传承与影响
+
+3.1 古代至中世的学术霸权
+
+• 希腊化时期：塞奥弗拉斯托继承其植物学研究，斯特拉波发展地理学体系。
+
+• 伊斯兰黄金时代：阿维森纳《治疗论》整合其哲学，阿威罗伊注释《形而上学》影响经院哲学。
+
+• 经院哲学顶峰：托马斯·阿奎那以“五路证明”融合亚里士多德与基督教神学，确立天主教学术正统。
+
+3.2 科学革命的复杂遗产
+
+• 物理学批判：伽利略斜面实验推翻“天然运动”说，牛顿力学否定以太宇宙。
+
+• 生物学复苏：林奈生物分类法受其启发，居维叶比较解剖学延续形式因研究。
+
+• 逻辑学奠基：《工具论》主导西方逻辑教学至19世纪，布尔代数革新其三段论。
+
+3.3 现代哲学的再诠释
+
+• 现象学：海德格尔解构其存在论，认为“遗忘存在”始于亚里士多德的实体中心主义。
+
+• 德性伦理学复兴：安斯康姆《现代道德哲学》呼吁回归亚里士多德传统，麦金太尔构建“德性之后”理论。
+
+• 分析哲学：罗素指其逻辑阻碍科学进步，但伯纳德·威廉姆斯重估其伦理学现实意义。
+
+四、学术争议与批判
+
+4.1 古代思想交锋
+
+• 柏拉图学派批判：理念论者攻击其经验主义忽视超越维度，普罗提诺指责“形式与质料不可分离”导致形上贫乏。
+
+• 伊壁鸠鲁学派反驳：卢克莱修《物性论》批判其目的论，主张原子随机运动解释自然。
+
+4.2 近现代科学挑战
+
+• 地心说崩溃：哥白尼革命摧毁其宇宙模型，伽利略望远镜观测证伪“月上界完美论”。
+
+• 进化论冲击：达尔文自然选择理论否定其静态物种观，摧毁“自然阶梯”目的论框架。
+
+4.3 伦理政治争议
+
+• 奴隶制辩护：认为“自然奴隶”（φύσει δοῦλοι）缺乏理性需被统治，遭启蒙思想家猛烈抨击。
+
+• 性别偏见：主张女性理性能力不全，被沃斯通克拉夫特《女权辩护》批为“哲学暴政”。
+
+• 民主批判：称民主制是“穷人的统治”，与现代价值观严重冲突。
+
+五、参考文献与原始文献
+
+1. 基础史料
+
+  • 《亚里士多德全集》（《形而上学》《尼各马可伦理学》《政治学》《物理学》） | 洛布古典丛书
+
+  • 第欧根尼·拉尔修《名哲言行录》 | 第五卷
+
+  • 托马斯·阿奎那《亚里士多德著作注释》 | 中世纪手抄本
+
+2. 现代研究
+
+  • W.D. Ross《亚里士多德》 | 伦敦出版社, 1923
+
+  • 耶格尔《亚里士多德：发展史纲要》 | 牛津大学出版社, 1934
+
+  • 努斯鲍姆《善的脆弱性》 | 剑桥大学出版社, 1986
+
+3. 跨学科研究
+
+  • 柯瓦雷《从封闭世界到无限宇宙》 | 芝加哥大学出版社, 1957（科学革命分析）
+
+  • 麦金太尔《追寻德性》 | 圣母大学出版社, 1981（伦理学复兴）
+
+  • 劳埃德《亚里士多德思想的成长》 | 加州大学出版社, 1968`,
+      epicurus: `哲学家 Philosopher #60
+姓名 Name: 伊壁鸠鲁 Epicurus（Ἐπίκουρος ὁ Σάμιος）
+生卒年 Lifespan: 公元前341–270年 | 希腊化时期原子论复兴者，快乐主义伦理学奠基人
+学派 School: 伊壁鸠鲁学派（主张“快乐即至善”，以原子论消解宗教恐惧，创建花园学派）
+
+一、生平与历史背景
+
+1.1 颠沛流离的哲学生涯
+
+伊壁鸠鲁生于萨摩斯岛的雅典殖民家庭，14岁接触德谟克利特著作，开启哲学启蒙。18岁赴雅典学习柏拉图学园与亚里士多德吕克昂学园，后因马其顿压迫迁居小亚细亚。35岁在米提利尼创办首个哲学团体，因遭驱逐转至兰普萨库斯建立学派核心。公元前306年重返雅典，购下带花园的宅邸（κῆπος），招收女性与奴隶成员，实践平等原则。临终遗言“记住，痛苦不会持久”，在肾绞痛中保持平静，弟子称其“以实践证明哲学可征服死亡”。
+
+1.2 花园学派的实践共同体
+
+伊壁鸠鲁花园（The Garden）成为希腊化时代精神避难所：
+
+• 平等原则：打破阶级与性别壁垒，妓女莱昂提乌姆作为女性哲学家参与讨论。
+
+• 简朴生活：以面包清水为食，主张“财富不在于占有，而在于需求稀少”。
+
+• 友谊至上：视友谊（φιλία）为最高快乐，学派成员互称“同志”（ἑταῖροι）。
+
+学派延续600余年，罗马时期卢克莱修、菲洛德穆等将其思想体系化。
+
+二、核心思想体系
+
+2.1 原子论的修正与发展
+
+1. 原子偏斜说（παρέγκλισις）：
+
+  • 原子在垂直下落中随机偏斜，产生碰撞与自由意志，破解德谟克利特决定论困境。
+
+  • “偏斜打破命运枷锁，允许我们成为命运的主宰”（卢克莱修《物性论》Ⅱ.216-293）。
+
+2. 感知理论革新：
+
+  • 物体持续放射原子膜（εἴδωλα），感官如筛子接收影像，错误源于传递干扰。
+
+  • 疼痛源于原子排列失衡，治疗需调节原子运动（如药物重整体液）。
+
+3. 有限宇宙论：
+
+  • 宇宙由原子与虚空构成，无限但非永恒，世界在生成与毁灭中循环。
+
+2.2 快乐主义伦理学
+
+1. 四重药方（τετραφάρμακος）：
+
+  • 神不足惧（ἄφοβον ὁ θεός）
+
+  • 死不足忧（ἀνύποπτον ὁ θάνατος）
+
+  • 善易得（τὸ ἀγαθὸν εὔκτητον）
+
+  • 恶易忍（τὸ δεινὸν εὐεκκαρτέρητον）
+
+2. 快乐等级论：
+
+  • 动态快乐：欲望满足的积极状态（如进食）。
+
+  • 静态快乐：痛苦消除后的平静（ἀταραξία）。
+
+  • 至善是“身体无痛苦，灵魂无纷扰”（VS 33）。
+
+3. 欲望分类学：
+
+  • 自然且必要：食物、庇护、友谊。
+
+  • 自然非必要：性欲、奢华饮食。
+
+  • 非自然非必要：权力、名声、财富。
+
+2.3 宗教批判与社会契约论
+
+1. 神学不可知论：
+
+  • 神由精细原子构成，居于星际间隙（μετακόσμια），不干预人世。
+
+  • 宗教恐惧源于“对自然现象的无知”（卢克莱修Ⅰ.62-79）。
+
+2. 社会契约起源：
+
+  • 法律为规避相互伤害的约定，正义随利益变化而调整。
+
+  • “自然正义不存在，只有避免受害的互惠协议”（《主要教义》第31-38条）。
+
+3. 死亡解构：
+
+  • “死亡与我们无关，因生时死亡未至，死时我已不在”（《致美诺西的信》）。
+
+三、思想传承与影响
+
+3.1 古代至中世的隐秘传承
+
+• 罗马花园学派：卢克莱修《物性论》以诗歌复兴原子论，菲洛德穆将享乐主义引入美学。
+
+• 基督教压制：德尔图良斥其为“猪的哲学”，但奥古斯丁青年时代曾受其吸引。
+
+• 阿拉伯保存：拉齐（al-Rāzī）在《哲学的生活方式》中吸收其医疗伦理观。
+
+3.2 近代启蒙与科学革命
+
+• 伽桑狄复兴：17世纪法国哲人伽桑狄以《论伊壁鸠鲁的生平与学说》对抗经院哲学。
+
+• 唯物主义奠基：马克思博士论文研究德谟克利特与伊壁鸠鲁差异，称后者为“古希腊最启蒙哲人”。
+
+• 功利主义先声：边沁“最大幸福原则”承袭其快乐计算法，但转向社会集体层面。
+
+3.3 现代哲学与跨文明对话
+
+• 存在主义共鸣：加缪《西西弗神话》以荒诞英雄呼应伊壁鸠鲁对命运的抗争。
+
+• 佛学比较：四圣谛“离苦得乐”与四重药方形似，但佛教否定欲望本质，伊壁鸠鲁主张理性满足。
+
+• 道家呼应：庄子“至乐无乐”与静态快乐相通，但伊壁鸠鲁更重经验主义实践。
+
+四、学术争议与批判
+
+4.1 古代哲学论战
+
+• 斯多葛学派批判：塞涅卡指责其“将人降格为感官动物”，忽视道德责任。
+
+• 柏拉图主义反驳：普鲁塔克《反科洛特》称享乐主义摧毁灵魂超越性。
+
+4.2 现代误读与澄清
+
+• 庸俗享乐污名：尼采误判其为“庸人哲学”，实则学派严格节制欲望。
+
+• 无神论争议：神作为原子集合体仍被后世无神论者尊为先驱，尽管其承认神存在。
+
+• 女性主义重估：花园学派收容女性被视为进步，但莱昂提乌姆仍被贬为“妓女哲人”。
+
+4.3 科学理论局限
+
+• 原子论过时：量子力学推翻原子不可分假设，但随机性原理延续偏斜说精神。
+
+• 心理学挑战：弗洛伊德揭示潜意识欲望远超理性控制，质疑静态快乐可行性。
+
+五、参考文献与原始文献
+
+1. 基础史料
+
+  • 第欧根尼·拉尔修《名哲言行录》 | 第十卷（含三封书信与主要教义）
+
+  • 卢克莱修《物性论》 | 洛布古典丛书
+
+  • 西塞罗《论至善与至恶》 | 第一卷
+
+2. 现代研究
+
+  • 德维特《伊壁鸠鲁与他的哲学》 | 明尼苏达大学出版社, 1954
+
+  • 朗&西德利《希腊化哲学家》 | 剑桥大学出版社, 1987
+
+  • 尼科尔《伊壁鸠鲁主义的宗教批判》 | 牛津大学出版社, 2020
+
+3. 跨学科研究
+
+  • 马克思《德谟克利特与伊壁鸠鲁自然哲学的差异》 | 柏林出版社, 1841
+
+  • 尼采《希腊悲剧时代的哲学》 | 商务印书馆, 1996（批判性章节）
+
+  • 哈达德《伊壁鸠鲁与道家》 | 夏威夷大学出版社, 2016`,
+      zeno_citium: `哲学家 Philosopher #61
+姓名 Name: 芝诺（西提乌姆的） Zeno of Citium（Ζήνων ὁ Κιτιεύς）
+生卒年 Lifespan: 约公元前334–262年 | 斯多葛学派创始人，自然法哲学先驱
+学派 School: 斯多葛学派（主张“顺应自然生活”，以理性统御激情，奠基世界主义伦理）
+
+一、生平与历史背景
+
+1.1 从商人到哲人的命运转折
+
+芝诺生于塞浦路斯西提乌姆的腓尼基商人家庭，早年随父经商。公元前312年，货船在雅典附近失事，滞留期间偶然阅读色诺芬《回忆苏格拉底》，遂放弃商业投身哲学。先后师从犬儒派的克拉底、麦加拉派的斯蒂尔波、学园派的波勒谟，融汇各派创立斯多葛学派。公元前301年在雅典彩廊（Στοὰ Ποικίλη）讲学，学派因此得名“斯多葛”（Stoic）。晚年拒接马其顿王安提柯二世邀请，以“哲人不宜侍奉君王”为由坚守雅典，临终饮蜜酒窒息而亡，践行“自然死亡”理念。
+
+1.2 雅典的精神堡垒
+
+在希腊化时代城邦衰微的背景下，芝诺将哲学重塑为个体灵魂堡垒：
+
+• 世界公民（κοσμοπολίτης）：突破雅典中心主义，主张“人类皆理性共同体成员”。
+
+• 女性教育：允许女性听课，女弟子希帕基娅成为斯多葛学派首位女性教师。
+
+• 奴隶解放：购买奴隶后立即释放，证明“自由是精神状态，无关法律身份”。
+
+二、核心思想体系
+
+2.1 哲学三分法架构
+
+1. 逻辑学（λογική）：
+
+  • 真理标准论：知觉（φαντασία）经理性认同（συγκατάθεσις）形成知识。
+
+  • 命题逻辑：提出假言推理与选言推理规则，影响早期形式逻辑发展。
+
+2. 物理学（φυσική）：
+
+  • 宇宙活火论：世界由神圣火元素（πῦρ τεχνικόν）驱动，经历周期性燃烧与重生。
+
+  • 普纽玛（πνεῦμα）理论：气与火的混合物构成生命动力，贯穿宇宙形成“同情共鸣”（συμπάθεια）。
+
+3. 伦理学（ἠθική）：
+
+  • 德性即幸福：智慧、勇敢、节制、正义四主德不可分割，唯德性（ἀρετή）具绝对价值。
+
+  • 情感控制术：激情（πάθος）是理性判断错误，需通过“无情”（ἀπάθεια）达至宁静（ἀταραξία）。
+
+2.2 自然法与世界主义
+
+1. 宇宙理性（λόγος）：
+
+  • 自然法即神法，人类法律应与之和谐，“违背自然的立法必败”（DL VII 88）。
+
+  • 命运（εἱμαρμένη）与自由统一：自由在于自觉顺应宇宙理性，如犬随马车。
+
+2. 社会政治哲学：
+
+  • 理想国构想：废除货币、婚姻与宗教，以理性替代传统制度（DL VII 33）。
+
+  • 世界城邦论：国家边界虚妄，“智者之邦无城墙”（普鲁塔克《论亚历山大的命运》329A）。
+
+2.3 实践智慧与精神训练
+
+1. 预先冥想（προμελέτη）：
+
+  • 每日预想贫困、流放、死亡等逆境，削弱其对心灵的冲击。
+
+2. 消极想象（ἀποχὴ）：
+
+  • 主动放弃舒适体验，如寒冬薄衫、粗食饮水，强化意志韧性。
+
+3. 角色伦理（πρόσωπον）：
+
+  • 每人皆承担多重角色（子女、公民、人类），需尽责而不执著结果。
+
+三、思想传承与影响
+
+3.1 古代哲学脉络
+
+• 中期斯多葛：克律西波斯系统化逻辑体系，波西多纽整合柏拉图主义。
+
+• 罗马斯多葛：塞涅卡的书信、爱比克泰德的《手册》、马可·奥勒留的《沉思录》构成实践哲学经典。
+
+• 基督教融合：保罗在雅典传教引用芝诺诗句（《使徒行传》17:28），克莱门特称其为“基督的先驱”。
+
+3.2 现代思想资源
+
+• 启蒙运动：莱布尼茨单子论受普纽玛启发，康德义务论吸收“责任先于情感”原则。
+
+• 心理治疗：阿尔伯特·埃利斯的理性情绪行为疗法（REBT）直接借鉴斯多葛认知重塑技术。
+
+• 生态哲学：深层生态学的“宇宙同情”概念呼应芝诺的普纽玛宇宙论。
+
+3.3 跨文明对话
+
+• 儒家对照：孟子“天爵人爵”之分类似德性至上论，但儒家更重社会伦理实践。
+
+• 佛学比较：四圣谛“离苦”路径与无情训练相通，但佛教主张破除我执而非强化理性。
+
+• 印度耆那教：“非暴力”（Ahimsa）伦理与斯多葛世界主义形成精神共鸣。
+
+四、学术争议与批判
+
+4.1 古代批评与辩护
+
+• 学园派质疑：卡尔涅阿德指其决定论消解道德责任，克律西波斯以“共同命运”理论回应。
+
+• 伊壁鸠鲁派对立：卢克莱修批判宇宙循环论制造无谓焦虑，主张享受现世快乐。
+
+• 犬儒派分歧：第欧根尼斥其保留财产制度妥协，但芝诺坚持“德性需物质基础”。
+
+4.2 现代哲学反思
+
+• 情感压抑批判：尼采指其“将人性阉割为逻辑机器”，存在主义强调激情对生存的意义。
+
+• 精英主义指控：罗尔斯批评其世界主义忽视弱势群体特殊需求，需制度正义补充。
+
+• 科学证伪挑战：宇宙活火论被热力学定律推翻，但作为隐喻仍具生态启示。
+
+4.3 文本传承困境
+
+• 著作湮灭：芝诺全部作品失传，仅存300余条残篇，依赖第欧根尼·拉尔修与西塞罗转述。
+
+• 学派演变混淆：罗马时期实践转向常被误植为芝诺原意，需严格区分不同阶段思想。
+
+五、参考文献与原始文献
+
+1. 基础史料
+
+  • 第欧根尼·拉尔修《名哲言行录》 | 第七卷
+
+  • 西塞罗《论神性》《论义务》 | 洛布古典丛书
+
+  • 普鲁塔克《论斯多葛的矛盾》 | 洛布古典丛书
+
+2. 现代研究
+
+  • 朗《希腊化哲学》 | 加州大学出版社, 2006
+
+  • 塞拉斯《斯多葛主义》 | 加州大学出版社, 2006
+
+  • 贝克《芝诺与斯多葛学派起源》 | 剑桥大学出版社, 1997
+
+3. 跨学科研究
+
+  • 贝克《斯多葛主义与现代心理学》 | 牛津大学出版社, 2013
+
+  • 纳斯鲍姆《治疗的欲望》 | 哈佛大学出版社, 1994（哲学与心理治疗）
+
+  • 阿多《古代哲学的智慧》 | 哈佛大学出版社, 2002（精神修炼比较）`,
+      chrysippus: `哲学家 Philosopher #62
+姓名 Name: 克律西波斯 Chrysippus（Χρύσιππος ὁ Σολεύς）
+生卒年 Lifespan: 约公元前279–206年 | 斯多葛学派体系化者，逻辑学巨擘
+学派 School: 斯多葛学派（深化芝诺思想，构建系统化逻辑学与伦理学，奠定学派正统地位）
+
+一、生平与历史背景
+
+1.1 从体育健将到哲学巨匠
+
+克律西波斯生于小亚细亚索利的希腊化城邦，早年作为长跑运动员闻名。25岁赴雅典学习哲学，先入学园派批判斯多葛学说，后受克里安塞斯（Cleanthes）感召加入斯多葛学派。因其逻辑天赋被称“学派第二创始人”，据第欧根尼·拉尔修记载，他每日写作500行，留下705部著作（无一完整传世）。传说因饮未掺水葡萄酒暴毙，或见驴吃无花果大笑而亡，临终戏言“我早准备好应对此类荒谬”。
+
+1.2 学派危机的拯救者
+
+公元前230年克里安塞斯去世后，斯多葛学派面临学园派卡尔涅阿德的激烈批判。克律西波斯重整教义：
+
+• 逻辑防御工事：发展命题逻辑抵御怀疑论攻击，确立“无逻辑则无哲学”原则。
+
+• 教义标准化：将芝诺思想系统化为逻辑学、物理学、伦理学三位一体结构。
+
+• 文本注释传统：撰写《论宙斯》《论义务》等评注，确立学派经典解释框架。
+
+二、核心思想体系
+
+2.1 逻辑学革命
+
+1. 命题逻辑奠基：
+
+  • 区分简单命题（“苏格拉底走路”）与复合命题（“若下雨，则地湿”），首创蕴含（συνημμένον）、合取（σύμπλεγμα）、析取（διεζευγμένον）等联结词分析。
+
+  • 提出五大基本推理规则（不可证式），如“若第一则第二；现第一；故第二”（Modus Ponens）。
+
+2. 语义理论：
+
+  • 词语（λέξις）指向外部对象（σημαινόμενον），命题真值取决于事物状态（πρᾶγμα）。
+
+  • 解决“说谎者悖论”：“我在说谎”因自我指涉导致真值不定，非严格命题。
+
+2.2 物理学与决定论
+
+1. 因果链条论：
+
+  • 宇宙被命运（εἱμαρμένη）的因果网笼罩，但人类可通过“认同”（συγκατάθεσις）实现自由。
+
+  • 类比狗拴马车：狗可选择跟随方向（自由），但总被马车拖动（命运）。
+
+2. 普纽玛（πνεῦμα）层级：
+
+  • 凝聚态（ἕξις）：石头等无机物的维持力。
+
+  • 生命态（φύσις）：植物的生长力。
+
+  • 灵魂态（ψυχή）：动物的感知与运动。
+
+  • 理性态（λόγος）：人类的思维能力。
+
+2.3 伦理学精微化
+
+1. 情感病理学：
+
+  • 激情（πάθος）是“过度的冲动”，分四类：痛苦、恐惧、欲望、快乐。
+
+  • 治疗术：通过逻辑分析揭穿错误价值判断（如“财富即善”）。
+
+2. 义务论（καθῆκον）：
+
+  • 区分“恰当行为”（如赡养父母）与“完美行为”（出于完全理性的孝道）。
+
+  • 提出“角色伦理学”：人应履行作为公民、父母、朋友的多重职责。
+
+三、思想传承与影响
+
+3.1 斯多葛学派的正统化
+
+• 教科书体系：其著作成为学派标准教材，波西多纽（Posidonius）称“若无克律西波斯，斯多葛学派早灭亡”。
+
+• 罗马法精神：西塞罗《论义务》吸收其角色伦理，影响罗马自然法思想。
+
+• 基督教预备：奥利金借用普纽玛理论解释圣灵，德尔图良赞其决定论彰显神意。
+
+3.2 逻辑学历史坐标
+
+• 中世纪经院哲学：彼得·阿伯拉尔重新发现其命题逻辑，影响托马斯·阿奎那三段论体系。
+
+• 现代逻辑复兴：弗雷格《概念文字》部分实现其“逻辑语言”理想，卢卡西维茨研究斯多葛逻辑史。
+
+• 分析哲学先驱：维特根斯坦《逻辑哲学论》中的真值函项论与克律西波斯联结词分析遥相呼应。
+
+3.3 跨学科启示
+
+• 认知行为疗法（CBT）：阿尔伯特·埃利斯借鉴其情感理论，发展“理性情绪疗法”。
+
+• 人工智能：命题逻辑成为计算机逻辑门设计基础，乔姆斯基谓其语法理论影响生成语法。
+
+• 法律解释学：德沃金“法律完整性”理论暗含克律西波斯体系化思维。
+
+四、学术争议与批判
+
+4.1 古代哲学交锋
+
+• 学园派攻击：卡尔涅阿德称其决定论导致“懒惰论证”（既然命运已定，努力无意义），克律西波斯反驳“原因链包含个体选择”。
+
+• 伊壁鸠鲁派讥讽：卢克莱修批评其逻辑学“用词语迷雾遮蔽自然之光”，菲洛德穆指其伦理学压抑人性。
+
+4.2 现代哲学反思
+
+• 自由意志难题：萨特指责其“相容论”虚伪，认为命运与自由根本对立。
+
+• 逻辑局限性：哥德尔不完备定理揭示形式系统内在限制，间接质疑其逻辑绝对主义。
+
+• 体系封闭性：波普尔批评其决定论阻碍科学猜想，但承认其体系化思维推动知识进步。
+
+4.3 文本复原挑战
+
+• 残篇拼图困境：现存2000余条残篇散见普鲁塔克、西塞罗等著作，需排除敌对学派曲解。
+
+• 阐释分歧：朗（A.A. Long）与塞拉斯（J. Sellars）对其“认同自由论”是否包含现代意志概念争论不休。
+
+五、参考文献与原始文献
+
+1. 基础史料
+
+  • 普鲁塔克《论斯多葛的矛盾》 | 洛布古典丛书
+
+  • 西塞罗《论命运》《论神性》 | 洛布古典丛书
+
+  • 盖伦《论希波克拉底与柏拉图的学说》 | 柏林本, 1821
+
+2. 现代研究
+
+  • 弗雷德《克律西波斯的逻辑学》 | 加州大学出版社, 1978
+
+  • 塞拉斯《斯多葛主义》 | 加州大学出版社, 2006
+
+  • 古尔德《克律西波斯的体系》 | 剑桥大学出版社, 1970
+
+3. 跨学科研究
+
+  • 德雷尔《古代逻辑与现代解释》 | 牛津大学出版社, 2012
+
+  • 贝克《哲学咨询与斯多葛传统》 | 施普林格出版社, 2013
+
+  • 哈多特《哲学作为一种生活方式》 | 布莱克威尔出版社, 1995`,
+    };
+    const quotes = [
+      "「哲学的任务，不在于给出答案，而在于澄清问题。」",
+      "「最深的黑暗处，往往藏着最锋利的问题。」",
+      "「思想的工作，是为概念找到恰当的位置。」",
+      "「我们所看到的世界，部分是世界，部分是看世界的方式。」",
+    ];
+    function pickQuote() {
+      const el = document.getElementById("todayQuote");
+      if (!el) return;
+      const idx = Math.floor(Math.random() * quotes.length);
+      el.textContent = quotes[idx];
+    }
+    // ===== 搜索结果渲染 =====
+    const resultListEl = document.getElementById("resultList");
+    const philosopherDetailEl = document.getElementById("philosopherDetail");
+    const homeViewEl = document.getElementById("homeView");
+    const appViewEl = document.getElementById("appView");
+    const homeSearchInputEl = document.getElementById("homeSearchInput");
+    const homeSearchBtnEl = document.getElementById("homeSearchBtn");
+    const homeRecoListEl = document.getElementById("homeRecoList");
+    const searchInputEl = document.getElementById("searchInput");
+    const searchBtnEl = document.getElementById("searchBtn");
+    const searchSummaryEl = document.getElementById("searchSummary");
+    const categoryChipsEl = document.getElementById("categoryChips");
+    let activeCategory = "all";
+    let activeEntryId = "confucius";
+
+    function showHomeView() {
+      if (homeViewEl && appViewEl) {
+        homeViewEl.classList.remove("view-hidden");
+        appViewEl.classList.add("view-hidden");
+      }
+      showListView();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function showAppView() {
+      if (homeViewEl && appViewEl) {
+        homeViewEl.classList.add("view-hidden");
+        appViewEl.classList.remove("view-hidden");
+      }
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+    function filterEntries(query, category) {
+      const q = (query || "").trim().toLowerCase();
+      return entries.filter((e) => {
+        if (category === "by_school") {
+          if (e.type !== "philosopher") return false;
+          if (!q) return true;
+          const parts = (e.subtitle || "").split("·").map((s) => s.trim());
+          const schoolPart = parts.length >= 2 ? parts[1] : e.subtitle || "";
+          return schoolPart.toLowerCase().includes(q);
+        }
+        if (category === "by_work") {
+          if (e.type !== "philosopher") return false;
+          const detail = philosopherDetails[e.id];
+          if (!detail) return false;
+          if (!q) return true;
+          const withBrackets = q.includes("《") ? q : "《" + q + "》";
+          return detail.includes(withBrackets);
+        }
+        if (category !== "all" && e.type !== category) {
+          return false;
+        }
+        if (!q) return true;
+        const haystack = [
+          e.title,
+          e.subtitle,
+          e.quote,
+          ...(e.tags || []),
+        ]
+          .join(" ")
+          .toLowerCase();
+        return haystack.includes(q);
+      });
+    }
+
+    function showListView() {
+      if (resultListEl) {
+        resultListEl.classList.remove("view-hidden");
+      }
+      if (philosopherDetailEl) {
+        philosopherDetailEl.classList.add("view-hidden");
+      }
+    }
+
+    function showPhilosopherDetail(entryId) {
+      const entry = entryById[entryId];
+      if (!entry || !philosopherDetailEl) return;
+      const full = philosopherDetails[entryId];
+      if (!full) {
+        // 若没有完整资料，就退回只设为导图中心
+        setActiveEntry(entryId);
+        return;
+      }
+      activeEntryId = entryId;
+      setActiveEntry(entryId);
+      if (resultListEl) {
+        resultListEl.classList.add("view-hidden");
+      }
+      philosopherDetailEl.classList.remove("view-hidden");
+      philosopherDetailEl.innerHTML = "";
+
+      const header = document.createElement("div");
+      header.className = "detail-header-row";
+
+      const title = document.createElement("div");
+      title.className = "detail-title";
+      title.textContent = entry.title;
+
+      const backBtn = document.createElement("button");
+      backBtn.type = "button";
+      backBtn.className = "icon-button";
+      backBtn.title = "返回搜索结果";
+      backBtn.textContent = "←";
+      backBtn.addEventListener("click", () => {
+        showListView();
+      });
+
+      header.appendChild(title);
+      header.appendChild(backBtn);
+
+      const pre = document.createElement("pre");
+      pre.className = "detail-pre";
+      pre.textContent = full;
+
+      philosopherDetailEl.appendChild(header);
+      philosopherDetailEl.appendChild(pre);
+    }
+
+    function renderResults(list) {
+      resultListEl.innerHTML = "";
+      list.forEach((entry) => {
+        const card = document.createElement("article");
+        card.className = "result-card" + (entry.id === activeEntryId ? " active" : "");
+        card.dataset.entryId = entry.id;
+        const titleRow = document.createElement("div");
+        titleRow.className = "result-title-row";
+        const title = document.createElement("div");
+        title.className = "result-title";
+        title.textContent = entry.title;
+        const tag = document.createElement("span");
+        tag.className = "result-tag";
+        tag.textContent =
+          entry.type === "philosopher"
+            ? "PHILOSOPHER"
+            : entry.type === "concept"
+            ? "CONCEPT"
+            : entry.type === "school"
+            ? "SCHOOL"
+            : "WORK";
+        titleRow.appendChild(title);
+        titleRow.appendChild(tag);
+        const meta = document.createElement("div");
+        meta.className = "result-meta";
+        const parts = entry.subtitle.split("·").map((s) => s.trim());
+        parts.forEach((p) => {
+          const span = document.createElement("span");
+          span.textContent = p;
+          meta.appendChild(span);
+        });
+        const quote = document.createElement("div");
+        quote.className = "result-quote";
+        quote.textContent = "「" + entry.quote + "」";
+        const actions = document.createElement("div");
+        actions.className = "result-actions";
+        const link1 = document.createElement("button");
+        link1.className = "link-button";
+        link1.type = "button";
+        link1.textContent = "设为导图中心";
+        link1.addEventListener("click", (e) => {
+          e.stopPropagation();
+          setActiveEntry(entry.id);
+        });
+        const link2 = document.createElement("button");
+        link2.className = "link-button";
+        link2.type = "button";
+        link2.textContent = "展开更多关系（预留）";
+        actions.appendChild(link1);
+        actions.appendChild(link2);
+        card.appendChild(titleRow);
+        card.appendChild(meta);
+        card.appendChild(quote);
+        card.appendChild(actions);
+        card.addEventListener("click", () => {
+          showPhilosopherDetail(entry.id);
+        });
+        resultListEl.appendChild(card);
+      });
+      searchSummaryEl.innerHTML =
+        "当前匹配到 <strong>" + list.length + "</strong> 条条目";
+    }
+    function performSearch() {
+      const query = searchInputEl.value;
+      const list = filterEntries(query, activeCategory);
+      showListView();
+      renderResults(list);
+    }
+    // 分类 chip 交互
+    function updateSearchPlaceholder() {
+      if (!searchInputEl) return;
+      if (activeCategory === "by_school") {
+        searchInputEl.placeholder = "输入流派名，如：理学、心学、今文经学…";
+      } else if (activeCategory === "by_work") {
+        searchInputEl.placeholder = "输入著作名（书名号内），如：论语、道德经、仁学…";
+      } else {
+        searchInputEl.placeholder = "搜索哲学家、概念、问题或著作…";
+      }
+    }
+    categoryChipsEl.addEventListener("click", (e) => {
+      const chip = e.target.closest(".chip");
+      if (!chip) return;
+      activeCategory = chip.dataset.category || "all";
+      [...categoryChipsEl.querySelectorAll(".chip")].forEach((c) =>
+        c.classList.toggle("active", c === chip),
+      );
+      updateSearchPlaceholder();
+      performSearch();
+    });
+    searchBtnEl.addEventListener("click", () => {
+      showAppView();
+      performSearch();
+    });
+    searchInputEl.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        showAppView();
+        performSearch();
+      }
+    });
+
+    // 首页搜索触发：从首页切换到搜索+导图页
+    function triggerSearchFromHome() {
+      if (!homeSearchInputEl) return;
+      const q = (homeSearchInputEl.value || "").trim();
+      if (!q) {
+        homeSearchInputEl.focus();
+        return;
+      }
+      searchInputEl.value = q;
+      showAppView();
+      performSearch();
+    }
+
+    if (homeSearchBtnEl && homeSearchInputEl) {
+      homeSearchBtnEl.addEventListener("click", triggerSearchFromHome);
+      homeSearchInputEl.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          triggerSearchFromHome();
+        }
+      });
+    }
+
+    // 首页今日推荐哲学家
+    function renderHomeRecommendations() {
+      if (!homeRecoListEl) return;
+      homeRecoListEl.innerHTML = "";
+      const philosophers = entries.filter((e) => e.type === "philosopher");
+      const list = philosophers.length ? philosophers : entries;
+      list.forEach((entry, index) => {
+        const card = document.createElement("article");
+        card.className = "home-reco-card";
+        card.style.transitionDelay = index * 40 + "ms";
+
+        const name = document.createElement("div");
+        name.className = "home-reco-name";
+        name.textContent = entry.title;
+
+        const meta = document.createElement("div");
+        meta.className = "home-reco-meta";
+        const parts = entry.subtitle.split("·").map((s) => s.trim());
+        parts.forEach((p) => {
+          const span = document.createElement("span");
+          span.textContent = p;
+          meta.appendChild(span);
+        });
+
+        const quote = document.createElement("div");
+        quote.className = "home-reco-quote";
+        quote.textContent = "「" + entry.quote + "」";
+
+        card.appendChild(name);
+        card.appendChild(meta);
+        card.appendChild(quote);
+
+        card.addEventListener("click", () => {
+          searchInputEl.value = entry.title;
+          showAppView();
+          performSearch();
+          setActiveEntry(entry.id);
+        });
+
+        homeRecoListEl.appendChild(card);
+      });
+    }
+    // ===== 思维导图渲染（简单辐射布局） =====
+    const mapTitleSubEl = document.getElementById("mapTitleSub");
+    const mapDepthLabelEl = document.getElementById("mapDepthLabel");
+    const centerSummaryEl = document.getElementById("centerSummary");
+    const mindmapSvg = document.getElementById("mindmapSvg");
+    const recenterBtn = document.getElementById("recenterBtn");
+    let dragState = null;
+    function clearMindmap() {
+      while (mindmapSvg.firstChild) {
+        mindmapSvg.removeChild(mindmapSvg.firstChild);
+      }
+    }
+    function createSvgElement(tag, attrs) {
+      const el = document.createElementNS("http://www.w3.org/2000/svg", tag);
+      for (const [k, v] of Object.entries(attrs || {})) {
+        el.setAttribute(k, v);
+      }
+      return el;
+    }
+    function computeLayout(width, height, levels) {
+      const cx = width / 2;
+      const cy = height / 2;
+      const radiusStep = Math.min(width, height) / (2.5 * levels);
+      return { cx, cy, radiusStep };
+    }
+    function setActiveEntry(entryId) {
+      activeEntryId = entryId;
+      const entry = entryById[entryId];
+      if (!entry) return;
+      // 更新结果列表高亮
+      [...document.querySelectorAll(".result-card")].forEach((card) => {
+        card.classList.toggle(
+          "active",
+          card.dataset.entryId === entryId,
+        );
+      });
+      // 更新面板文案
+      mapTitleSubEl.textContent = "当前中心：" + entry.title;
+      centerSummaryEl.innerHTML =
+        "<strong>" +
+        entry.title +
+        "</strong>：" +
+        (entry.centerSummary || entry.quote || "关系说明预留。");
+      renderMindmap(entryId);
+    }
+    function collectNeighborIds(centerId) {
+      const center = entryById[centerId];
+      if (!center) return { firstRing: [], secondRing: [] };
+      const ring1Set = new Set();
+      const ring2Set = new Set();
+      // 中心条目的 relations
+      if (center.relations) {
+        for (const key of Object.keys(center.relations)) {
+          (center.relations[key] || []).forEach((id) => ring1Set.add(id));
+        }
+      }
+      // 反向：谁指向了 center
+      entries.forEach((e) => {
+        if (!e.relations) return;
+        for (const key of Object.keys(e.relations)) {
+          if ((e.relations[key] || []).includes(centerId)) {
+            ring1Set.add(e.id);
+          }
+        }
+      });
+      // 第二圈：与第一圈相连、但不在第一圈和中心中的
+      ring1Set.forEach((id) => {
+        const node = entryById[id];
+        if (!node || !node.relations) return;
+        for (const key of Object.keys(node.relations)) {
+          (node.relations[key] || []).forEach((nid) => {
+            if (nid !== centerId && !ring1Set.has(nid)) {
+              ring2Set.add(nid);
+            }
+          });
+        }
+      });
+      return {
+        firstRing: [...ring1Set].filter((id) => entryById[id]),
+        secondRing: [...ring2Set].filter((id) => entryById[id]),
+      };
+    }
+    function relationType(a, b) {
+      const A = entryById[a];
+      const B = entryById[b];
+      if (!A || !B) return "related";
+      const relA = A.relations || {};
+      const relB = B.relations || {};
+      if (
+        (relA.influences || []).includes(b) ||
+        (relB.influencedBy || []).includes(a)
+      ) {
+        return "influences";
+      }
+      if (
+        (relA.influencedBy || []).includes(b) ||
+        (relB.influences || []).includes(a)
+      ) {
+        return "influencedBy";
+      }
+      return "related";
+    }
+    function renderMindmap(centerId) {
+      const bbox = mindmapSvg.getBoundingClientRect();
+      const width = bbox.width || 600;
+      const height = bbox.height || 360;
+      clearMindmap();
+      mindmapSvg.setAttribute("viewBox", `0 0 ${width} ${height}`);
+      mindmapSvg.style.cursor = "grab";
+      const { cx, cy, radiusStep } = computeLayout(width, height, 3);
+      const neighbors = collectNeighborIds(centerId);
+      const firstRing = neighbors.firstRing;
+      const secondRing = neighbors.secondRing;
+      mapDepthLabelEl.textContent = secondRing.length ? "两到三层" : "两层";
+      const nodesPos = {};
+      // 中心节点
+      nodesPos[centerId] = { x: cx, y: cy };
+      // 第一圈：均匀分布
+      const ring1Radius = radiusStep * 1.6;
+      firstRing.forEach((id, index) => {
+        const angle = (2 * Math.PI * index) / Math.max(firstRing.length, 1);
+        const x = cx + ring1Radius * Math.cos(angle);
+        const y = cy + ring1Radius * Math.sin(angle) * 0.85;
+        nodesPos[id] = { x, y };
+      });
+      // 第二圈：围绕第一圈再分布
+      const ring2Radius = radiusStep * 2.7;
+      secondRing.forEach((id, index) => {
+        const angle = (2 * Math.PI * index) / Math.max(secondRing.length, 1);
+        const x = cx + ring2Radius * Math.cos(angle);
+        const y = cy + ring2Radius * Math.sin(angle) * 0.9;
+        nodesPos[id] = { x, y };
+      });
+      // 连线
+      function drawLine(sourceId, targetId) {
+        const a = nodesPos[sourceId];
+        const b = nodesPos[targetId];
+        if (!a || !b) return;
+        const type = relationType(sourceId, targetId);
+        const isInfluence = type === "influences" || type === "influencedBy";
+        const line = createSvgElement("line", {
+          x1: a.x,
+          y1: a.y,
+          x2: b.x,
+          y2: b.y,
+          stroke:
+            type === "influences"
+              ? "rgba(200,169,106,0.85)"
+              : type === "influencedBy"
+              ? "rgba(111,197,169,0.85)"
+              : "rgba(129,136,164,0.62)",
+          "stroke-width": isInfluence ? 1.6 : 1,
+          "stroke-linecap": "round",
+          "stroke-dasharray": type === "related" ? "2.6 3.2" : "none",
+          opacity: type === "related" ? 0.7 : 0.9,
+        });
+        mindmapSvg.appendChild(line);
+      }
+      // 中心与第一圈
+      firstRing.forEach((id) => drawLine(centerId, id));
+      // 第一圈与第二圈
+      secondRing.forEach((id) => {
+        const node = entryById[id];
+        if (!node || !node.relations) return;
+        const rels = new Set();
+        Object.values(node.relations).forEach((arr) =>
+          arr.forEach((x) => rels.add(x)),
+        );
+        rels.forEach((rid) => {
+          if (firstRing.includes(rid)) {
+            drawLine(id, rid);
+          }
+        });
+      });
+      // 节点
+      function nodeColor(entry, isCenter) {
+        if (isCenter) return "rgba(200,169,106,0.98)";
+        switch (entry.type) {
+          case "philosopher":
+            return "rgba(200,169,106,0.85)";
+          case "concept":
+            return "rgba(111,197,169,0.92)";
+          case "school":
+            return "rgba(158,171,210,0.86)";
+          case "work":
+          default:
+            return "rgba(219,182,164,0.9)";
+        }
+      }
+      function nodeRadius(entry, isCenter) {
+        if (isCenter) return 16;
+        switch (entry.type) {
+          case "philosopher":
+            return 10;
+          case "concept":
+            return 9;
+          case "school":
+            return 11;
+          case "work":
+          default:
+            return 8;
+        }
+      }
+      function drawNode(id) {
+        const pos = nodesPos[id];
+        const entry = entryById[id];
+        if (!pos || !entry) return;
+        const isCenter = id === centerId;
+        const glow = createSvgElement("circle", {
+          cx: pos.x,
+          cy: pos.y,
+          r: nodeRadius(entry, isCenter) * (isCenter ? 2.1 : 1.9),
+          fill:
+            isCenter && entry.type === "concept"
+              ? "rgba(200,169,106,0.38)"
+              : "rgba(60,184,152,0.24)",
+          opacity: 0.9,
+        });
+        const circle = createSvgElement("circle", {
+          cx: pos.x,
+          cy: pos.y,
+          r: nodeRadius(entry, isCenter),
+          fill: nodeColor(entry, isCenter),
+          stroke: "rgba(7,9,14,0.9)",
+          "stroke-width": 1.4,
+        });
+        const label = createSvgElement("text", {
+          x: pos.x,
+          y: pos.y + (isCenter ? 30 : 22),
+          "text-anchor": "middle",
+          "font-size": isCenter ? 11 : 9.5,
+          fill: isCenter ? "#14313b" : "#264653",
+          "font-family":
+            '"Songti SC","Noto Serif SC","Source Han Serif SC","SimSun","Times New Roman",serif',
+        });
+        label.textContent = entry.title;
+        const group = createSvgElement("g", {
+          "data-id": id,
+        });
+        group.appendChild(glow);
+        group.appendChild(circle);
+        group.appendChild(label);
+        group.style.cursor = "pointer";
+        group.addEventListener("click", (e) => {
+          e.stopPropagation();
+          if (id !== centerId) {
+            showPhilosopherDetail(id);
+          }
+        });
+        group.addEventListener("mouseenter", () => {
+          circle.setAttribute("stroke", "rgba(255,255,255,0.85)");
+          circle.setAttribute("stroke-width", 1.9);
+        });
+        group.addEventListener("mouseleave", () => {
+          circle.setAttribute("stroke", "rgba(7,9,14,0.9)");
+          circle.setAttribute("stroke-width", 1.4);
+        });
+        mindmapSvg.appendChild(group);
+      }
+      drawNode(centerId);
+      firstRing.forEach(drawNode);
+      secondRing.forEach(drawNode);
+    }
+    // 简易拖动画布（通过 viewBox 偏移）
+    mindmapSvg.addEventListener("mousedown", (e) => {
+      if (e.target.tagName !== "svg") {
+        return;
+      }
+      dragState = {
+        startX: e.clientX,
+        startY: e.clientY,
+        viewBox: mindmapSvg.getAttribute("viewBox") || "0 0 600 360",
+      };
+      const [x, y, w, h] = dragState.viewBox.split(" ").map(parseFloat);
+      dragState.vx = x;
+      dragState.vy = y;
+      dragState.vw = w;
+      dragState.vh = h;
+      mindmapSvg.style.cursor = "grabbing";
+    });
+    window.addEventListener("mousemove", (e) => {
+      if (!dragState) return;
+      const dx = e.clientX - dragState.startX;
+      const dy = e.clientY - dragState.startY;
+      const scale = 1.1;
+      const nx = dragState.vx - (dx / window.innerWidth) * dragState.vw * scale;
+      const ny = dragState.vy - (dy / window.innerHeight) * dragState.vh * scale;
+      mindmapSvg.setAttribute(
+        "viewBox",
+        `${nx} ${ny} ${dragState.vw} ${dragState.vh}`,
+      );
+    });
+    window.addEventListener("mouseup", () => {
+      if (dragState) {
+        dragState = null;
+        mindmapSvg.style.cursor = "grab";
+      }
+    });
+    recenterBtn.addEventListener("click", () => {
+      renderMindmap(activeEntryId);
+    });
+
+    // 顶部视图切换按钮：在“搜索/图谱页”和“首页”之间往返
+    const viewToggleBtn = document.getElementById("viewToggleBtn");
+    if (viewToggleBtn) {
+      viewToggleBtn.addEventListener("click", () => {
+        if (appViewEl && appViewEl.classList.contains("view-hidden")) {
+          showAppView();
+        } else {
+          showHomeView();
+        }
+      });
+    }
+
+    // ===== 初始化 =====
+    pickQuote();
+    renderHomeRecommendations();
+    renderResults(entries);
+    setActiveEntry(activeEntryId);
+  </script>
+</body>
+</html
