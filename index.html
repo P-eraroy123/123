@@ -32,6 +32,9 @@
       padding: 0;
       height: 100%;
       width: 100%;
+      min-height: 100vh;
+      min-width: 100vw;
+      overflow: hidden;
       background: #ffffff;
       color: var(--text-main);
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
@@ -46,12 +49,14 @@
       padding: 0;
     }
     .app-shell {
-      width: 100vw;
-      height: 100vh;
+      width: 100%;
+      height: 100%;
+      min-width: 100vw;
+      min-height: 100vh;
       background: linear-gradient(145deg, rgba(255, 255, 255, 0.98), rgba(243, 247, 255, 0.98));
       border-radius: 0;
       border: none;
-      box-shadow: var(--shadow-soft);
+      box-shadow: none;
       display: flex;
       flex-direction: column;
       overflow: hidden;
@@ -138,8 +143,8 @@
       flex: 1;
       display: grid;
       grid-template-columns: 1.6fr 1fr; /* 左侧（搜索+资料）更宽，右侧导图略缩小 */
-      padding: 18px 18px 20px;
-      gap: 16px;
+      padding: 12px 14px 14px;
+      gap: 14px;
       overflow: hidden;
       /* 与搜索首页相同的浅色背景图 */
       background:
@@ -282,12 +287,12 @@
     }
     .search-input {
       width: 100%;
-      padding: 9px 11px 9px 30px;
+      padding: 12px 14px 12px 36px;
       border-radius: 999px;
       border: 1px solid rgba(181, 194, 220, 0.9);
       background: #ffffff;
       color: var(--text-main);
-      font-size: 13px;
+      font-size: 15px;
       outline: none;
       transition: border-color var(--transition-fast), box-shadow var(--transition-fast),
         background var(--transition-fast), transform 0.12s ease-out;
@@ -303,9 +308,10 @@
     }
     .search-icon {
       position: absolute;
-      left: 9px;
+      left: 13px;
       top: 50%;
       transform: translateY(-50%);
+      font-size: 15px;
       font-size: 13px;
       color: #666a7a;
     }
@@ -532,6 +538,63 @@
       background: rgba(7, 9, 14, 0.9);
       color: var(--text-muted);
     }
+    .mindmap-view-mode {
+      display: inline-flex;
+      gap: 2px;
+    }
+    .mindmap-view-mode .mode-btn {
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(7, 9, 14, 0.6);
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+    .mindmap-view-mode .mode-btn:hover {
+      background: rgba(7, 9, 14, 0.85);
+      color: var(--text-main);
+    }
+    .mindmap-view-mode .mode-btn.active {
+      background: rgba(111, 191, 168, 0.35);
+      border-color: rgba(111, 191, 168, 0.6);
+      color: var(--text-main);
+    }
+    .mindmap-concept-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 6px;
+      flex-wrap: wrap;
+    }
+    .mindmap-concept-bar.view-hidden {
+      display: none;
+    }
+    .concept-bar-label {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    .concept-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .concept-chip {
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(111, 191, 168, 0.5);
+      background: rgba(255, 255, 255, 0.6);
+      color: var(--text-main);
+      cursor: pointer;
+    }
+    .concept-chip:hover {
+      background: rgba(111, 191, 168, 0.25);
+    }
+    .concept-chip.active {
+      background: rgba(111, 191, 168, 0.4);
+      border-color: var(--accent);
+    }
     .mindmap-canvas-wrapper {
       flex: 1;
       min-height: 0;
@@ -613,46 +676,57 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 72px 18px 32px;
+      padding: 0 18px 32px;
       background: transparent;
+      min-height: calc(100vh - 56px);
+    }
+
+    .home-hero {
+      height: calc(100vh - 56px);
+      min-height: 360px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     .home-center {
-      max-width: 720px;
+      max-width: 920px;
       width: 100%;
       display: flex;
       flex-direction: column;
       align-items: center;
       text-align: center;
-      margin-bottom: 40px;
     }
 
     .home-title {
-      font-size: 30px;
-      margin: 0 0 10px;
+      font-size: 44px;
+      margin: 0 0 14px;
       letter-spacing: 0.12em;
       text-transform: uppercase;
       color: #24344f;
     }
 
     .home-subtitle {
-      margin: 0 0 22px;
-      font-size: 13px;
+      margin: 0 0 24px;
+      font-size: 15px;
       color: var(--text-muted);
-      max-width: 520px;
+      max-width: 560px;
     }
 
     .home-search-row {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
       justify-content: center;
     }
 
     .home-search-input {
-      width: 360px;
-      max-width: 80vw;
-      padding: 10px 14px;
+      width: 480px;
+      max-width: 88vw;
+      padding: 14px 22px;
+      font-size: 16px;
       border-radius: 999px;
       border: 1px solid rgba(181, 194, 220, 0.9);
       background: #ffffff;
@@ -667,7 +741,7 @@
 
     .home-reco-block {
       width: 100%;
-      max-width: 860px;
+      max-width: 960px;
       margin-top: 12px;
       border-radius: 20px;
       padding: 14px 16px 12px;
@@ -777,6 +851,181 @@
       color: var(--text-muted);
     }
 
+    .home-timeline-entry {
+      display: block;
+      margin-top: 28px;
+      padding: 16px 24px;
+      max-width: 520px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, rgba(224, 251, 252, 0.95), rgba(216, 243, 220, 0.9));
+      border: 1px solid rgba(111, 191, 168, 0.85);
+      box-shadow: 0 12px 32px rgba(0, 48, 73, 0.15);
+      text-decoration: none;
+      color: inherit;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+    .home-timeline-entry:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 18px 42px rgba(0, 48, 73, 0.22);
+      border-color: var(--accent);
+    }
+    .home-timeline-icon {
+      font-size: 1.4rem;
+      margin-right: 10px;
+      vertical-align: middle;
+    }
+    .home-timeline-text {
+      font-size: 1.05rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      color: var(--text-main);
+    }
+    .home-timeline-desc {
+      display: block;
+      margin-top: 6px;
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+
+    .timeline-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      padding: 20px 24px 32px;
+      background: linear-gradient(180deg, #e8f4f8 0%, #e0fbfc 18%, #d8f3dc 100%);
+    }
+    .timeline-header {
+      margin-bottom: 20px;
+      position: relative;
+    }
+    .timeline-title {
+      margin: 0 0 8px;
+      font-size: 1.6rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      color: var(--text-main);
+      font-family: "Songti SC", "Noto Serif SC", "Source Han Serif SC", "SimSun", "Times New Roman", serif;
+    }
+    .timeline-subtitle {
+      margin: 0 0 16px;
+      font-size: 14px;
+      color: var(--text-muted);
+      max-width: 640px;
+    }
+    .timeline-back-btn {
+      position: absolute;
+      top: 0;
+      right: 0;
+      padding: 8px 14px;
+      font-size: 13px;
+      border-radius: 8px;
+      border: 1px solid rgba(111, 191, 168, 0.7);
+      background: rgba(255, 255, 255, 0.85);
+      color: var(--text-main);
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .timeline-back-btn:hover {
+      background: rgba(111, 191, 168, 0.2);
+      border-color: var(--accent);
+    }
+    .timeline-body {
+      flex: 1;
+      min-height: 0;
+      overflow: auto;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.75);
+      border: 1px solid rgba(111, 191, 168, 0.5);
+      box-shadow: 0 12px 36px rgba(0, 48, 73, 0.12);
+    }
+    .timeline-axis-wrap {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 0;
+      align-items: start;
+      padding: 24px 20px 48px;
+      min-width: min-content;
+    }
+    .timeline-track {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .timeline-track-label {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+      padding-left: 4px;
+    }
+    .timeline-track-china .timeline-track-label { color: #0d5c63; }
+    .timeline-track-west .timeline-track-label { color: #264653; }
+    .timeline-track-content {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .timeline-axis {
+      width: 2px;
+      min-height: 100%;
+      background: linear-gradient(180deg, rgba(111, 191, 168, 0.5), rgba(111, 191, 168, 0.9), rgba(111, 191, 168, 0.5));
+      border-radius: 1px;
+      margin: 0 24px;
+      align-self: stretch;
+    }
+    .timeline-period {
+      border-radius: 14px;
+      padding: 14px 18px;
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 4px 14px rgba(0, 48, 73, 0.08);
+    }
+    .timeline-track-china .timeline-period { border-left: 4px solid rgba(13, 92, 99, 0.7); }
+    .timeline-track-west .timeline-period { border-left: 4px solid rgba(38, 70, 83, 0.7); }
+    .timeline-period-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 4px;
+      font-family: "Songti SC", "Noto Serif SC", "Source Han Serif SC", "SimSun", "Times New Roman", serif;
+    }
+    .timeline-period-time {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+    .timeline-figures {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .timeline-figure {
+      display: inline-block;
+      padding: 5px 12px;
+      font-size: 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(111, 191, 168, 0.5);
+      background: rgba(255, 255, 255, 0.9);
+      color: var(--text-main);
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s, border-color 0.2s, transform 0.15s;
+    }
+    .timeline-figure:hover {
+      background: rgba(111, 191, 168, 0.25);
+      border-color: var(--accent);
+      transform: translateY(-1px);
+    }
+    .timeline-figure.no-link,
+    span.timeline-figure {
+      cursor: default;
+      pointer-events: none;
+    }
+
     .view-hidden {
       display: none;
     }
@@ -795,10 +1044,11 @@
     /* 响应式 */
     @media (max-width: 960px) {
       body {
-        padding: 10px;
+        padding: 0;
       }
       .app-shell {
         max-height: none;
+        min-height: 100vh;
         height: auto;
       }
       .main {
@@ -853,7 +1103,8 @@
     <!-- 搜索首页 -->
     <main id="homeView" class="home-main">
       <div class="home-overlay">
-        <div class="home-center">
+        <div class="home-hero">
+          <div class="home-center">
           <h1 class="home-title">PHILOSOPHICAL SEARCH</h1>
           <p class="home-subtitle">
             从一位哲学家的名字出发，向下展开他的时代、生平与概念系谱。
@@ -869,6 +1120,12 @@
               <span>开始追问</span>
               <span>↵</span>
             </button>
+          </div>
+          <a id="timelineEntryBtn" class="home-timeline-entry" href="javascript:void(0)">
+            <span class="home-timeline-icon">⏳</span>
+            <span class="home-timeline-text">中西哲学发展脉络图</span>
+            <span class="home-timeline-desc">以时间轴为基底，梳理中国与西方哲学的演变主线与思想传承</span>
+          </a>
           </div>
         </div>
         <div class="home-reco-block">
@@ -924,11 +1181,9 @@
               <span class="dot"></span><span>全部</span>
             </button>
             <button class="chip" data-category="philosopher">哲学家</button>
-            <button class="chip" data-category="concept">概念</button>
-            <button class="chip" data-category="school">流派</button>
-            <button class="chip" data-category="work">著作</button>
-            <button class="chip chip-mode" data-category="by_school" title="按哲学家学派筛选">按流派</button>
-            <button class="chip chip-mode" data-category="by_work" title="按书名号内著作筛选">按著作</button>
+            <button class="chip chip-mode" data-category="by_concept" title="按哲学概念搜索对应哲学家">概念</button>
+            <button class="chip chip-mode" data-category="by_school" title="按哲学家学派筛选">流派</button>
+            <button class="chip chip-mode" data-category="by_work" title="按书名号内著作筛选">著作</button>
           </div>
           <div class="search-meta-row">
             <span id="searchSummary">
@@ -956,12 +1211,20 @@
             </div>
             <div class="panel-actions">
               <div class="mindmap-toolbar">
-                <span class="label">布局</span>
-                <span class="badge">RADIAl · 关系视图</span>
+                <span class="label">图谱</span>
+                <span class="mindmap-view-mode">
+                  <button type="button" class="mode-btn active" id="modeRelationBtn" title="按哲学家关系">关系</button>
+                  <button type="button" class="mode-btn" id="modeConceptBtn" title="按核心概念">概念</button>
+                </span>
+                <span class="badge" id="mindmapModeBadge">RADIAL · 关系视图</span>
                 <button class="icon-button" id="recenterBtn" title="回到中心">
                   ⊙
                 </button>
               </div>
+            </div>
+            <div class="mindmap-concept-bar view-hidden" id="mindmapConceptBar">
+              <span class="concept-bar-label">该哲学家的概念（点击可筛选）：</span>
+              <div class="concept-chips" id="conceptChips"></div>
             </div>
           </div>
           <div class="mindmap-meta-row">
@@ -983,6 +1246,28 @@
         </div>
       </section>
     </main>
+
+    <!-- 中西哲学发展脉络图 -->
+    <main id="timelineView" class="timeline-main view-hidden">
+      <div class="timeline-header">
+        <h1 class="timeline-title">中西哲学发展脉络图</h1>
+        <p class="timeline-subtitle">以时间轴为基底，呈现中国哲学与西方哲学各自的演变主线与核心人物</p>
+        <button type="button" id="timelineBackBtn" class="timeline-back-btn" title="返回首页">← 返回首页</button>
+      </div>
+      <div class="timeline-body">
+        <div class="timeline-axis-wrap">
+          <div class="timeline-track timeline-track-china">
+            <div class="timeline-track-label">中国哲学</div>
+            <div id="timelineChinaContent" class="timeline-track-content"></div>
+          </div>
+          <div class="timeline-axis" id="timelineAxis" aria-hidden="true"></div>
+          <div class="timeline-track timeline-track-west">
+            <div class="timeline-track-label">西方哲学</div>
+            <div id="timelineWestContent" class="timeline-track-content"></div>
+          </div>
+        </div>
+      </div>
+    </main>
   </div>
   <script>
     // ===== 假数据：哲学条目与关系图 =====
@@ -999,7 +1284,52 @@
           "孔子以“仁”和“礼”为核心，通过教育与礼乐重建周礼秩序，奠定整个东亚儒家人文传统的源头形象。",
         relations: {
           influences: ["mencius", "xunzi", "dong_zhongshu", "zhu_xi", "wang_yangming"],
-          related: ["socrates"],
+          related: ["socrates", "marcus_aurelius", "augustine", "mozi", "xunzi"],
+        },
+      },
+      {
+        id: "mozi",
+        type: "philosopher",
+        title: "墨子 Mozi",
+        subtitle: "约前470–前391 · 墨家 · 兼爱与非攻",
+        tags: ["兼爱", "非攻", "节用", "墨辩"],
+        quote:
+          "兼相爱，交相利；视人之国若视其国，视人之家若视其家。",
+        centerSummary:
+          "墨子在战国乱世中倡导“兼爱”“非攻”，以三表法检验言行利害，建立重功利、尚节用、反厚葬的墨家体系，与儒家差等爱形成尖锐对话。",
+        relations: {
+          related: ["confucius", "mencius"],
+        },
+      },
+      {
+        id: "mencius",
+        type: "philosopher",
+        title: "孟子 Mencius",
+        subtitle: "约前372–前289 · 儒家 · 性善论与仁政",
+        tags: ["性善论", "四端", "仁政", "民本"],
+        quote:
+          "恻隐之心，仁之端也；羞恶之心，义之端也；辞让之心，礼之端也；是非之心，智之端也。民为贵，社稷次之，君为轻。",
+        centerSummary:
+          "孟子承孔子之道，提出性善论与“四端说”，发展“民为贵”的仁政思想与浩然之气修养论，对宋明理学与近现代中西伦理对话影响深远。",
+        relations: {
+          influencedBy: ["confucius"],
+          related: ["mozi", "xunzi"],
+        },
+      },
+      {
+        id: "xunzi",
+        type: "philosopher",
+        title: "荀子 Xunzi",
+        subtitle: "约前313–前238 · 儒家 · 性恶论与礼法并重",
+        tags: ["性恶论", "礼法", "天人之分", "经世"],
+        quote:
+          "人之性恶，其善者伪也；天行有常，不为尧存，不为桀亡。化性起伪，以礼义法度正人情而成其善。",
+        centerSummary:
+          "荀子于战国末期集大成儒学，提出“性恶论”与“化性起伪”，主张天人之分与礼法并重，为法家与汉代政治哲学奠定现实主义基础。",
+        relations: {
+          influencedBy: ["confucius", "mencius"],
+          influences: ["han_fei", "dong_zhongshu"],
+          related: ["mozi", "mencius"],
         },
       },
       {
@@ -1014,7 +1344,53 @@
           "老子以“道”为宇宙本体，以“无为”“守柔”为政治与人生智慧的核心，开启中国思想中关于自然与权力的另一条线索。",
         relations: {
           influences: ["zhuangzi", "han_fei", "wang_bi", "sengzhao"],
-          related: ["thales", "anaximander", "heraclitus", "parmenides", "empedocles", "anaxagoras", "epicurus"],
+          related: ["thales", "anaximander", "heraclitus", "parmenides", "empedocles", "anaxagoras", "epicurus", "plotinus"],
+        },
+      },
+      {
+        id: "zhuangzi",
+        type: "philosopher",
+        title: "庄子 Zhuangzi",
+        subtitle: "约前369–前286 · 道家 · 齐物论与逍遥游",
+        tags: ["齐物论", "逍遥游", "语言批判", "技艺哲学"],
+        quote:
+          "彼亦一是非，此亦一是非；乘天地之正，而御六气之辩，以游无穷。言者所以在意，得意而忘言。",
+        centerSummary:
+          "庄子在战国末期以寓言展开“齐物论”与“逍遥游”，通过语言批判与技艺哲学追求精神自由，深刻影响黄老政治学、佛教中国化与现代解构思潮。",
+        relations: {
+          influencedBy: ["laozi"],
+          related: ["laozi", "ji_kang", "guo_xiang", "sengzhao"],
+        },
+      },
+      {
+        id: "han_fei",
+        type: "philosopher",
+        title: "韩非子 Han Fei",
+        subtitle: "约前280–前233 · 法家 · 法、术、势与历史进化论",
+        tags: ["法家", "法术势", "矛盾说", "集权"],
+        quote:
+          "法者，编著之图籍，设之于官府；世异则事异，事异则备变。夫不可陷之盾与无不陷之矛，不可同世而立。",
+        centerSummary:
+          "韩非子以法、术、势三位一体系统化法家理论，主张“世异则事异”的历史进化论与严刑峻法的集权模式，对秦制与后世权力哲学影响深远。",
+        relations: {
+          influencedBy: ["xunzi", "laozi"],
+          related: ["mozi", "dong_zhongshu"],
+        },
+      },
+      {
+        id: "dong_zhongshu",
+        type: "philosopher",
+        title: "董仲舒 Dong Zhongshu",
+        subtitle: "前179–前104 · 汉代儒学 · 天人感应与大一统",
+        tags: ["天人感应", "三纲五常", "大一统", "汉代儒学"],
+        quote:
+          "天人之际，合而为一；国家将有失道之败，而天乃先出灾害以谴告之。《春秋》大一统者，天地之常经，古今之通谊。",
+        centerSummary:
+          "董仲舒在汉武帝时期以天人感应、三纲五常与大一统理论完成儒学神学化改造，确立“罢黜百家，独尊儒术”的帝国意识形态框架。",
+        relations: {
+          influencedBy: ["confucius", "mencius", "xunzi"],
+          influences: ["wang_chong"],
+          related: ["han_fei"],
         },
       },
       { id: "wang_chong", type: "philosopher", title: "王充 Wang Chong", subtitle: "27–约97 · 批判哲学 · 《论衡》与经验主义", tags: ["怀疑论", "经验主义", "自然主义", "反迷信"], quote: "事莫明于有效，论莫定于有证；夫天道，自然也，无为也。", centerSummary: "王充以严厉的经验主义批判谶纬与鬼神，将理性怀疑精神引入东汉思想界。", relations: { related: ["dong_zhongshu"] } },
@@ -1024,7 +1400,7 @@
       { id: "sengzhao", type: "philosopher", title: "僧肇 Sengzhao", subtitle: "约384–414 · 佛教 · 中观与玄学会通", tags: ["不真空", "物不迁", "般若", "中观"], quote: "诸法假号不真，譬如幻化人；物从因缘故不有，缘起故不无。", centerSummary: "僧肇以《肇论》将龙树中观与魏晋玄学会通，开启中国佛教哲学的本土表达。", relations: { influencedBy: ["laozi", "zhuangzi", "wang_bi"] } },
       { id: "zhu_daosheng", type: "philosopher", title: "竺道生 Zhu Daosheng", subtitle: "355–434 · 佛教 · 涅槃学与佛性论", tags: ["佛性", "顿悟", "一阐提成佛"], quote: "一切众生，莫不是佛，亦皆泥洹；理不可分，悟语照极。", centerSummary: "竺道生以“一阐提皆可成佛”和“顿悟成佛”突破传统佛性论。", relations: { related: ["sengzhao", "huineng"] } },
       { id: "huineng", type: "philosopher", title: "慧能 Huineng", subtitle: "638–713 · 禅宗 · 顿悟与无念", tags: ["顿悟", "无念", "即心即佛", "生活禅"], quote: "菩提本无树，明镜亦非台；本来无一物，何处惹尘埃。", centerSummary: "禅宗六祖慧能以“顿悟成佛”和“无念为宗”将觉悟落实于日常生活。", relations: { influencedBy: ["sengzhao", "zhu_daosheng"] } },
-      { id: "zhu_xi", type: "philosopher", title: "朱熹 Zhu Xi", subtitle: "1130–1200 · 程朱理学 · 理气与四书", tags: ["理气", "格物致知", "存理灭欲", "经学重构"], quote: "理也者，形而上之道也；气也者，形而下之器也。", centerSummary: "朱熹以理气二元论和“四书集注”重构儒学，成为元明清东亚官方意识形态的哲学核心。", relations: { influencedBy: ["confucius", "mencius", "dong_zhongshu", "wang_bi"], influences: ["wang_yangming"], related: ["aristotle"] } },
+      { id: "zhu_xi", type: "philosopher", title: "朱熹 Zhu Xi", subtitle: "1130–1200 · 程朱理学 · 理气与四书", tags: ["理气", "格物致知", "存理灭欲", "经学重构"], quote: "理也者，形而上之道也；气也者，形而下之器也。", centerSummary: "朱熹以理气二元论和“四书集注”重构儒学，成为元明清东亚官方意识形态的哲学核心。", relations: { influencedBy: ["confucius", "mencius", "dong_zhongshu", "wang_bi"], influences: ["wang_yangming"], related: ["aristotle", "thomas_aquinas"] } },
       { id: "wang_yangming", type: "philosopher", title: "王阳明 Wang Yangming", subtitle: "1472–1529 · 心学 · 心即理与致良知", tags: ["心即理", "知行合一", "致良知"], quote: "未有知而不行者，知而不行只是未知；良知即是天植灵根。", centerSummary: "王阳明以“心即理”“知行合一”“致良知”对程朱理学作内在革命。", relations: { influencedBy: ["mencius", "zhu_xi"], influences: ["li_zhi", "huang_zongxi"], related: ["plato"] } },
       { id: "li_zhi", type: "philosopher", title: "李贽 Li Zhi", subtitle: "1527–1602 · 晚明异端 · 童心与历史相对主义", tags: ["童心", "人性解放", "历史相对主义", "文学批评"], quote: "夫童心者，绝假纯真，最初一念之本心也；穿衣吃饭即是人伦物理。", centerSummary: "李贽以“童心说”批判假道学与道统史观，肯定自然人性与通俗文学。", relations: { influencedBy: ["wang_yangming"] } },
       { id: "huang_zongxi", type: "philosopher", title: "黄宗羲 Huang Zongxi", subtitle: "1610–1695 · 浙东学派 · 《明夷待访录》与君权批判", tags: ["民本", "政治哲学", "史学", "经世致用"], quote: "为天下之大害者，君而已矣；天下为主，君为客。", centerSummary: "黄宗羲以犀利的君权批判和经世史学开清初启蒙之先。", relations: { influencedBy: ["mencius", "wang_yangming"] } },
@@ -1039,7 +1415,7 @@
       { id: "wang_guowei", type: "philosopher", title: "王国维 Wang Guowei", subtitle: "1877–1927 · 实证史学 · 境界说与二重证据法", tags: ["境界说", "甲骨学", "考据", "美学"], quote: "古今成大事业、大学问者，必经过三种之境界。", centerSummary: "王国维以“境界说”革新文学批评，并以“二重证据法”综合文献与考古，奠定现代中国古史研究范式。", relations: { related: ["liang_qichao"] } },
       { id: "chen_yinke", type: "philosopher", title: "陈寅恪 Chen Yinke", subtitle: "1890–1969 · 文化史学 · “独立之精神，自由之思想”", tags: ["文化史", "胡汉交融", "士人精神", "学术独立"], quote: "士之读书治学，盖将脱心志于俗谛之桎梏。", centerSummary: "陈寅恪以种族文化史观与诗史互证方法重写中古史，并以“独立之精神，自由之思想”成为现代学术良知象征。", relations: { related: ["wang_guowei"] } },
       { id: "liang_shuming", type: "philosopher", title: "梁漱溟 Liang Shuming", subtitle: "1893–1988 · 新儒家 · 乡村建设与文化三路向", tags: ["新儒家", "乡村建设", "文化比较", "伦理本位"], quote: "中国文化重伦理本位，西方文化重物质本位，印度文化重出世本位。", centerSummary: "梁漱溟以“东西文化三路向”与乡村建设实验探索中国现代化的儒家道路，被誉为“最后的儒家”。", relations: { related: ["liang_qichao", "wang_hui"] } },
-      { id: "feng_youlan", type: "philosopher", title: "冯友兰 Feng Youlan", subtitle: "1895–1990 · 新理学派 · 哲学史与境界论", tags: ["新理学", "中国哲学史", "境界说", "逻辑分析"], quote: "理是抽象的有，气是具体的存在；中国哲学将来要大放光彩。", centerSummary: "冯友兰以逻辑分析法重构程朱理学为新理学，著《中国哲学史》奠定学科范式，提出自然、功利、道德、天地四境界说。", relations: { related: ["liang_shuming", "chen_yinke"] } },
+      { id: "feng_youlan", type: "philosopher", title: "冯友兰 Feng Youlan", subtitle: "1895–1990 · 新理学派 · 哲学史与境界论", tags: ["新理学", "中国哲学史", "境界说", "逻辑分析"], quote: "理是抽象的有，气是具体的存在；中国哲学将来要大放光彩。", centerSummary: "冯友兰以逻辑分析法重构程朱理学为新理学，早年著《中国哲学史》奠定学科范式，95岁时完成七卷本《中国哲学史新编》，并提出自然、功利、道德、天地四境界说。", relations: { related: ["liang_shuming", "chen_yinke"] } },
       { id: "xiong_shili", type: "philosopher", title: "熊十力 Xiong Shili", subtitle: "1885–1968 · 新心学·新儒家 · 体用不二与新唯识论", tags: ["新唯识论", "体用不二", "本心", "返本开新"], quote: "即体即用，即用即体；本心是虚寂而健动的生命本体。", centerSummary: "熊十力以“体用不二”“翕辟成变”建构新唯识论，融合儒佛与柏格森生命哲学，被尊为现代新儒学精神源头。", relations: { related: ["feng_youlan", "liang_shuming"] } },
       { id: "mou_zongsan", type: "philosopher", title: "牟宗三 Mou Zongsan", subtitle: "1909–1995 · 当代新儒家 · 道德形上学与良知坎陷说", tags: ["道德形上学", "良知坎陷", "心体与性体", "智的直觉"], quote: "良知必须自觉坎陷自身以开出知性主体；古今无两。", centerSummary: "牟宗三以康德哲学重构儒家心性论，提出“两层存有论”与“良知自我坎陷”说，完成当代新儒学体系化。", relations: { influencedBy: ["xiong_shili"], related: ["feng_youlan"] } },
       { id: "tang_junyi", type: "philosopher", title: "唐君毅 Tang Junyi", subtitle: "1909–1978 · 当代新儒家 · 心灵九境与人文精神论", tags: ["心灵九境", "人文精神", "感通", "文化哲学"], quote: "生命存在即心灵活动；中华文化花果飘零，灵根自植。", centerSummary: "唐君毅以“心灵九境”与“感通”哲学建构人文精神论，著《中国哲学原论》《生命存在与心灵九境》，倡文化主体性重建。", relations: { influencedBy: ["xiong_shili", "fang_dongmei"], related: ["mou_zongsan", "qian_mu"] } },
@@ -1065,14 +1441,670 @@
       { id: "democritus", type: "philosopher", title: "德谟克利特 Democritus", subtitle: "约前460–370 · 阿布德拉学派 · 原子论集大成者", tags: ["原子论", "影像说", "幸福伦理", "欢笑的哲人"], quote: "真理隐藏在深渊；至善是灵魂的晴朗。宁可发现一个因果律，也不愿做波斯王。", centerSummary: "德谟克利特在留基伯基础上完成原子论体系，提出影像说与幸福伦理学，被西塞罗称为前苏格拉底哲学巅峰。", relations: { influencedBy: ["leucippus"], influences: ["protagoras", "epicurus"] } },
       { id: "protagoras", type: "philosopher", title: "普罗泰戈拉 Protagoras", subtitle: "约前490–420 · 智者学派 · 人是万物的尺度", tags: ["人是万物的尺度", "相对主义", "智者", "修辞学"], quote: "人是万物的尺度；关于神，我无法知道他们是否存在，因为问题晦涩而人生短暂。", centerSummary: "普罗泰戈拉首倡“人是万物的尺度”，发展修辞学与正反论证，推动哲学从自然转向人文，为智者学派领袖。", relations: { influencedBy: ["democritus"], related: ["gorgias", "socrates"] } },
       { id: "gorgias", type: "philosopher", title: "高尔吉亚 Gorgias", subtitle: "约前483–375 · 智者学派 · 修辞学之父，虚无主义三命题", tags: ["论非存在", "修辞术", "智者", "怀疑论"], quote: "无物存在；即使存在亦不可知；即使可知亦不可传达。语言是强大的君主。", centerSummary: "高尔吉亚以虚无主义三命题与《海伦颂》发展修辞术为说服的艺术，被称修辞学之父与怀疑论智者。", relations: { influencedBy: ["empedocles"], related: ["protagoras", "socrates"] } },
-      { id: "socrates", type: "philosopher", title: "苏格拉底 Socrates", subtitle: "前470–399 · 苏格拉底学派 · 无知之知与辩证问答法", tags: ["无知之知", "精神助产术", "德性即知识", "伦理哲学"], quote: "未经省察的人生不值得活；我知我无知。分手的时候到了，我去死，你们去活，谁的去路好，唯有神知道。", centerSummary: "苏格拉底将哲学从自然拉回人间，以无知之知与精神助产术追问德性，为西方伦理哲学奠基，饮鸩殉道。", relations: { influencedBy: ["anaxagoras"], related: ["confucius", "protagoras", "gorgias"], influences: ["plato", "zeno_citium"] } },
-      { id: "plato", type: "philosopher", title: "柏拉图 Plato", subtitle: "前428/427–348/347 · 柏拉图学派 · 理念论与学园派创始人", tags: ["理念论", "理想国", "灵魂三分", "哲人王"], quote: "不懂几何者不得入内；我们寻找的正义是正义本身。爱欲是从肉体美升华至理念美的阶梯。", centerSummary: "柏拉图以理念论构建两个世界体系，创办学园，著《理想国》与《蒂迈欧篇》，奠定西方形而上学与政治哲学传统。", relations: { influencedBy: ["socrates"], related: ["pythagoras", "wang_yangming"], influences: ["aristotle"] } },
-      { id: "aristotle", type: "philosopher", title: "亚里士多德 Aristotle", subtitle: "前384–322 · 逍遥学派 · 逻辑学与实证科学奠基者", tags: ["四因说", "实体论", "中庸", "逻辑学"], quote: "人是理性的动物；至善是合乎德性的灵魂活动。让雅典人再犯一次反哲学的罪。", centerSummary: "亚里士多德批判理念论，建立四因说与实体论，开创逻辑学与多学科体系，为逍遥学派与西方科学范式奠基。", relations: { influencedBy: ["plato"], related: ["zhu_xi", "epicurus"] } },
+      { id: "socrates", type: "philosopher", title: "苏格拉底 Socrates", subtitle: "前470–399 · 苏格拉底学派 · 无知之知与辩证问答法", tags: ["无知之知", "精神助产术", "德性即知识", "伦理哲学"], quote: "未经省察的人生不值得活；我知我无知。分手的时候到了，我去死，你们去活，谁的去路好，唯有神知道。", centerSummary: "苏格拉底将哲学从自然拉回人间，以无知之知与精神助产术追问德性，为西方伦理哲学奠基，饮鸩殉道。", relations: { influencedBy: ["anaxagoras"], related: ["confucius", "protagoras", "gorgias", "seneca", "marcus_aurelius"], influences: ["plato", "zeno_citium"] } },
+      { id: "plato", type: "philosopher", title: "柏拉图 Plato", subtitle: "前428/427–348/347 · 柏拉图学派 · 理念论与学园派创始人", tags: ["理念论", "理想国", "灵魂三分", "哲人王"], quote: "不懂几何者不得入内；我们寻找的正义是正义本身。爱欲是从肉体美升华至理念美的阶梯。", centerSummary: "柏拉图以理念论构建两个世界体系，创办学园，著《理想国》与《蒂迈欧篇》，奠定西方形而上学与政治哲学传统。", relations: { influencedBy: ["socrates"], related: ["pythagoras", "wang_yangming"], influences: ["aristotle", "plotinus"] } },
+      { id: "aristotle", type: "philosopher", title: "亚里士多德 Aristotle", subtitle: "前384–322 · 逍遥学派 · 逻辑学与实证科学奠基者", tags: ["四因说", "实体论", "中庸", "逻辑学"], quote: "人是理性的动物；至善是合乎德性的灵魂活动。让雅典人再犯一次反哲学的罪。", centerSummary: "亚里士多德批判理念论，建立四因说与实体论，开创逻辑学与多学科体系，为逍遥学派与西方科学范式奠基。", relations: { influencedBy: ["plato"], related: ["zhu_xi", "epicurus"], influences: ["plotinus", "thomas_aquinas"] } },
       { id: "epicurus", type: "philosopher", title: "伊壁鸠鲁 Epicurus", subtitle: "前341–270 · 伊壁鸠鲁学派 · 快乐即至善，花园学派", tags: ["快乐主义", "四重药方", "原子偏斜", "无痛无扰"], quote: "神不足惧，死不足忧；至善是身体无痛苦、灵魂无纷扰。记住，痛苦不会持久。", centerSummary: "伊壁鸠鲁以原子偏斜说修正决定论，倡四重药方与静态快乐，创花园学派，为希腊化快乐主义伦理学奠基。", relations: { influencedBy: ["democritus"], related: ["aristotle", "laozi", "zeno_citium", "chrysippus"] } },
       { id: "zeno_citium", type: "philosopher", title: "芝诺（西提乌姆的） Zeno of Citium", subtitle: "约前334–262 · 斯多葛学派 · 顺应自然与自然法", tags: ["斯多葛", "自然法", "理性", "世界公民"], quote: "顺应自然生活；违背自然的立法必败。智者之邦无城墙。", centerSummary: "芝诺创斯多葛学派于雅典彩廊，以理性统御激情、自然法与世界主义奠基希腊化实践哲学。", relations: { influencedBy: ["socrates"], related: ["epicurus", "mencius"], influences: ["chrysippus"] } },
-      { id: "chrysippus", type: "philosopher", title: "克律西波斯 Chrysippus", subtitle: "约前279–206 · 斯多葛学派 · 逻辑学巨擘，学派体系化者", tags: ["命题逻辑", "决定论", "义务论", "斯多葛"], quote: "无逻辑则无哲学；激情是过度的冲动。我早准备好应对此类荒谬。", centerSummary: "克律西波斯将芝诺思想系统化为逻辑-物理-伦理三位一体，奠基命题逻辑与相容论自由观，被称学派第二创始人。", relations: { influencedBy: ["zeno_citium"], related: ["epicurus"] } },
+      { id: "chrysippus", type: "philosopher", title: "克律西波斯 Chrysippus", subtitle: "约前279–206 · 斯多葛学派 · 逻辑学巨擘，学派体系化者", tags: ["命题逻辑", "决定论", "义务论", "斯多葛"], quote: "无逻辑则无哲学；激情是过度的冲动。我早准备好应对此类荒谬。", centerSummary: "克律西波斯将芝诺思想系统化为逻辑-物理-伦理三位一体，奠基命题逻辑与相容论自由观，被称学派第二创始人。", relations: { influencedBy: ["zeno_citium"], related: ["epicurus"], influences: ["seneca"] } },
+      { id: "seneca", type: "philosopher", title: "塞涅卡 Seneca the Younger", subtitle: "约前4–公元65 · 罗马斯多葛 · 政治家、剧作家", tags: ["论愤怒", "道德书简", "命运接纳", "精神修炼"], quote: "愤怒是短暂的疯狂；生命长短无关岁月，虚度光阴者虽生犹死。哲人赴死当如苏格拉底。", centerSummary: "塞涅卡以《论愤怒》《道德书简》实践罗马斯多葛伦理，任尼禄导师而终被迫自尽，融哲学沉思与政治行动。", relations: { influencedBy: ["chrysippus"], related: ["socrates", "mencius"], influences: ["epictetus"] } },
+      { id: "epictetus", type: "philosopher", title: "爱比克泰德 Epictetus", subtitle: "约50–135 · 罗马斯多葛 · 奴隶出身的自由哲学家", tags: ["可控与不可控", "手册", "判断中介", "精神韧性"], quote: "扰乱人非事物本身，而是对事物的判断。自由是心灵的属性。", centerSummary: "爱比克泰德以“可控/不可控”二分与判断中介论奠基斯多葛实践哲学，《手册》为CBT与心理韧性理论源头。", relations: { influencedBy: ["seneca"], related: ["mencius"], influences: ["marcus_aurelius"] } },
+      { id: "marcus_aurelius", type: "philosopher", title: "马可·奥勒留 Marcus Aurelius", subtitle: "121–180 · 罗马斯多葛 · 皇帝与《沉思录》作者", tags: ["沉思录", "宇宙理性", "帝王德性", "斯多葛"], quote: "宇宙是活的生命体，由神圣理性贯穿。千年后无人记得你，此刻的烦恼何其渺小。", centerSummary: "马可·奥勒留以《沉思录》践行斯多葛哲学，融帝王责任与个人德性，被称罗马斯多葛最后一位大师。", relations: { influencedBy: ["epictetus"], related: ["confucius"] } },
+      { id: "plotinus", type: "philosopher", title: "普罗提诺 Plotinus", subtitle: "204–270 · 新柏拉图主义 · 太一流溢说创始人", tags: ["太一", "九章集", "流溢说", "出神"], quote: "说太一'是'便已否定其超越性。将神性归还神圣。", centerSummary: "普罗提诺以太一-理智-灵魂三一与流溢说综合柏拉图与东方神秘主义，著《九章集》，开新柏拉图主义。", relations: { influencedBy: ["plato", "aristotle"], related: ["laozi"], influences: ["augustine", "eriugena", "nicholas_cusa"] } },
+      { id: "augustine", type: "philosopher", title: "奥古斯丁 Augustine of Hippo", subtitle: "354–430 · 教父哲学 · 基督教哲学奠基人", tags: ["忏悔录", "上帝之城", "原罪与恩典", "两城论"], quote: "我们的心不安息，直到在你里面找到安息。我疑故我在。恶是善的缺乏。", centerSummary: "奥古斯丁融合新柏拉图主义与基督教神学，立原罪论、恩典论与《上帝之城》，奠定中世纪思想与教父哲学。", relations: { influencedBy: ["plotinus"], related: ["confucius", "abelard"], influences: ["boethius", "eriugena", "anselm", "thomas_aquinas", "nicholas_cusa"] } },
+      { id: "boethius", type: "philosopher", title: "波爱修斯 Boethius", subtitle: "约477–524 · 拉丁教父哲学 · 中世纪逻辑学与神学桥梁", tags: ["哲学的慰藉", "共相", "存在与本质", "七艺"], quote: "幸福在于内在德性而非外在机运。神在永恒中直观全部时间。", centerSummary: "波爱修斯译注亚里士多德与波菲利，著《哲学的慰藉》，区分存在与本质、奠定七艺与经院逻辑学基础。", relations: { influencedBy: ["augustine", "aristotle"], influences: ["eriugena", "anselm"] } },
+      { id: "eriugena", type: "philosopher", title: "约翰·司各脱·埃里金纳 John Scotus Eriugena", subtitle: "约815–877 · 爱尔兰经院传统 · 自然四重划分与泛神论", tags: ["论自然的区分", "自然四重", "泛神论", "伪狄奥尼修斯"], quote: "真正哲学即真正宗教，真正宗教即真正哲学。权威源于真理性理性，而理性绝不源于权威。", centerSummary: "埃里金纳译伪狄奥尼修斯，著《论自然的区分》构建自然四重与万有回归，为爱尔兰新柏拉图主义集大成者。", relations: { influencedBy: ["plotinus", "boethius", "augustine"] } },
+      { id: "anselm", type: "philosopher", title: "安瑟伦 Anselm of Canterbury", subtitle: "1033–1109 · 经院哲学 · 信仰寻求理解，本体论论证", tags: ["本体论论证", "宣讲", "信仰寻求理解", "赎罪论"], quote: "信仰寻求理解。上帝是无法设想更伟大的存在者，故必然现实存在。", centerSummary: "安瑟伦以《宣讲》首创本体论论证，倡“信仰寻求理解”，融合奥古斯丁与辩证法，奠基经院哲学。", relations: { influencedBy: ["augustine", "boethius"], influences: ["abelard", "thomas_aquinas"] } },
+      { id: "abelard", type: "philosopher", title: "彼得·阿伯拉尔 Peter Abelard", subtitle: "1079–1142 · 经院哲学 · 概念论与辩证神学", tags: ["概念论", "是与否", "理解而后信仰", "意图伦理"], quote: "理解以便信仰；怀疑是通向真理之路。同一行为可善可恶，全凭动机。", centerSummary: "阿伯拉尔以概念论超越共相之争，著《是与否》倡辩证神学与意图伦理，为经院辩证法革新者。", relations: { influencedBy: ["anselm"], related: ["augustine"] } },
+      {
+        id: "thomas_aquinas",
+        type: "philosopher",
+        title: "托马斯·阿奎那 Thomas Aquinas",
+        subtitle: "1225–1274 · 经院哲学 · 亚里士多德主义神学集大成者",
+        tags: ["经院哲学", "自然神学", "五路证明", "自然法"],
+        quote:
+          "信仰与理性如同两翼，助人飞升于真理；行善避恶乃自然法第一原则，至福在于直观上帝本身。",
+        centerSummary:
+          "托马斯·阿奎那融合亚里士多德哲学与基督教神学，创立自然神学体系，以《神学大全》与五路证明奠定中世纪经院哲学巅峰。",
+        relations: {
+          influencedBy: ["aristotle", "augustine", "anselm"],
+          related: ["zhu_xi"],
+          influences: ["duns_scotus", "ockham"],
+        },
+      },
+      {
+        id: "duns_scotus",
+        type: "philosopher",
+        title: "邓斯·司各脱 John Duns Scotus",
+        subtitle: "约1266–1308 · 经院哲学 · 个体性原则与意志主义",
+        tags: ["经院哲学", "此性", "意志主义", "方济各会"],
+        quote:
+          "个体的终极实在在于“此性”；意志是灵魂的皇后，理性只是它的顾问。",
+        centerSummary:
+          "邓斯·司各脱作为方济各会“精细博士”，以此性个体性原则、存在单义性与意志优先论挑战托马斯主义，重塑中世纪晚期形而上学与伦理神学格局。",
+        relations: {
+          influencedBy: ["thomas_aquinas", "anselm", "augustine"],
+          related: ["thomas_aquinas", "ockham"],
+        },
+      },
+      {
+        id: "ockham",
+        type: "philosopher",
+        title: "奥卡姆的威廉 William of Ockham",
+        subtitle: "约1285–1347 · 唯名论 · 奥卡姆剃刀与政治哲学",
+        tags: ["唯名论", "奥卡姆剃刀", "逻辑", "政教分离"],
+        quote:
+          "如无必要，勿增实体；存在即个体存在，普遍概念只是语言的影子。",
+        centerSummary:
+          "奥卡姆的威廉以唯名论和“奥卡姆剃刀”批判经院实在论，简化形而上学范畴，推动中世纪逻辑与科学方法论向经验主义转型，并在政教分离与自然权利理论上开出现代政治哲学先声。",
+        relations: {
+          influencedBy: ["thomas_aquinas", "duns_scotus"],
+          related: ["duns_scotus"],
+        },
+      },
+      {
+        id: "nicholas_cusa",
+        type: "philosopher",
+        title: "库萨的尼古拉 Nicholas of Cusa",
+        subtitle: "1401–1464 · 文艺复兴 · 有学识的无知与无限宇宙",
+        tags: ["有学识的无知", "对立统一", "无限宇宙", "新柏拉图主义"],
+        quote:
+          "真理如圆周，人类理性如内接多边形，只能无限逼近而永不重合；宇宙之中心处处，边界无处。",
+        centerSummary:
+          "库萨的尼古拉以“有学识的无知”和对立面的一致重塑认识论，以无限宇宙与相对运动观预示近代科学宇宙论，被视为从中世纪到文艺复兴的思想桥梁。",
+        relations: {
+          influencedBy: ["plotinus", "augustine"],
+          related: ["thomas_aquinas"],
+        },
+      },
+      {
+        id: "machiavelli",
+        type: "philosopher",
+        title: "尼科洛·马基雅维利 Niccolò Machiavelli",
+        subtitle: "1469–1527 · 文艺复兴 · 政治现实主义与权力技术",
+        tags: ["政治现实主义", "君主论", "共和主义", "Virtù与Fortuna"],
+        quote:
+          "人性自私多变，君主须学会不善，以保全国与自由；政治判断基于事物实际如何，而非想象中如何。",
+        centerSummary:
+          "马基雅维利在意大利战乱与佛罗伦萨政坛沉浮中，以《君主论》《论李维》开创政治现实主义，区分事实与价值，提出Virtù与Fortuna的辩证，奠定现代政治科学与共和思想的重要基石。",
+        relations: {
+          related: ["han_fei", "thomas_more"],
+        },
+      },
+      {
+        id: "erasmus",
+        type: "philosopher",
+        title: "德西德里乌斯·伊拉斯谟 Desiderius Erasmus",
+        subtitle: "1466–1536 · 文艺复兴 · 基督教人文主义与圣经革命",
+        tags: ["基督教人文主义", "愚人颂", "希腊文新约", "教育改革"],
+        quote:
+          "真正的虔敬在内心，不在朝圣与圣物；我的祖国是缪斯的领地，我的同胞是所有热爱智慧之人。",
+        centerSummary:
+          "伊拉斯谟以基督哲学与希腊文《新约》校勘，调和古典学术与基督信仰，讽刺教权腐败、倡导教育与和平，被誉为文艺复兴基督教人文主义的精神领袖与欧洲良心。",
+        relations: {
+          related: ["thomas_more"],
+        },
+      },
+      {
+        id: "calvin",
+        type: "philosopher",
+        title: "约翰·加尔文 John Calvin",
+        subtitle: "1509–1564 · 宗教改革 · 改革宗神学与预定论",
+        tags: ["加尔文主义", "预定论", "教会纪律", "新教伦理"],
+        quote:
+          "救恩不依赖人的行为，唯独出于神的主权；人类全然败坏，惟有恩典使人自由。",
+        centerSummary:
+          "约翰·加尔文在宗教改革与日内瓦实验中发展预定论、教会纪律与“天职”伦理，重塑西方信仰实践，对现代民主制度与资本主义精神产生深远影响。",
+        relations: {
+          related: ["erasmus"],
+        },
+      },
+      {
+        id: "boehme",
+        type: "philosopher",
+        title: "雅各布·波墨 Jacob Böhme",
+        subtitle: "1575–1624 · 德国神秘主义 · 神性辩证与宇宙生成论",
+        tags: ["基督教神秘主义", "自然哲学", "恶之形而上学", "灵性炼金术"],
+        quote:
+          "神在无根基中渴望自知，爱与怒在其内辩证燃烧；每一株草皆是符号，显明神的奥秘。",
+        centerSummary:
+          "雅各布·波墨出身鞋匠，却以神秘异象与象征语言描绘神性的辩证显现与宇宙生成论，融合新教神学、炼金术与自然哲学，被称为“条顿哲学家”，深刻影响德国神秘主义与后来的唯心主义。",
+        relations: {
+          related: ["nicholas_cusa"],
+        },
+      },
+      {
+        id: "bacon",
+        type: "philosopher",
+        title: "弗兰西斯·培根 Francis Bacon",
+        subtitle: "1561–1626 · 英国经验主义 · 归纳法与科学革命",
+        tags: ["经验主义", "归纳法", "新工具", "知识即权力"],
+        quote:
+          "真理是时间的女儿，而非权威的产物；知识的目的不在争辩，而在赋予人类驾驭自然的力量。",
+        centerSummary:
+          "弗兰西斯·培根在文艺复兴末期批判经院演绎法，提出三表法与排除法的经验归纳程序，揭示“四假象”之蔽，以《新工具》《新大西岛》描绘科学合作乌托邦，奠定现代科学方法论与“知识即权力”的实践哲学，被视为启蒙与科学革命的思想先驱。",
+        relations: {
+          related: ["calvin"],
+        },
+      },
+      {
+        id: "descartes",
+        type: "philosopher",
+        title: "勒内·笛卡尔 René Descartes",
+        subtitle: "1596–1650 · 近代哲学 · 理性主义与“我思故我在”",
+        tags: ["理性主义", "我思故我在", "身心二元论", "科学方法"],
+        quote:
+          "我思故我在；怀疑一切，以清晰分明观念为真理准则，用数学语言书写自然之书。",
+        centerSummary:
+          "勒内·笛卡尔以普遍怀疑与“我思故我在”奠定近代主体哲学，以身心二元论和机械自然观推进科学革命，并通过解析几何与方法论反思奠基现代理性主义与科学世界观。",
+        relations: {
+          related: ["bacon"],
+        },
+      },
+      {
+        id: "spinoza",
+        type: "philosopher",
+        title: "巴鲁赫·斯宾诺莎 Baruch Spinoza",
+        subtitle: "1632–1677 · 理性主义 · 神即自然与一元论体系",
+        tags: ["理性主义", "神即自然", "一元论", "思想自由"],
+        quote:
+          "神即自然；人非帝国中的帝国，而是自然整体的一部分。自由不在于任意选择，而在于认识必然性。",
+        centerSummary:
+          "斯宾诺莎在荷兰黄金时代以几何学方法建构实体一元论体系，提出“神即自然”，分析情感结构与理智之爱，捍卫思想自由与民主政治，对启蒙运动、现代科学自然主义与生态整体论产生深远影响。",
+        relations: {
+          related: ["descartes"],
+        },
+      },
+      {
+        id: "leibniz",
+        type: "philosopher",
+        title: "戈特弗里德·莱布尼茨 Gottfried Wilhelm Leibniz",
+        subtitle: "1646–1716 · 理性主义 · 单子论与前定和谐",
+        tags: ["理性主义", "单子论", "前定和谐", "微积分"],
+        quote:
+          "单子无窗，却以自身的知觉反映整个宇宙；我们生活在所有可能世界中最好的一个。",
+        centerSummary:
+          "莱布尼茨以单子论和前定和谐调和机械论与目的论，提出“最佳可能世界”神义论，独立创立微积分与二进制体系，对德国观念论、数理逻辑与计算机科学产生深远影响。",
+        relations: {
+          related: ["descartes", "spinoza"],
+        },
+      },
+      {
+        id: "locke",
+        type: "philosopher",
+        title: "约翰·洛克 John Locke",
+        subtitle: "1632–1704 · 英国经验主义 · 自然权利与有限政府",
+        tags: ["经验主义", "白板说", "自然权利", "自由主义"],
+        quote:
+          "心灵初如白板，一切观念来自经验；人天生享有生命、自由与财产的权利，政府只是受托者。",
+        centerSummary:
+          "约翰·洛克以白板说奠定英国经验主义认识论，在《政府论》中提出以自然权利为核心的社会契约与有限政府学说，为光荣革命辩护，并成为现代自由主义与民主宪政的思想源头。",
+        relations: {
+          related: ["hobbes", "rousseau", "hume"],
+        },
+      },
+      {
+        id: "hume",
+        type: "philosopher",
+        title: "大卫·休谟 David Hume",
+        subtitle: "1711–1776 · 苏格兰启蒙 · 彻底经验主义与怀疑论",
+        tags: ["经验主义", "怀疑论", "因果批判", "宗教批判"],
+        quote:
+          "理性只是激情的奴隶；因果不过是习惯形成的期待，而非世界中可见的必然纽带。",
+        centerSummary:
+          "大卫·休谟以印象与观念区分重构经验主义认识论，解构因果必然性与实体自我观念，将道德与政治建基于情感与效用原则，并以对神迹与设计论的系统批判，将怀疑论推至启蒙时代的极致，深刻影响康德、实证主义与现代分析哲学。",
+        relations: {
+          related: ["locke", "berkeley"],
+        },
+      },
+      {
+        id: "rousseau",
+        type: "philosopher",
+        title: "让-雅克·卢梭 Jean-Jacques Rousseau",
+        subtitle: "1712–1778 · 启蒙运动矛盾之子 · 社会契约与公意哲学",
+        tags: ["社会契约论", "公意", "自然教育", "启蒙反思"],
+        quote:
+          "人生而自由，却无往不在枷锁之中；公意不是多数人的意见，而是指向共同善的整体意志。",
+        centerSummary:
+          "让-雅克·卢梭以社会契约与公意理论重构政治主权合法性，既猛烈批判文明与私有制对人性的异化，又在《爱弥儿》中提出以自然成长与消极教育为核心的教育革命，其对民主、革命、浪漫主义与现代教育学的影响极其深远，却也因“强迫自由”等概念饱受极权主义隐患的争议。",
+        relations: {
+          related: ["locke", "hume", "kant"],
+        },
+      },
+      {
+        id: "kant",
+        type: "philosopher",
+        title: "伊曼努尔·康德 Immanuel Kant",
+        subtitle: "1724–1804 · 德国古典哲学 · 批判哲学与哥白尼式转向",
+        tags: ["先验哲学", "批判哲学", "绝对命令", "哥白尼式转向"],
+        quote:
+          "有两样东西，我愈是经常而持久地加以思考，它们就在我心中唤起愈来愈新的、愈来愈强烈的敬畏和赞叹：我上面的灿烂星空和我心中的道德律。",
+        centerSummary:
+          "伊曼努尔·康德通过“哥白尼式转向”提出先验哲学，认为理性以先天形式与范畴建构经验世界，在《纯粹理性批判》中为科学与形而上学划定边界，在《实践理性批判》中以绝对命令与目的王国重建义务论伦理学，并在《判断力批判》中发展美学与目的论，其体系成为德国观念论、分析哲学与现象学的共同起点。",
+        relations: {
+          related: ["hume", "rousseau"],
+        },
+      },
+      {
+        id: "hegel",
+        type: "philosopher",
+        title: "格奥尔格·威廉·弗里德里希·黑格尔 G.W.F. Hegel",
+        subtitle: "1770–1831 · 德国观念论 · 辩证法与历史哲学",
+        tags: ["德国观念论", "辩证法", "绝对精神", "历史哲学"],
+        quote:
+          "哲学是就其时代在思想中把握的世界；密涅瓦的猫头鹰总在黄昏起飞。",
+        centerSummary:
+          "黑格尔在德国观念论中集大成，以正反合辩证运动与“实体即主体”的命题，构建绝对精神通过历史与文化自我实现的宏大体系，在《精神现象学》《逻辑学》《法哲学原理》中将自由理解为历史展开的核心，并深刻影响马克思主义、存在主义、历史主义与当代批判理论。",
+        relations: {
+          related: ["kant", "marx", "schopenhauer"],
+        },
+      },
+      {
+        id: "schopenhauer",
+        type: "philosopher",
+        title: "亚瑟·叔本华 Arthur Schopenhauer",
+        subtitle: "1788–1860 · 唯意志论 · 悲观主义与意志形而上学",
+        tags: ["唯意志论", "悲观主义", "意志哲学", "印度哲学"],
+        quote:
+          "人生如钟摆，在痛苦与无聊之间摆动；要么孤独，要么庸俗。",
+        centerSummary:
+          "亚瑟·叔本华以《作为意志与表象的世界》确立唯意志论，将盲目生命意志视为世界本质，融合印度《奥义书》与佛教苦谛阐发悲观主义，以审美静观与否定意志寻求解脱，深刻影响尼采、弗洛伊德、存在主义与文学现代主义，却因与黑格尔柏林擂台失利而长期遭学界冷遇。",
+        relations: {
+          related: ["hegel", "kant"],
+        },
+      },
+      {
+        id: "nietzsche",
+        type: "philosopher",
+        title: "弗里德里希·尼采 Friedrich Nietzsche",
+        subtitle: "1844–1900 · 生命哲学 · 权力意志与价值重估",
+        tags: ["生命哲学", "权力意志", "上帝已死", "价值重估"],
+        quote:
+          "上帝已死，我们杀了他；真正伟大的灵魂，是能愿意自己的人生无限次地再度发生。",
+        centerSummary:
+          "弗里德里希·尼采以“上帝已死”“超人”和永恒回归为核心，解构基督教与启蒙理性奠定的传统道德，将权力意志视为生命的根本动力，通过谱系学方法揭示道德与真理背后的权力结构，在肯定悲剧性生命的同时呼吁价值重估，对存在主义、后现代哲学与现代文学产生巨大影响。",
+        relations: {
+          related: ["schopenhauer", "hegel"],
+        },
+      },
+      {
+        id: "marx",
+        type: "philosopher",
+        title: "卡尔·马克思 Karl Marx",
+        subtitle: "1818–1883 · 历史唯物主义 · 资本主义批判与科学社会主义",
+        tags: ["历史唯物主义", "阶级斗争", "剩余价值", "科学社会主义"],
+        quote:
+          "不是人们的意识决定他们的存在，而是他们的社会存在决定他们的意识；全世界无产者，联合起来！",
+        centerSummary:
+          "卡尔·马克思在批判黑格尔观念论与古典政治经济学的基础上创立历史唯物主义与剩余价值理论，揭示资本主义制度中异化劳动与商品拜物教的结构性暴力，将阶级斗争视为历史发展的内在动力，并通过科学社会主义设想无产阶级革命与共产主义社会，对20世纪世界政治、社会科学与批判理论产生深远影响。",
+        relations: {
+          related: ["hegel", "nietzsche"],
+        },
+      },
+      {
+        id: "kierkegaard",
+        type: "philosopher",
+        title: "索伦·克尔凯郭尔 Søren Kierkegaard",
+        subtitle: "1813–1855 · 存在主义先驱 · 个体生存与信仰的激情",
+        tags: ["存在主义", "个体生存", "焦虑", "信仰的跳跃"],
+        quote:
+          "真理即主体性；焦虑是自由的可能，在理性的悬崖边跃入信仰。",
+        centerSummary:
+          "索伦·克尔凯郭尔以审美-伦理-宗教三阶段论与焦虑、绝望分析，将个体生存置于体系哲学之上，批判黑格尔的抽象理性，以亚伯拉罕献祭以撒等悖论阐明信仰超越伦理，并以笔名与间接沟通策略捍卫“那个个体”，成为存在主义与辩证神学的重要源头。",
+        relations: {
+          related: ["hegel", "kant"],
+        },
+      },
+      {
+        id: "husserl",
+        type: "philosopher",
+        title: "埃德蒙德·胡塞尔 Edmund Husserl",
+        subtitle: "1859–1938 · 现象学之父 · 悬置、还原与生活世界",
+        tags: ["现象学", "意向性", "悬置", "生活世界"],
+        quote:
+          "回到事物本身；意识总是对某物的意识，科学不可遗忘其意义根源——生活世界。",
+        centerSummary:
+          "埃德蒙德·胡塞尔以《逻辑研究》开创现象学，提出悬置与本质直观的方法论，以意向性理论阐明意识的结构，在先验转向中发展生活世界与主体间性概念，并在一战与纳粹时期以《欧洲科学的危机》诊断意义虚无，为存在主义、解释学与分析哲学中的意识研究奠定基础。",
+        relations: {
+          related: ["kant", "kierkegaard", "heidegger"],
+        },
+      },
+      {
+        id: "heidegger",
+        type: "philosopher",
+        title: "马丁·海德格尔 Martin Heidegger",
+        subtitle: "1889–1976 · 现象学存在论 · 此在与技术批判",
+        tags: ["存在论", "此在", "向死而在", "座架"],
+        quote:
+          "存在者存在，但存在本身不“是”存在者；语言是存在之家，技术本质是座架。",
+        centerSummary:
+          "马丁·海德格尔在《存在与时间》中以“此在”分析追问存在意义，提出向死而在、时间性与本真生存，后转向存在史批判与技术哲学，以“座架”揭示现代技术对人与自然的促逼，并以诗意栖居与泰然任之寻求出路，深刻影响存在主义、解释学与后现代哲学，其纳粹牵连与反犹言论亦引发持续争议。",
+        relations: {
+          related: ["husserl", "nietzsche"],
+        },
+      },
+      {
+        id: "wittgenstein",
+        type: "philosopher",
+        title: "路德维希·维特根斯坦 Ludwig Wittgenstein",
+        subtitle: "1889–1951 · 分析哲学 · 语言游戏与哲学治疗",
+        tags: ["分析哲学", "语言游戏", "逻辑哲学论", "哲学治疗"],
+        quote:
+          "对不可说者须保持沉默；想象一种语言即想象一种生活形式。",
+        centerSummary:
+          "路德维希·维特根斯坦前期以《逻辑哲学论》提出图像论与言说界限，后期在《哲学研究》中转向语言游戏、家族相似与私有语言批判，将哲学任务界定为对语言误用的治疗而非理论建构，深刻塑造分析哲学、日常语言学派及当代语言与心灵哲学。",
+        relations: {
+          related: ["heidegger", "husserl"],
+        },
+      },
+      {
+        id: "sartre",
+        type: "philosopher",
+        title: "让-保罗·萨特 Jean-Paul Sartre",
+        subtitle: "1905–1980 · 存在主义 · 存在先于本质与介入",
+        tags: ["存在主义", "存在先于本质", "绝对自由", "介入"],
+        quote:
+          "存在先于本质；人被判定为自由，他人即地狱。",
+        centerSummary:
+          "让-保罗·萨特在《存在与虚无》中以“存在先于本质”与自欺分析阐发绝对自由与责任，主张人通过选择创造自身；后期在《辩证理性批判》中融合马克思主义的匮乏与实践惰性理论，并以介入文学与政治行动践行“沉默即共谋”，成为战后存在主义与左翼知识分子的象征。",
+        relations: {
+          related: ["heidegger", "husserl", "marx"],
+        },
+      },
+      {
+        id: "foucault",
+        type: "philosopher",
+        title: "米歇尔·福柯 Michel Foucault",
+        subtitle: "1926–1984 · 后结构主义 · 权力-知识与规训批判",
+        tags: ["后结构主义", "权力-知识", "规训", "生命政治"],
+        quote:
+          "权力生产知识，知识以权力形式运作；人将被抹去，如海边沙上的脸。",
+        centerSummary:
+          "米歇尔·福柯以知识考古学与权力系谱学解构疯癫、监狱与性态的历史，揭示规训社会与生命政治如何塑造现代主体，提出“人之死”与话语形构理论，并以生存美学与自我技术探索抵抗规范化，深刻影响后现代理论、女性主义、后殖民研究与文化研究。",
+        relations: {
+          related: ["sartre", "marx", "nietzsche"],
+        },
+      },
+      {
+        id: "merleau_ponty",
+        type: "philosopher",
+        title: "莫里斯·梅洛-庞蒂 Maurice Merleau-Ponty",
+        subtitle: "1908–1961 · 知觉现象学 · 身体主体与交织",
+        tags: ["现象学", "身体主体", "知觉现象学", "交织"],
+        quote:
+          "身体是世界的媒介；我用身体理解世界，可见者与不可见者在肉身中交织。",
+        centerSummary:
+          "莫里斯·梅洛-庞蒂在《知觉现象学》中以身体主体取代意识中心，将知觉与空间性置于哲学核心，批判笛卡尔身心二元论；后期在《可见的与不可见的》中发展交织与肉身存在论，并与结构主义对话，深刻影响具身认知、现象学美学与政治哲学，其与萨特的决裂亦标志战后法国思想的分流。",
+        relations: {
+          related: ["husserl", "sartre", "heidegger"],
+        },
+      },
+      {
+        id: "beauvoir",
+        type: "philosopher",
+        title: "西蒙娜·德·波伏瓦 Simone de Beauvoir",
+        subtitle: "1908–1986 · 存在主义女性主义 · 第二性与社会建构",
+        tags: ["女性主义", "第二性", "存在主义", "社会建构"],
+        quote:
+          "女人非天生，而是被造就的；男性将女性贬为绝对他者，剥夺其超越性。",
+        centerSummary:
+          "西蒙娜·德·波伏瓦在《第二性》中以存在主义与现象学分析揭示性别如何被社会建构，提出“他者”理论与身体处境批判，阐发暧昧伦理学与老年、死亡的政治维度，成为第二波女性主义理论奠基人，其与萨特的思想同盟与开放关系亦成为二十世纪知识分子生活的象征。",
+        relations: {
+          related: ["sartre", "merleau_ponty", "foucault"],
+        },
+      },
+      {
+        id: "habermas",
+        type: "philosopher",
+        title: "尤尔根·哈贝马斯 Jürgen Habermas",
+        subtitle: "1929– · 批判理论 · 沟通行动与协商民主",
+        tags: ["批判理论", "沟通行动", "公共领域", "协商民主"],
+        quote:
+          "交往理性以最佳论据的力量达成共识；系统殖民生活世界，民主需重建公共领域。",
+        centerSummary:
+          "尤尔根·哈贝马斯在法兰克福学派传统中发展沟通行动理论，以交往理性对抗工具理性与后现代相对主义，提出理想言谈情境、系统与生活世界殖民化及双轨协商民主模型，并阐发宪法爱国主义与世界公民社会构想，深刻影响政治哲学、法学、传播学与国际关系理论。",
+        relations: {
+          related: ["marx", "kant", "foucault"],
+        },
+      },
+      {
+        id: "rawls",
+        type: "philosopher",
+        title: "约翰·罗尔斯 John Rawls",
+        subtitle: "1921–2002 · 新契约论 · 作为公平的正义",
+        tags: ["正义论", "原初状态", "重叠共识", "政治自由主义"],
+        quote:
+          "正义是社会制度的首要德性；在原初状态与无知之幕下，自由平等的人会选择差异原则。",
+        centerSummary:
+          "约翰·罗尔斯在《正义论》中以原初状态与无知之幕重构社会契约，提出作为公平的正义两原则及反思平衡方法，后期在《政治自由主义》中发展重叠共识与公共理性以应对合理多元主义，并在《万民法》中拓展全球正义与战争伦理，复兴战后政治哲学并深刻影响宪政与制度设计。",
+        relations: {
+          related: ["kant", "locke", "habermas"],
+        },
+      },
+      {
+        id: "deleuze",
+        type: "philosopher",
+        title: "吉尔·德勒兹 Gilles Deleuze",
+        subtitle: "1925–1995 · 后结构主义 · 差异哲学与块茎思维",
+        tags: ["后结构主义", "差异与重复", "块茎", "欲望生产"],
+        quote:
+          "哲学是概念的创造；存在是差异的差异化，块茎对抗树的层级逻辑。",
+        centerSummary:
+          "吉尔·德勒兹以《差异与重复》与《尼采与哲学》阐发差异哲学，与加塔利合著《反俄狄浦斯》《千高原》，提出欲望生产、解辖域化、无器官身体与块茎思维，批判规训社会并预言控制社会，深刻影响后现代理论、电影哲学、新唯物主义与政治思想。",
+        relations: {
+          related: ["nietzsche", "foucault", "marx"],
+        },
+      },
+      {
+        id: "derrida",
+        type: "philosopher",
+        title: "雅克·德里达 Jacques Derrida",
+        subtitle: "1930–2004 · 解构主义 · 延异与文本批判",
+        tags: ["解构主义", "延异", "逻各斯中心论", "补充逻辑"],
+        quote:
+          "文本之外无物；意义在延异中无限延宕，中心由边缘的补充所构成。",
+        centerSummary:
+          "雅克·德里达在《论文字学》与《书写与差异》中创立解构方法，以延异、补充逻辑与语音中心论批判颠覆西方在场形而上学，后期转向好客、死刑与马克思幽灵等伦理政治议题，深刻影响后殖民理论、文学批评、建筑解构与当代欧陆哲学。",
+        relations: {
+          related: ["heidegger", "husserl", "foucault"],
+        },
+      },
+      {
+        id: "said",
+        type: "philosopher",
+        title: "爱德华·萨义德 Edward Said",
+        subtitle: "1935–2003 · 后殖民理论 · 东方主义与文化批判",
+        tags: ["后殖民", "东方主义", "文化批判", "知识分子"],
+        quote:
+          "东方学是西方用以宰制、重构与君临东方的一种权力；知识分子应为正义做业余者。",
+        centerSummary:
+          "爱德华·萨义德在《东方学》中揭示西方学术如何将“东方”建构为他者并服务于殖民权力，在《文化与帝国主义》中阐发对抗性书写与反叙述，并以《知识分子论》与晚期风格论倡导流亡视角与业余者伦理，开创后殖民研究与文化批判范式，深刻影响文学批评、文化研究与政治论述。",
+        relations: {
+          related: ["foucault", "derrida", "marx"],
+        },
+      },
+      {
+        id: "butler",
+        type: "philosopher",
+        title: "朱迪斯·巴特勒 Judith Butler",
+        subtitle: "1956– · 后结构女性主义 · 性别操演与脆弱性政治",
+        tags: ["性别操演", "酷儿理论", "后结构女性主义", "脆弱性"],
+        quote:
+          "性别是重复操演产生的自然化假象；可哀悼性划分界定何者为人类。",
+        centerSummary:
+          "朱迪斯·巴特勒在《性别麻烦》中以操演理论解构生理/社会性别二元与异性恋矩阵，在《身体之重》中阐发身体物质化与话语建构，后期转向哀悼、可哀悼性、集会自由与非暴力伦理，深刻影响酷儿理论、跨性别研究、批判理论与当代政治行动主义。",
+        relations: {
+          related: ["beauvoir", "foucault", "derrida"],
+        },
+      },
+      {
+        id: "zizek",
+        type: "philosopher",
+        title: "斯拉沃热·齐泽克 Slavoj Žižek",
+        subtitle: "1949– · 批判理论 · 意识形态崇高客体与拉康-黑格尔",
+        tags: ["意识形态批判", "拉康", "黑格尔", "崇高客体"],
+        quote:
+          "他们清楚所作所为，但依然为之；意识形态的崇高客体支撑日常现实。",
+        centerSummary:
+          "斯拉沃热·齐泽克融合拉康精神分析与黑格尔辩证法，在《意识形态的崇高客体》中阐发犬儒意识形态与商品恋物癖，以视差之见、暴力辩证法与共产主义假设介入政治哲学，并以电影、流行文化与网络迷因分析著称，成为当代批判理论与左翼论述的标志性声音。",
+        relations: {
+          related: ["marx", "hegel", "deleuze"],
+        },
+      },
+      {
+        id: "agamben",
+        type: "philosopher",
+        title: "乔吉奥·阿甘本 Giorgio Agamben",
+        subtitle: "1942– · 大陆哲学 · 神圣人与例外状态",
+        tags: ["生命政治", "神圣人", "例外状态", "赤裸生命"],
+        quote:
+          "神圣人可被杀死但不可献祭；法律通过例外状态悬置自身而确立主权。",
+        centerSummary:
+          "乔吉奥·阿甘本在《神圣人》系列中以赤裸生命与例外状态阐发主权权力的结构，融合海德格尔与福柯的生命政治批判，揭示从古罗马到集中营与关塔那摩的连续性，并以弥赛亚时间、任意独体与无目的的手段探索抵抗可能，深刻影响政治神学、难民研究与当代批判理论。",
+        relations: {
+          related: ["foucault", "heidegger", "butler"],
+        },
+      },
+      {
+        id: "berkeley",
+        type: "philosopher",
+        title: "乔治·贝克莱 George Berkeley",
+        subtitle: "1685–1753 · 爱尔兰经验主义 · 非物主义与“存在即被感知”",
+        tags: ["经验主义", "非物主义", "存在即被感知", "感知哲学"],
+        quote:
+          "存在即被感知；所谓物质不过是观念的集合，世界持续存在因上帝永恒感知。",
+        centerSummary:
+          "乔治·贝克莱以“存在即被感知”的非物主义批判洛克的物质基底概念，将自然规律视为上帝设定的观念秩序，并在视觉与空间感知研究中奠定现代感知哲学的重要基础。",
+        relations: {
+          related: ["locke", "hume"],
+        },
+      },
+      {
+        id: "thomas_more",
+        type: "philosopher",
+        title: "托马斯·莫尔 Thomas More",
+        subtitle: "1478–1535 · 文艺复兴 · 乌托邦与基督教人文主义",
+        tags: ["乌托邦", "基督教人文主义", "空想社会主义", "社会正义"],
+        quote:
+          "羊开始吃人之时，贫困便成了制度的罪恶；宁可错放十罪人，不可冤杀一无辜。",
+        centerSummary:
+          "托马斯·莫尔以《乌托邦》批判圈地与资本原始积累，构想财产公有与六小时工作制的理想社会，并以“先为国王忠仆，更为上帝仆人”的殉道见证基督教人文主义良知。",
+        relations: {
+          related: ["machiavelli", "han_fei", "erasmus"],
+        },
+      },
     ];
     const entryById = Object.fromEntries(entries.map((e) => [e.id, e]));
+
+    // 概念图谱：按核心概念连接哲学家（用户点击概念后显示该线索）
+    const conceptList = [
+      "存在", "正义", "自由", "知识", "道德", "权力", "语言", "理性", "身体", "真理", "启蒙", "差异",
+      "气", "心", "道",
+      "意识形态", "修正主义", "唯物论", "唯名论",
+      "仁", "泛灵论", "理学", "宇宙",
+    ];
+    const conceptToPhilosophers = {
+      "存在": ["heidegger", "sartre", "kierkegaard", "merleau_ponty", "parmenides", "husserl", "zhuangzi", "wang_bi"],
+      "正义": ["plato", "aristotle", "rawls", "habermas", "confucius", "huang_zongxi", "locke", "rousseau", "marx"],
+      "自由": ["sartre", "rousseau", "locke", "kant", "hegel", "kierkegaard", "ji_kang", "mill"],
+      "知识": ["plato", "descartes", "locke", "hume", "kant", "wittgenstein", "husserl", "zhu_xi", "berkeley"],
+      "道德": ["aristotle", "kant", "hume", "confucius", "mencius", "nietzsche", "rawls", "socrates"],
+      "权力": ["foucault", "marx", "nietzsche", "agamben", "han_fei", "machiavelli"],
+      "语言": ["wittgenstein", "heidegger", "derrida", "foucault", "saussure"],
+      "理性": ["kant", "hegel", "habermas", "descartes", "husserl", "rawls", "zhu_xi"],
+      "身体": ["merleau_ponty", "beauvoir", "foucault", "butler"],
+      "真理": ["plato", "heidegger", "derrida", "nietzsche", "husserl", "sengzhao"],
+      "启蒙": ["kant", "rousseau", "foucault", "habermas", "liang_qichao", "descartes"],
+      "差异": ["derrida", "deleuze", "butler", "said", "nietzsche"],
+      "气": ["mencius", "zhuangzi", "wang_chong", "ji_kang", "zhu_xi", "wang_fuzhi", "dai_zhen", "feng_youlan", "anaximenes", "empedocles"],
+      "心": ["mencius", "zhu_xi", "wang_yangming", "li_zhi", "huang_zongxi", "dai_zhen", "xiong_shili", "mou_zongsan", "xu_fuguan"],
+      "道": ["laozi", "zhuangzi", "confucius", "mencius", "xunzi", "han_fei", "dong_zhongshu", "wang_bi", "wang_chong", "sengzhao", "zhu_xi", "dai_zhen", "zhang_xuecheng", "kang_youwei", "heidegger"],
+      "意识形态": ["marx", "foucault", "zizek", "dong_zhongshu", "zhu_xi", "du_weiming", "chen_yinke", "feng_youlan", "mou_zongsan", "yu_yingshih", "gan_yang", "wang_hui", "said"],
+      "修正主义": ["marx", "guo_xiang", "kang_youwei"],
+      "唯物论": ["marx", "leucippus", "democritus", "epicurus", "wang_chong", "wang_fuzhi", "dai_zhen", "feng_youlan", "anaximenes", "tan_sitong"],
+      "唯名论": ["ockham", "abelard", "duns_scotus", "anselm", "thomas_aquinas"],
+      "仁": ["confucius", "mencius", "dong_zhongshu", "zhu_xi", "wang_yangming", "tan_sitong", "du_weiming", "xu_fuguan"],
+      "泛灵论": ["thales", "pythagoras", "empedocles", "plotinus", "marcus_aurelius", "boehme"],
+      "理学": ["zhu_xi", "wang_yangming", "dai_zhen", "feng_youlan", "dong_zhongshu", "guo_xiang", "wang_bi", "huineng", "mou_zongsan"],
+      "宇宙": ["laozi", "zhuangzi", "thales", "anaximander", "pythagoras", "empedocles", "wang_chong", "zhu_xi", "wang_yangming", "nicholas_cusa", "boehme", "leibniz", "marcus_aurelius", "kant", "fang_dongmei", "tan_sitong"],
+    };
+    // 反向映射：每位哲学家关联的概念（用于概念视图：以哲学家为中心，展示其概念及有相似概念的学者）
+    const philosopherToConcepts = {};
+    conceptList.forEach((conceptName) => {
+      (conceptToPhilosophers[conceptName] || []).forEach((pid) => {
+        if (!entryById[pid]) return;
+        if (!philosopherToConcepts[pid]) philosopherToConcepts[pid] = [];
+        philosopherToConcepts[pid].push(conceptName);
+      });
+    });
+
+    // 中西哲学发展脉络：从 entries 中所有哲学家按时期归类（共约 110 位）
+    const timelineChinaIds = new Set([
+      "confucius", "laozi", "mozi", "mencius", "xunzi", "zhuangzi", "han_fei", "dong_zhongshu", "wang_chong",
+      "wang_bi", "ji_kang", "guo_xiang", "sengzhao", "zhu_daosheng", "huineng", "zhu_xi", "wang_yangming", "li_zhi",
+      "huang_zongxi", "wang_fuzhi", "dai_zhen", "zhang_xuecheng", "wei_yuan", "kang_youwei", "tan_sitong", "zhang_taiyan",
+      "liang_qichao", "wang_guowei", "chen_yinke", "liang_shuming", "feng_youlan", "xiong_shili", "mou_zongsan", "tang_junyi",
+      "xu_fuguan", "fang_dongmei", "qian_mu", "yu_yingshih", "du_weiming", "li_zehou", "liu_xiaofeng", "wang_hui", "gan_yang",
+    ]);
+    const timelinePeriodById = {
+      confucius: "pre_qin", laozi: "pre_qin", mozi: "pre_qin", mencius: "pre_qin", xunzi: "pre_qin", zhuangzi: "pre_qin", han_fei: "pre_qin",
+      dong_zhongshu: "han_tang", wang_chong: "han_tang", wang_bi: "han_tang", ji_kang: "han_tang", guo_xiang: "han_tang", sengzhao: "han_tang", zhu_daosheng: "han_tang", huineng: "han_tang",
+      zhu_xi: "song_ming", wang_yangming: "song_ming", li_zhi: "song_ming",
+      huang_zongxi: "modern", wang_fuzhi: "modern", dai_zhen: "modern", zhang_xuecheng: "modern", wei_yuan: "modern", kang_youwei: "modern", tan_sitong: "modern", zhang_taiyan: "modern", liang_qichao: "modern", wang_guowei: "modern", chen_yinke: "modern", liang_shuming: "modern", feng_youlan: "modern", xiong_shili: "modern", mou_zongsan: "modern", tang_junyi: "modern", xu_fuguan: "modern", fang_dongmei: "modern", qian_mu: "modern", yu_yingshih: "modern", du_weiming: "modern", li_zehou: "modern", liu_xiaofeng: "modern", wang_hui: "modern", gan_yang: "modern",
+      thales: "ancient_greece", anaximander: "ancient_greece", anaximenes: "ancient_greece", pythagoras: "ancient_greece", heraclitus: "ancient_greece", parmenides: "ancient_greece", zeno_elea: "ancient_greece", empedocles: "ancient_greece", anaxagoras: "ancient_greece", leucippus: "ancient_greece", democritus: "ancient_greece", protagoras: "ancient_greece", gorgias: "ancient_greece", socrates: "ancient_greece", plato: "ancient_greece", aristotle: "ancient_greece",
+      epicurus: "hellenistic_rome", zeno_citium: "hellenistic_rome", chrysippus: "hellenistic_rome", seneca: "hellenistic_rome", epictetus: "hellenistic_rome", marcus_aurelius: "hellenistic_rome", plotinus: "hellenistic_rome",
+      augustine: "medieval", boethius: "medieval", eriugena: "medieval", anselm: "medieval", abelard: "medieval", thomas_aquinas: "medieval", duns_scotus: "medieval", ockham: "medieval",
+      nicholas_cusa: "renaissance", machiavelli: "renaissance", erasmus: "renaissance", calvin: "renaissance", boehme: "renaissance", thomas_more: "renaissance",
+      bacon: "early_modern", descartes: "early_modern", spinoza: "early_modern", leibniz: "early_modern", locke: "early_modern", hobbes: "early_modern", berkeley: "early_modern", hume: "early_modern", rousseau: "early_modern", kant: "early_modern",
+      hegel: "german_19", schopenhauer: "german_19", kierkegaard: "german_19", marx: "german_19", nietzsche: "german_19",
+      husserl: "contemporary", heidegger: "contemporary", wittgenstein: "contemporary", sartre: "contemporary", foucault: "contemporary", merleau_ponty: "contemporary", beauvoir: "contemporary", habermas: "contemporary", rawls: "contemporary", deleuze: "contemporary", derrida: "contemporary", said: "contemporary", butler: "contemporary", zizek: "contemporary", agamben: "contemporary",
+    };
+    const timelinePeriodConfig = {
+      pre_qin: { period: "先秦诸子", timeLabel: "约前6世纪 – 前221年" },
+      han_tang: { period: "汉唐经学与玄学", timeLabel: "前2世纪 – 10世纪" },
+      song_ming: { period: "宋明理学与心学", timeLabel: "11世纪 – 17世纪" },
+      modern: { period: "近现代", timeLabel: "19世纪 – 20世纪" },
+      ancient_greece: { period: "古希腊", timeLabel: "约前6世纪 – 前4世纪" },
+      hellenistic_rome: { period: "希腊化与罗马", timeLabel: "约前4世纪 – 3世纪" },
+      medieval: { period: "中世纪", timeLabel: "约4世纪 – 14世纪" },
+      renaissance: { period: "文艺复兴与宗教改革", timeLabel: "约15世纪 – 17世纪初" },
+      early_modern: { period: "近代理性主义与经验论", timeLabel: "17世纪 – 18世纪" },
+      german_19: { period: "德国古典与19世纪", timeLabel: "18世纪末 – 19世纪" },
+      contemporary: { period: "现当代", timeLabel: "20世纪至今" },
+    };
+    function buildTimelineFromEntries() {
+      const philosophers = entries.filter((e) => e.type === "philosopher");
+      const chinaByPeriod = {};
+      const westByPeriod = {};
+      const chinaOrder = ["pre_qin", "han_tang", "song_ming", "modern"];
+      const westOrder = ["ancient_greece", "hellenistic_rome", "medieval", "renaissance", "early_modern", "german_19", "contemporary"];
+      chinaOrder.forEach((k) => { chinaByPeriod[k] = []; });
+      westOrder.forEach((k) => { westByPeriod[k] = []; });
+      philosophers.forEach((e) => {
+        const key = timelinePeriodById[e.id];
+        if (!key) return;
+        const fig = { name: e.title.split(" ")[0] || e.title, id: e.id };
+        if (timelineChinaIds.has(e.id)) {
+          if (chinaByPeriod[key]) chinaByPeriod[key].push(fig);
+        } else {
+          if (westByPeriod[key]) westByPeriod[key].push(fig);
+        }
+      });
+      const timelineChina = chinaOrder.filter((k) => chinaByPeriod[k].length).map((k) => ({
+        period: timelinePeriodConfig[k].period,
+        timeLabel: timelinePeriodConfig[k].timeLabel,
+        figures: chinaByPeriod[k],
+      }));
+      const timelineWest = westOrder.filter((k) => westByPeriod[k].length).map((k) => ({
+        period: timelinePeriodConfig[k].period,
+        timeLabel: timelinePeriodConfig[k].timeLabel,
+        figures: westByPeriod[k],
+      }));
+      return { timelineChina, timelineWest };
+    }
+    const _timelineBuilt = buildTimelineFromEntries();
+    const timelineChina = _timelineBuilt.timelineChina;
+    const timelineWest = _timelineBuilt.timelineWest;
 
     // 每个哲学家的完整资料（原文，不做删减）
     const philosopherDetails = {
@@ -1174,6 +2206,278 @@
 2. 芬格莱特《孔子：即凡而圣》，Harper & Row，1972。
 
 3.黄勇《儒家伦理的当代重构》，牛津大学出版社，2021。`,
+      mozi: `哲学家 Philosopher #03
+姓名 Name: 墨子 Mozi
+生卒年 Lifespan: 约前470-前391 BCE | 据孙诒让《墨子年表》推定
+学派 School: 墨家 Mohism
+
+生平与历史背景
+
+1. 传统记载
+
+  • 《史记》未单独立传，事迹散见于《孟子荀卿列传》，载其曾习儒术，后创墨家，批判儒家“厚葬靡财”。
+
+  • 《淮南子》称“墨子学儒者之业，受孔子之术，以为其礼烦扰而不悦”，遂自立学派。
+
+2. 现代学术重构
+
+  • 孙诒让《墨子间诂》考订其活动于前5世纪末至前4世纪初，与楚惠王（前488-前432在位）同时代。
+
+  • 钱穆《先秦诸子系年》推测生卒年约前480-前390年，晚于孔子而早于孟子。
+
+3. 考古与文本证据
+
+  • 世爵山汉简（前2世纪）出土《墨子》残篇，含《尚贤》《节用》等内容，证实战国至汉初流传。
+
+  • 《墨子》现存53篇，分“十论”（尚贤、尚同等核心主张）、“墨辩”（逻辑学）、“城守”（军事技术）三部分。
+
+核心思想体系
+
+1. 兼爱（Jian’ai, Universal Love）
+
+  • 定义：“视人之国若视其国，视人之家若视其家”（《兼爱上》），主张无差别普遍关怀。
+
+  • 功利基础：“兼相爱，交相利”（《兼爱中》），以互惠互利为伦理前提。
+
+  • 儒家批判：反对“亲亲有术”的差等爱，孟子斥为“无父”（《孟子·滕文公下》）。
+
+2. 非攻（Feigong, Condemnation of Aggression）
+
+  • 反战逻辑：以“窃桃李”类比侵国不义（《非攻上》：“杀一人谓之不义，必有一死罪矣；杀百人，百重不义，必有百死罪矣”）。
+
+  • 军事技术：《备城门》等11篇详述防御战术，体现“以守为攻”的战略思想。
+
+3. 三表法（Three Standards of Validation）
+
+  • 经验主义方法论：
+
+    ◦ 本之者：历史经验（“上本之于古者圣王之事”）
+
+    ◦ 原之者：感官证据（“下原察百姓耳目之实”）
+
+    ◦ 用之者：实践效用（“发以为刑政，观其中国家百姓人民之利”）
+
+思想传承与影响
+
+1. 战国显学
+
+  • 与儒家并称“世之显学”（《韩非子·显学》），门下弟子“充满天下”。
+
+  • 逻辑学成就：《墨经》定义“名”（概念）、“辩”（推理），发展命题逻辑（如“侔”式推论）。
+
+2. 中衰与近代复兴
+
+  • 秦汉后因反战思想与集权冲突而式微，至清代考据学重新发掘。
+
+  • 梁启超《墨子学案》（1921）赞其“兼爱”可比基督教，胡适《先秦名学史》推崇其科学方法论。
+
+学术争议
+
+1. 逻辑学渊源
+
+  • 李约瑟《中国科学技术史》认为墨家逻辑独立发展，反映中国科学思维特质。
+
+  • 葛瑞汉（A.C. Graham）推测《墨经》可能间接接触印度因明学，但无直接证据。
+
+2. 文本真实性
+
+  • 《墨子·备城门》等兵技巧篇或为秦汉兵家托名，掺杂后世技术内容。
+
+  • “十论”中《非儒》《公孟》等篇可能经后期墨者增补，强化反儒立场。
+
+3. 宗教维度争议
+
+  • “天志”“明鬼”思想是否残留原始宗教迷信？冯友兰批评其“落后于孔子的人文主义”。
+
+  • 方授楚《墨学源流》认为“天志”实为工具理性，借宗教权威推行兼爱。
+
+参考文献
+
+1. 梅贻宝（Y.P. Mei）《墨子：孔子的批判者》英译本，伦敦普罗布斯坦出版社，1929。
+
+2. 葛瑞汉（A.C. Graham）《后期墨家逻辑、伦理与科学》，香港大学出版社，1978。
+
+3. 李约瑟（Joseph Needham）《中国科学技术史》第二卷，剑桥大学出版社，1956。
+
+4. 孙诒让《墨子间诂》，中华书局，2001。`,
+      mencius: `哲学家 Philosopher #04
+姓名 Name: 孟子 Mencius
+生卒年 Lifespan: 约前372-前289 BCE | 据《史记·孟子荀卿列传》推算
+学派 School: 儒家 Confucianism
+
+生平与历史背景
+
+1. 传统记载
+
+  • 《史记》载孟子为邹国人，受业于子思（孔子之孙）门人，曾游说齐宣王、梁惠王等推行仁政。
+
+  • 晚年退隐与弟子万章等编撰《孟子》七篇。
+
+2. 现代学术定位
+
+  • 钱穆《先秦诸子系年》考订其活动于前4世纪中后期，晚于墨子而早于荀子。
+
+  • 出土简帛：郭店楚简《性自命出》（约前300年）反映同期心性论思潮，佐证孟子思想非孤立产物。
+
+3. 文本传承
+
+  • 赵岐《孟子章句》（东汉）确立今本结构，朱熹《孟子集注》提升为“四书”之一。
+
+核心思想体系
+
+1. 性善论（Theory of Innate Goodness）
+
+  • 四端说：
+“恻隐之心，仁之端也；羞恶之心，义之端也；辞让之心，礼之端也；是非之心，智之端也”（《公孙丑上》）
+
+  • 批判性恶论：
+以“孺子入井”案例论证人性本善，反驳告子“性无善无不善”说。
+
+2. 仁政思想（Benevolent Governance）
+
+  • 民本原则：
+“民为贵，社稷次之，君为轻”（《尽心下》）
+
+  • 经济改革：
+“制民之产”主张保障基本生存权（“五亩之宅，树之以桑”）。
+
+3. 修养方法论
+
+  • 养气说：
+“我善养吾浩然之气”（《公孙丑上》），通过道德实践培养精神力量。
+
+  • 环境论：
+“富岁子弟多赖，凶岁子弟多暴”强调后天教化重要性。
+
+思想传承与影响
+
+1. 战国时期
+
+  • 与荀子形成儒家内部对立（性善 vs 性恶），荀子门人斥孟子“僻违而无类”（《荀子·非十二子》）。
+
+2. 宋明理学
+
+  • 程颢、程颐推崇为道统继承者，朱熹将“四端”纳入理气论框架。
+
+  • 王阳明心学直接继承“万物皆备于我”（《尽心上》）命题。
+
+3. 近现代诠释
+
+  • 牟宗三以“道德的形上学”重构孟子心性论。
+
+  • 李明辉比较孟子与康德自律伦理学，引发中西伦理学对话。
+
+学术争议
+
+1. 性善论的理论基础
+
+  • 陈大齐批评“孺子入井”论证存在自然主义谬误（从事实推导价值）。
+
+  • 安乐哲（Roger Ames）认为“性”应译为“human nature as tendency”而非固定本质。
+
+2. 民本与民主的张力
+
+  • 黄宗羲《明夷待访录》借孟子思想批判专制，但学界争议其是否具备现代民主基因。
+
+3. 文本诠释分歧
+
+  • 刘殿爵指出《孟子》中“心”概念含混，兼具情感（heart）与理性（mind）双重维度。
+
+参考文献
+
+1. 刘殿爵（D.C. Lau）译《孟子》 | 企鹅出版社, 1970
+
+2. 黄俊杰《孟子思想史论》 | 台湾大学出版中心, 1991
+
+3.Ivanhoe, P.J. 《孟子研究》 | 哈克特出版社, 2002`,
+      xunzi: `哲学家 Philosopher #05
+姓名 Name: 荀子 Xunzi
+生卒年 Lifespan: 约前313-前238 BCE | 汪中《荀卿子年表》考订
+学派 School: 儒家 Confucianism
+
+生平与历史定位
+
+1. 文献记载
+
+  • 《史记·孟子荀卿列传》载其名况，赵国人，曾三任齐国稷下学宫祭酒。
+
+  • 晚年任楚兰陵令，传李斯、韩非皆出其门。
+
+2. 学术重构
+
+  • 内山俊彦《荀子》考其生平约前313-前238年，活动于战国晚期。
+
+  • 出土文献：阜阳汉简《荀子》残篇（前165年）证实文本早期流传。
+
+3. 思想史地位
+
+  • 战国儒学集大成者，调和孔孟理想主义与法家现实政治。
+
+  • 唐宋以降长期被边缘化，清代考据学重新发掘（汪中《荀卿子通论》）。
+
+核心思想体系
+
+1. 性恶论（Theory of Innate Evil）
+
+  • 核心命题：“人之性恶，其善者伪也”（《性恶》），主张人性本趋利避害。
+
+  • 教化理论：“化性起伪”通过礼法改造人性（“枸木必将待檃栝烝矫然后直”）。
+
+2. 天人之分（Separation of Heaven and Human）
+
+  • 自然观：“天行有常，不为尧存，不为桀亡”（《天论》），否定天人感应。
+
+  • 实践哲学：“制天命而用之”强调人类能动性。
+
+3. 礼法并重（Integration of Ritual and Law）
+
+  • 礼的功能：“养人之欲，给人之求”（《礼论》）的社会调节机制。
+
+  • 法的作用：“法者，治之端也”（《君道》），为韩非法治思想奠基。
+
+思想传承与影响
+
+1. 战国法家转型
+
+  • 韩非继承“人性恶”预设，发展极端性恶论与法术势体系。
+
+  • 李斯实践其“法后王”思想，推动秦代中央集权。
+
+2. 汉代经学渗透
+
+  • 董仲舒吸收“天人相分”思想，改造为“天人感应”神学体系。
+
+  • 王充《论衡》继承其自然主义天道观。
+
+3. 近现代重估
+
+  • 谭嗣同《仁学》斥荀学为“二千年来专制政治之灵魂”。
+
+  • 徐复观《中国人性论史》肯定其经验主义方法论价值。
+
+学术争议
+
+1. 学派归属问题
+
+  • 司马谈《论六家要旨》归入儒家，郭沫若《十批判书》则认为属“儒法过渡形态”。
+
+2. 性恶论逻辑矛盾
+
+  • 唐君毅批评：若人性全恶，则“化性起伪”的道德动力从何而来？
+
+  • 李泽厚回应：荀子实际主张“性朴论”，恶是社会争夺资源的结果。
+
+3. 文本真伪争议
+
+  • 《成相》《赋篇》等或为门人增补，反映秦汉之际思想流变。
+
+参考文献
+
+1. Knoblock, John 《荀子全译》三卷本 | 斯坦福大学出版社, 1988-1994
+
+2. 王先谦《荀子集解》 | 中华书局, 1988
+
+3. 内山俊彦《荀子》 | 东京大学出版会, 2008`,
       laozi: `哲学家 Philosopher #02
 姓名 Name: 老子 Laozi
 生卒年 Lifespan: 传统认为活跃于前6世纪 | 现代争议：或为战国学者集体笔名
@@ -1274,6 +2578,276 @@
 3. 韩禄伯（Robert Henricks）《老子德道经：新出马王堆本译注》，哥伦比亚大学出版社，1989。
 
 4.艾兰（Sarah Allan）《水之道与德之端》，上海古籍出版社，2002。`,
+      zhuangzi: `哲学家 Philosopher #06
+姓名 Name: 庄子 Zhuangzi
+生卒年 Lifespan: 约前369-前286 BCE | 据钱穆《先秦诸子系年》考订
+学派 School: 道家 Daoism
+
+生平与历史背景
+
+1. 传统记载
+
+  • 《史记·老子韩非列传》载庄子名周，宋国蒙人，曾为漆园吏，与梁惠王、齐宣王同时代。
+
+  • 拒楚威王聘相，以寓言阐发道家思想，著书十余万言，今存《庄子》33篇（内7篇一般视为真作）。
+
+2. 学术重构
+
+  • 葛瑞汉（A.C. Graham）考证其活动于前4世纪晚期，晚于孟子而早于荀子。
+
+  • 郭店楚简（前300年）未发现《庄子》文本，推测其思想在战国末期方广为传播。
+
+3. 文本演变
+
+  • 晋代向秀、郭象删定今本33篇，分内篇（7）、外篇（15）、杂篇（11），学界普遍认为内篇为庄子自著。
+
+  • 敦煌唐写本《庄子》残卷（S.615）显示唐代文本与今本高度一致。
+
+核心思想体系
+
+1. 齐物论（Equality of All Things）
+
+  • 认识论批判：“彼亦一是非，此亦一是非”解构二元对立，主张“莫若以明”的超越视角。
+
+  • 语言批判：“言者所以在意，得意而忘言”（《外物》）否定概念的绝对性。
+
+2. 逍遥游（Free and Easy Wandering）
+
+  • 精神自由：“乘天地之正，而御六气之辩，以游无穷”的超功利境界。
+
+  • 对儒家的解构：“鹪鹩巢于深林，不过一枝”讽刺礼法束缚（《逍遥游》）。
+
+3. 技艺哲学
+
+  • 庖丁解牛：“依乎天理，批大郤，导大窾”体现“道进乎技”的实践智慧。
+
+  • 梓庆削木：“齐以静心”与“以天合天”的创造论（《达生》）。
+
+思想传承与影响
+
+1. 战国至汉初
+
+  • 黄老学派吸收其政治哲学，发展出“君无为而臣有为”的治理术。
+
+  • 《淮南子》融合庄子相对论与阴阳五行说，构建汉代道家体系。
+
+2. 佛教中国化
+
+  • 僧肇《肇论》以“物不迁论”呼应庄子动静观。
+
+  • 禅宗“不立文字”受其语言批判启发（如惠能“本来无一物”）。
+
+3. 现代转型
+
+  • 章太炎以“齐物”论支持民族平等，鲁迅《故事新编》重塑庄子形象。
+
+  • 海德格尔引用“孰能浊以静之徐清”探讨存在哲学（见《通往语言之路》）。
+
+学术争议
+
+1. 文本真伪
+
+  • 任继愈主张外杂篇早于内篇，刘笑敢以概念统计论证内篇为庄子原创。
+
+  • 《盗跖》《渔父》等篇被疑为汉初道家托名之作。
+
+2. 哲学定位
+
+  • 冯友兰归为“神秘主义”，李泽厚强调其“审美超越”特质。
+
+  • 爱莲心（Robert E. Allinson）认为庄子是系统怀疑论者，非相对主义者。
+
+3. 比较哲学挑战
+
+  • 与德里达解构主义对话：均批判“逻各斯中心主义”，但庄子更重实践解脱。
+
+  • 与斯宾诺莎“自然主义”比较：“天地与我并生” vs “神即自然”。
+
+参考文献
+
+1. 郭庆藩《庄子集释》 | 中华书局, 1961
+
+2. 葛瑞汉（A.C. Graham）《庄子内篇析论》 | 伦敦大学亚非学院, 1981
+
+3. 爱莲心（Robert E. Allinson）《向往心灵转化的庄子》 | 夏威夷大学出版社, 1990`,
+      han_fei: `哲学家 Philosopher #07
+姓名 Name: 韩非子 Han Fei
+生卒年 Lifespan: 约前280-前233 BCE | 据《史记·老子韩非列传》记载
+学派 School: 法家 Legalism
+
+生平与历史背景
+
+1. 传统记载
+
+  • 韩国贵族出身，与李斯同拜荀子为师，口吃不善言辩而长于著述。
+
+  • 著《孤愤》《五蠹》等篇传至秦国，秦王政叹“嗟乎！寡人得见此人与之游，死不恨矣”。
+
+  • 入秦后遭李斯陷害，狱中自杀，著有《韩非子》55篇。
+
+2. 学术重构
+
+  • 陈启天《韩非子校释》考订其活动于战国末期，思想集法家之大成。
+
+  • 睡虎地秦简（前217年）法律文书印证韩非理论与秦制实践的关联。
+
+核心思想体系
+
+1. 法、术、势三位一体
+
+  • 法：成文法典“编著之图籍，设之于官府”（《难三》）
+
+  • 术：驭臣之术“藏之于胸中，以偶众端而潜御群臣”（《难三》）
+
+  • 势：政治权威“贤人而诎于不肖者，则权轻位卑也”（《难势》）
+
+2. 历史进化论
+
+  • “世异则事异”“事异则备变”（《五蠹》），主张改革需应时势。
+
+  • 批判儒家复古：“欲以先王之政，治当世之民，皆守株之类也”。
+
+3. 矛盾说与逻辑学
+
+  • 形式逻辑命题：“夫不可陷之盾与无不陷之矛，不可同世而立”（《难一》）
+
+  • 名实关系论：“循名实而定是非，因参验而审言辞”（《奸劫弑臣》）
+
+思想传承与影响
+
+1. 秦代实践
+
+  • 李斯实施“以法为教，以吏为师”，将理论转化为集权制度。
+
+  • 秦始皇焚书坑儒部分实践韩非“明主之国，无书简之文”（《五蠹》）主张。
+
+2. 汉代以降
+
+  • 司马迁评“其极惨礉少恩，皆原于道德之意”，揭示与道家渊源。
+
+  • 谭嗣同《仁学》斥为“二千年来专制政治之算法”。
+
+3. 现代重估
+
+  • 萧公权《中国政治思想史》肯定其“客观精神”的行政理论价值。
+
+  • 西方汉学界常将韩非与马基雅维利比较，探讨权力哲学共性。
+
+学术争议
+
+1. 学派归属问题
+
+  • 冯友兰归入“法术势综合派”，郭沫若认为属荀子学派分支。
+
+2. 人性论矛盾
+
+  • 继承荀子性恶论却否定教化，如何解释“法术”执行者的道德能力？
+
+3. 文本真伪
+
+  • 《初见秦》《存韩》等篇被疑为后人伪托，反映秦统一后的思想整合。
+
+参考文献
+
+1. 陈启天《韩非子校释》 | 中华书局, 1969
+
+2. 王先慎《韩非子集解》 | 上海古籍出版社, 2015
+
+3. Liao, W.K. 《韩非子全译》 | 伦敦普罗布斯坦出版社, 1959`,
+      dong_zhongshu: `哲学家 Philosopher #08
+姓名 Name: 董仲舒 Dong Zhongshu
+生卒年 Lifespan: 前179-前104 BCE | 《汉书·董仲舒传》明确记载
+学派 School: 汉代儒学 Han Confucianism
+
+生平与历史背景
+
+1. 传统记载
+
+  • 广川（今河北景县）人，专治《春秋公羊传》，汉武帝时以“天人三策”对策称旨，任江都相、胶西王相。
+
+  • 晚年著书立说，今存《春秋繁露》《举贤良对策》等，系统构建儒学神学体系。
+
+2. 学术重构
+
+  • 徐复观《两汉思想史》考订其活动于文景至武帝时期，适逢汉帝国意识形态转型期。
+
+  • 马王堆帛书《春秋事语》（前168年）反映《公羊》学在西汉前期的政治影响力。
+
+3. 历史定位
+
+  • 司马迁评“董仲舒推明孔氏，抑黜百家”，确立儒学独尊地位。
+
+  • 班固《汉书·五行志》载其灾异说，开启谶纬神学化儒学先河。
+
+核心思想体系
+
+1. 天人感应（Cosmic Resonance）
+
+  • 理论核心：“天人之际，合而为一”（《春秋繁露·深察名号》），主张灾异谴告说。
+
+  • 政治运用：“国家将有失道之败，而天乃先出灾害以谴告之”（《举贤良对策》）。
+
+2. 三纲五常（Three Bonds & Five Constants）
+
+  • 伦理建构：“君为臣纲，父为子纲，夫为妻纲”强化等级秩序。
+
+  • 道德规范：“仁、义、礼、智、信”固定为五常，成为儒家核心德目。
+
+3. 大一统理论（Great Unification）
+
+  • 政治哲学：“《春秋》大一统者，天地之常经，古今之通谊”为中央集权提供理论依据。
+
+  • 文化策略：“诸不在六艺之科、孔子之术者，皆绝其道”推动思想统一。
+
+思想传承与影响
+
+1. 汉代制度化
+
+  • 白虎观会议（79年）钦定《白虎通义》，完成儒学法典化。
+
+  • 谶纬神学泛滥，催生《河图》《洛书》等神秘主义文献。
+
+2. 宋明理学吸收
+
+  • 朱熹吸收“天人合一”框架，改造为“理一气殊”宇宙论。
+
+  • 王夫之批判其“曲学阿世”，但继承大一统政治理念。
+
+3. 近现代批判
+
+  • 康有为《孔子改制考》借公羊学托古改制，章太炎斥为“董仲舒之流毒”。
+
+  • 五四运动抨击三纲伦理为“吃人礼教”思想根源。
+
+学术争议
+
+1. 儒学异化问题
+
+  • 冯友兰《中国哲学史》认为其混入阴阳家思想，背离孔子人文主义。
+
+  • 周桂钿《董学探微》肯定其整合百家、适应帝国需求的创造性转化。
+
+2. 灾异说科学性
+
+  • 王充《论衡》批判“天人感应”为虚妄，清代崔述斥其“附会穿凿”。
+
+  • 李约瑟《中国科学技术史》认为其阻碍科学理性发展。
+
+3. 现代价值重估
+
+  • 蒋庆公羊学复兴运动推崇其政治儒学传统。
+
+  • 贝克（Hans van Baren）比较董仲舒与阿奎那，探讨神学化儒学普世性。
+
+参考文献
+
+1. 苏舆《春秋繁露义证》 | 中华书局, 1992
+
+2. 周桂钿《董学探微》 | 北京师范大学出版社, 2008
+
+3. 冯友兰《中国哲学史》第二册 | 华东师范大学出版社, 2011
+
+4. Sarah A. Queen 《从编年史到经典：董仲舒的春秋诠释》 | 哈佛大学出版社, 1996`,
       wang_chong: `哲学家 Philosopher #09
 姓名 Name: 王充 Wang Chong
 生卒年 Lifespan: 27-约97 CE | 据《论衡·自纪篇》推算
@@ -3251,7 +4825,7 @@
 
   • 建国后自我批判“资产阶级学术”，改写《中国哲学史》为《中国哲学史新编》，加入唯物史观框架。文革期间被批为“反动学术权威”，1973年参加“批林批孔”遭学界非议。
 
-  • 晚年重获学术自由，85岁完成七卷本《中国哲学史新编》，自比“贞元六书”续篇，临终遗言“中国哲学将来要大放光彩”。
+  • 晚年重获学术自由，95岁时方告完成七卷本《中国哲学史新编》，自比“贞元六书”续篇，临终遗言“中国哲学将来要大放光彩”。
 
 核心思想体系
 
@@ -6859,6 +8433,3772 @@
   • 贝克《哲学咨询与斯多葛传统》 | 施普林格出版社, 2013
 
   • 哈多特《哲学作为一种生活方式》 | 布莱克威尔出版社, 1995`,
+      seneca: `哲学家 Philosopher #63
+姓名 Name: 塞涅卡 Seneca the Younger（Lucius Annaeus Seneca）
+生卒年 Lifespan: 约公元前4年–公元65年 | 罗马斯多葛学派代表，政治家、剧作家
+学派 School: 斯多葛学派（实践伦理学典范，融合哲学沉思与政治行动，倡导精神自由与道德韧性）
+
+一、生平与历史背景
+
+1.1 从西班牙行省到罗马权力中心
+
+塞涅卡出生于罗马帝国西班牙行省的科尔多瓦，父为修辞学家老塞涅卡，母为贵族后裔。早年赴罗马学习哲学，师从斯多葛派的阿塔罗斯（Attalus）与毕达哥拉斯派的索提昂（Sotion）。因患呼吸疾病赴埃及疗养期间研习自然科学与东方宗教。公元41年因触怒克劳狄乌斯皇帝被流放科西嘉岛八年，期间撰写《慰藉书简》。公元49年由克劳狄乌斯之妻小阿格里皮娜召回，担任其子尼禄的导师。尼禄登基后任顾问执政官，试图以哲学驯化暴君，最终因涉嫌皮索尼安阴谋被迫自刎，临终背诵《斐多篇》场景，践行“哲人赴死当如苏格拉底”。
+
+1.2 斯多葛主义的政治实践
+
+在权力与道德的夹缝中，塞涅卡尝试调和哲学理想与现实政治：
+
+• 暴政驯化实验：以《论仁慈》劝诫尼禄，主张君主应如“灵魂统御身体”。
+
+• 经济改革：提议取消债务奴隶制，限制高利贷，缓解社会矛盾。
+
+• 文化赞助：资助诗人卢坎、佩特罗尼乌斯，推动白银时代文学繁荣。
+
+其双重生活（聚敛财富与倡导简朴）成为后世争议焦点，自辩称“智者可用财富而不为所用”。
+
+二、核心思想体系
+
+2.1 伦理学：愤怒管理与命运接纳
+
+1. 《论愤怒》三卷：
+
+  • 愤怒（ira）是“短暂的疯狂”，源于对不公的误判与失控的报复欲。
+
+  • 治疗术：延迟反应（“数到百再行动”）、反思动机（“伤害他人实为自残”）。
+
+2. 命运观（fatum）：
+
+  • 区分可控（意志）与不可控（外物），如“舵手可控航向，不可控风暴”。
+
+  • 接纳逆境为“神赐训练”，流放是“宇宙公民的迁徙”，死亡为“自然之律”。
+
+3. 时间哲学：
+
+  • 生命长短无关岁月，“虚度光阴者虽生犹死”（《论生命的短促》）。
+
+  • 提倡“每日自省”（夜间审查日间言行），将时间投入德性修炼。
+
+2.2 自然哲学与神学
+
+1. 普纽玛宇宙论：
+
+  • 继承克律西波斯，认为宇宙由神圣气息（pneuma）贯穿，地震、彗星皆自然现象。
+
+  • 批评占星宿命论：“星辰指引而非强迫，智者借其光而非跪拜”。
+
+2. 神人关系：
+
+  • 神是内在理性（logos），祈祷应求“灵魂完善而非物质增益”。
+
+  • 宗教仪式为“愚众的隐喻”，哲人以德性直接与神沟通。
+
+2.3 奴隶制与人性平等
+
+1. 《致卢奇利乌斯的道德书简》第47篇：
+
+  • 奴隶制反自然，“奴隶的灵魂与你同等自由”。
+
+  • 主张主奴互敬：“待奴隶如朋友，因命运无常，明日或角色互换”。
+
+2. 女性教育：
+
+  • 支持女性研习哲学，称其“灵魂与男子无别”，指导友人母亲玛尔西娅研读芝诺。
+
+三、思想传承与影响
+
+3.1 欧洲思想史的隐形线索
+
+• 基督教伦理：德尔图良称其“几乎是我们中的一员”，《论仁慈》影响奥古斯丁恩典论。
+
+• 文艺复兴人文主义：彼特拉克视其为道德楷模，《书简》成为人文教育经典。
+
+• 启蒙运动：蒙田《随笔集》引用塞涅卡365次，卢梭吸收其自然神论与平等观。
+
+3.2 现代心理学与领导力
+
+• 情绪管理：阿尔伯特·埃利斯（REBT疗法）借鉴其愤怒控制技术。
+
+• 斯多葛领导力：现代企业培训引用“可控/不可控”模型，培养危机应变力。
+
+• 存在主义先声：加缪《西西弗神话》呼应其“在荒诞中坚守尊严”的主题。
+
+3.3 跨文明对话
+
+• 儒家对照：与孟子“性善论”相通，但塞涅卡更强调意志训练而非本心扩充。
+
+• 佛学比较：“接纳无常”近似四圣谛，但拒弃轮回观，主张现世德性圆满。
+
+• 波斯苏菲主义：鲁米的“灵魂淬炼”诗与塞涅卡精神修炼形成神秘主义共鸣。
+
+四、学术争议与批判
+
+4.1 古代非难与自辩
+
+• 伪善指控：卡里古拉称其哲学为“课堂表演”，回应“智者不必贫穷，只需超然”。
+
+• 尼禄共谋争议：塔西佗《编年史》详述其权力沉浮，现代学者格里芬（Miriam Griffin）辩护其为“现实主义的理想主义者”。
+
+4.2 现代哲学批判
+
+• 道德妥协论：阿多诺斥其“用修辞美化暴政”，但福柯赞为“自我技术”典范。
+
+• 性别局限：虽倡女性平等，但剧作《美狄亚》强化“疯妇”刻板印象。
+
+• 生态盲点：自然观未发展出环保伦理，被深层生态学批评为“人类中心主义残余”。
+
+4.3 文本真伪问题
+
+• 伪作争议：中世纪托名的《塞涅卡与圣保罗通信》被伊拉斯谟证伪，部分剧作归属存疑。
+
+• 历史重构：学者瓦托（James Romm）结合钱币学与考古学，还原其经济改革的社会语境。
+
+五、参考文献与原始文献
+
+1. 基础史料
+
+  • 《塞涅卡全集》（《论愤怒》《论生命的短促》《道德书简》） | 洛布古典丛书
+
+  • 塔西佗《编年史》 | 第十五卷60-64节（记述塞涅卡之死）
+
+  • 狄奥·卡西乌斯《罗马史》 | 第六十一卷
+
+2. 现代研究
+
+  • 格里芬《塞涅卡：斯多葛哲人与政治家》 | 牛津大学出版社, 1976
+
+  • 努斯鲍姆《治疗的欲望》 | 哈佛大学出版社, 1994（哲学与心理治疗）
+
+  • 威尔逊《塞涅卡的悲剧》 | 普林斯顿大学出版社, 2014
+
+3. 跨学科研究
+
+  • 贝克《斯多葛主义与现代心理学》 | 牛津大学出版社, 2013
+
+  • 罗米伊《塞涅卡：危机中的哲学》 | 芝加哥大学出版社, 2020
+
+  • 索拉布吉《斯多葛主义的遗产》 | 剑桥大学出版社, 2000`,
+      epictetus: `哲学家 Philosopher #64
+姓名 Name: 爱比克泰德 Epictetus（Ἐπίκτητος ὁ Φρύξ）
+生卒年 Lifespan: 约公元50–135年 | 罗马斯多葛学派宗师，奴隶出身的自由哲学家
+学派 School: 斯多葛学派（实践哲学典范，提出“可控/不可控”二分法，奠基现代心理韧性理论）
+
+一、生平与历史背景
+
+1.1 从奴隶到哲人的精神突围
+
+爱比克泰德生于弗里吉亚（今土耳其）的希拉波利斯，幼年被卖至罗马权臣埃帕弗罗迪图斯为奴，因残疾（可能先天跛足或遭主人虐待致残）获名“Epictetus”（意为“被获得者”）。在奴役期间获准学习斯多葛哲学，师从穆索尼乌斯·鲁弗斯（Musonius Rufus）。公元68年尼禄死后获释，建立罗马哲学学校，公元93年因图密善驱逐哲学家迁居希腊尼科波利斯，创办“哲学诊疗所”直至逝世。其教学由学生阿利安整理为《语录》（Διατριβαί）与《手册》（Ἐγχειρίδιον），成为斯多葛实践哲学巅峰。
+
+1.2 哲学治疗的公共实践
+
+在尼科波利斯的露天讲坛，爱比克泰德将哲学转化为精神诊疗术：
+
+• 不分阶层的教育：学生包括奴隶、妇女、行省公民与罗马贵族，主张“自由是心灵的属性”。
+
+• 辩证问答法：通过诘问暴露认知谬误，如“你为何因丢钱痛苦？因你误认钱财属于自己”。
+
+• 生存训练场：鼓励学生直面贫困、疾病与死亡，“如角斗士以伤疤为荣，哲人以逆境为修炼勋章”。
+
+二、核心思想体系
+
+2.1 自由意志的二元分野
+
+1. “可控/不可控”（ἐφ' ἡμῖν / οὐκ ἐφ' ἡμῖν）理论：
+
+  • 不可控领域：身体、财产、名誉、生死等外部事物。
+
+  • 可控领域：信念、判断、欲望、意图等内在选择。
+
+  • 智慧在于“分清边界，如守城门般抵御外界侵扰”。
+
+2. 判断中介论：
+
+  • “扰乱人非事物本身，而是对事物的判断”（《手册》5），如死亡不可怕，可怕的是“死亡可怕”的信念。
+
+  • 痛苦源于“对不可控事物的占有欲”，治疗需重塑认知架构。
+
+2.2 角色伦理与宇宙公民
+
+1. 神圣演员论：
+
+  • 宇宙是神编写的剧本，人类如演员需“欣然接受分配的角色”（《语录》Ⅰ.29）。
+
+  • 贫穷、疾病等是神设定的训练关卡，旨在磨砺灵魂。
+
+2. 世界城邦观：
+
+  • “人类皆宙斯子孙”（《语录》Ⅰ.3），突破罗马公民身份局限，倡导普世伦理责任。
+
+  • 社会关系如“手足之链”，伤害他人即自残“宇宙身体”。
+
+2.3 精神训练技术
+
+1. 消极预演（προσοχὴ）：
+
+  • 每日预想至亲死亡、财产尽失，培养“无执着之心”。
+
+2. 欲望解剖术：
+
+  • 将欲望分解为“对象+判断”，如“我欲求财富”→“我判断财富=善”。
+
+3. 死亡冥想：
+
+  • 随身携带陶杯，常念“此杯已碎”，体悟万物无常。
+
+三、思想传承与影响
+
+3.1 古代至中世纪的实践遗产
+
+• 马可·奥勒留：将爱比克泰德思想注入《沉思录》，称“我的哲学乳母”。
+
+• 基督教修道传统：本笃会修士以《手册》为灵修指南，沙漠教父吸收其“心智堡垒”概念。
+
+• 拜占庭手抄本：君士坦丁七世命人编纂《爱比克泰德金言》，影响东正教禁欲主义。
+
+3.2 现代心理学的认知革命
+
+• 认知行为疗法（CBT）：阿尔伯特·埃利斯直言“爱比克泰德是CBT鼻祖”，其ABC理论（Activating event, Belief, Consequence）直接承袭判断中介论。
+
+• 意义治疗：维克多·弗兰克尔《活出生命的意义》引用“忍受不可避痛苦即英雄主义”，延续其苦难哲学。
+
+• 积极心理学：塞利格曼的“习得性无助”实验验证“可控感”对心理健康的关键作用。
+
+3.3 跨文明精神对话
+
+• 禅宗公案：其诘问法与禅宗“棒喝”同属破执利器，但爱比克泰德更重逻辑拆解。
+
+• 儒家修身：与孟子“夭寿不贰，修身以俟”相通，但拒斥礼法束缚，强调内在自由。
+
+• 存在主义：加缪《西西弗神话》中“推石上山”的英雄姿态呼应其“命运反抗美学”。
+
+四、学术争议与批判
+
+4.1 古代哲学交锋
+
+• 伊壁鸠鲁派讥讽：卢克莱修批评其“逆来顺受”扼杀生活激情，菲洛德穆称其学说“将人降格为命运的傀儡”。
+
+• 学园派质疑：卡尔涅阿德后学指其决定论消解道德责任，爱比克泰德辩称“自由正在于对必然的自觉拥抱”。
+
+4.2 现代哲学反思
+
+• 消极被动指控：尼采斥其为“奴隶道德集大成者”，但福柯赞其“自我技术”赋予主体能动性。
+
+• 政治冷漠批评：阿伦特指其学说淡化公共参与，但罗尔斯借鉴其“角色伦理”构建正义责任论。
+
+• 文化相对性争议：格尔茨质疑“可控二分法”忽视文化建构差异，如荣誉观在部落社会属可控领域。
+
+4.3 文本诠释难题
+
+• 口述传承失真：阿利安记录可能掺杂柏拉图化倾向，现代校勘强调区分爱比克泰德原话与学生诠释。
+
+• 基督教改编：中世纪抄本常删改“宙斯”为“上帝”，需对照多版本还原异教语境。
+
+五、参考文献与原始文献
+
+1. 基础史料
+
+  • 《爱比克泰德语录》（W.A. Oldfather英译本） | 洛布古典丛书
+
+  • 《手册》（Robin Hard英译本） | 牛津世界经典丛书
+
+  • 奥勒留《沉思录》（顾寿观中译本） | 商务印书馆
+
+2. 现代研究
+
+  • Long, A.A.《爱比克泰德：斯多葛哲学的践履者》 | 加州大学出版社, 2002
+
+  • Dobbin, R.《爱比克泰德〈语录〉评注》 | 牛津大学出版社, 1998
+
+  • Sellars, J.《斯多葛主义》 | 加州大学出版社, 2006
+
+3. 跨学科研究
+
+  • 贝克《斯多葛主义与认知疗法》 | 纽约科学院出版社, 2010
+
+  • 弗兰克尔《活出生命的意义》 | 华夏出版社, 2010
+
+  • 纳斯鲍姆《治疗的欲望》 | 哈佛大学出版社, 1994`,
+      marcus_aurelius: `哲学家 Philosopher #65
+姓名 Name: 马可·奥勒留 Marcus Aurelius（Μάρκος Αὐρήλιος）
+生卒年 Lifespan: 公元121–180年 | 罗马帝国皇帝，斯多葛学派最后一位大师
+学派 School: 斯多葛学派（以《沉思录》实践哲学，融合帝王责任与个人德性，倡导“宇宙理性”）
+
+一、生平与历史背景
+
+1.1 哲学家皇帝的悖论人生
+
+马可·奥勒留生于罗马贵族家庭，幼年丧父，由哈德良皇帝指定为皇位继承人。师从斯多葛哲人尤尼乌斯·鲁斯提库斯（Junius Rusticus），接受希腊哲学与罗马法学的双重教育。公元161年成为罗马帝国共治皇帝，后独掌大权。在位期间征战多瑙河抵御蛮族入侵，同时遭遇瘟疫与叛乱。在军营帐篷中写下《沉思录》（Τὰ εἰς ἑαυτόν），以希腊文记录自我对话，成为西方哲学史上罕见的“帝王日记”。公元180年病逝于维也纳前线，临终前仍与将领讨论“如何以德性面对死亡”。
+
+1.2 乱世中的精神堡垒
+
+面对“罗马和平”（Pax Romana）的崩解，奥勒留将斯多葛主义转化为统治工具：
+
+• 德性治国：立法限制角斗士死亡率，改善奴隶待遇，设立贫民救助基金。
+
+• 瘟疫应对：亲临疫区抚民，以“宇宙理性”解释灾难，避免宗教恐慌。
+
+• 军事伦理：严令禁止劫掠征服地，“胜利的荣耀不在毁灭而在秩序重建”。
+
+其统治被吉本称为“人类最幸福的年代”，但本人始终自视为“背负枷锁的哲人”。
+
+二、核心思想体系
+
+2.1 宇宙理性与人类义务
+
+1. 自然法实践：
+
+  • 宇宙是活的生命体（ζῷον），由神圣理性（λόγος）贯穿，人类作为“宇宙城邦公民”需履行自然义务。
+
+  • 社会角色如蜂群分工：“帝王若不行善如蜂王，则违背自然法则”（《沉思录》VI.54）。
+
+2. 时间透视法：
+
+  • 以“无限时间”消解现世焦虑：“千年后无人记得你，此刻的烦恼何其渺小”（IV.32）。
+
+  • 万物皆流变，“你记忆中的祖父、父亲终将湮灭，你亦如是”（VI.24）。
+
+2.2 德性修炼的日常技术
+
+1. 晨间预演：
+
+  • 每日晨起预想人性之恶，如“今日将遇忘恩、傲慢、欺诈者”，培养心理韧性（II.1）。
+
+2. 夜间反省：
+
+  • 回顾言行是否符合自然理性，“如导师柏拉图般严厉审视自我”（X.13）。
+
+3. 死亡冥想：
+
+  • 视死亡为“自然分解”，“如熟果坠地，赞美孕育它的枝干”（IV.48）。
+
+2.3 权力伦理的斯多葛诠释
+
+1. 帝王辩证法：
+
+  • 权力是“服务宇宙理性的工具”，暴政如“逆流游泳，终将力竭而亡”（VI.44）。
+
+2. 愤怒克制术：
+
+  • 遇背叛时默念“他们行恶因无知，如眼疾者辨色”，以悲悯替代报复（V.28）。
+
+3. 简朴示范：
+
+  • 居皇宫而睡地铺，穿羊毛袍而非紫绸，以身证“德性超越物质”（I.7）。
+
+三、思想传承与影响
+
+3.1 西方思想史的隐秘线索
+
+• 基督教神学：奥古斯丁援引其宇宙秩序论，托马斯·阿奎那吸收自然法思想。
+
+• 启蒙运动：莱布尼茨称其“前定和谐”说受《沉思录》启发，卢梭《社会契约论》暗含“普遍意志”雏形。
+
+• 现代心理学：维克多·弗兰克尔意义疗法（Logotherapy）以“生命意义”回应其宇宙目的论。
+
+3.2 全球治理的精神遗产
+
+• 领袖教育：美国开国元勋杰斐逊将《沉思录》列为必读书，丘吉尔二战期间随身携带。
+
+• 企业伦理：硅谷精英将其“专注可控领域”奉为管理圭臬，斯多葛式领导力课程风靡华尔街。
+
+• 军事哲学：西点军校以“责任先于享乐”训练军官，呼应奥勒留的边疆沉思。
+
+3.3 跨文明精神对话
+
+• 儒家圣王：与《论语》“修己安人”相通，但奥勒留更重个体与宇宙的理性联结。
+
+• 佛学无常观：与“诸行无常”近似，但拒弃轮回转世，主张现世德性圆满。
+
+• 存在主义：加缪《鼠疫》中里厄医生的坚毅身影，仿佛奥勒留在现代瘟疫中的化身。
+
+四、学术争议与批判
+
+4.1 古代非议与矛盾
+
+• 镇压基督徒：虽倡导宽容，却默许对基督徒的迫害，被德尔图良斥为“伪善哲人”。
+
+• 继承者之殇：传位亲子康茂德（暴君原型），暴露“哲人王无法确保代际德性”的困境。
+
+4.2 现代哲学反思
+
+• 消极退避批判：以赛亚·伯林指其学说助长政治冷漠，但福柯赞为“自我技术”典范。
+
+• 精英主义局限：其哲学依赖高度理性，忽视情感与社会结构的互动，遭法兰克福学派批判。
+
+• 生态哲学盲点：宇宙观未发展出环保意识，被深生态学批评为“人类中心主义残余”。
+
+4.3 文本诠释难题
+
+• 私人写作悖论：《沉思录》本无意出版，今人解读是否过度建构体系？
+
+• 希腊文与拉丁张力：作为罗马皇帝用希腊文写作，反映文化认同的分裂抑或融合？
+
+五、参考文献与原始文献
+
+1. 基础史料
+
+  • 《沉思录》（A.S.L. Farquharson评注本） | 牛津大学出版社, 1944
+
+  • 卡西乌斯·狄奥《罗马史》 | 第七十一至七十二卷
+
+  • 《奥古斯都史·马可·奥勒留传》 | 洛布古典丛书
+
+2. 现代研究
+
+  • Pierre Hadot《内在的堡垒》 | 哈佛大学出版社, 1998
+
+  • Frank McLynn《马可·奥勒留：战士与哲人》 | 哈佛大学出版社, 2009
+
+  • John Sellars《斯多葛主义》 | 加州大学出版社, 2006
+
+3. 跨学科研究
+
+  • 瑞安·霍利德《斯多葛式生活》 | 企鹅出版社, 2014（现代实践指南）
+
+  • 玛莎·努斯鲍姆《治疗的欲望》 | 哈佛大学出版社, 1994（哲学与心理学对话）
+
+  • 米歇尔·福柯《自我技术》 | 纽约大学出版社, 1997（修身实践分析）`,
+      plotinus: `哲学家 Philosopher #66
+姓名 Name: 普罗提诺 Plotinus（Πλωτῖνος）
+生卒年 Lifespan: 公元204–270年 | 新柏拉图主义创始人，古典哲学最后一位体系构建者
+学派 School: 新柏拉图主义（综合柏拉图哲学、亚里士多德主义与东方神秘主义，提出“太一流溢说”）
+
+一、生平与历史背景
+
+1.1 跨文明哲人的精神远征
+
+普罗提诺生于埃及吕科波利斯，早年师从亚历山大城的安莫尼乌斯·萨卡斯（Ammonius Saccas），与奥利金同窗。为探究波斯与印度哲学，38岁加入罗马皇帝戈尔迪安三世的东征军，远征失败后逃亡安提阿，后定居罗马。49岁始创哲学学校，吸引元老院议员、贵族妇女甚至皇帝加里恩努斯夫妇为弟子。其授课拒绝书面记录，晚年由波菲利整理54篇论文，辑为《九章集》（Enneads）。临终遗言“将神性归还神圣”，遗体葬于坎帕尼亚。
+
+1.2 罗马帝国的精神危机与回应
+
+3世纪的罗马深陷军事无政府状态，传统多神教衰微，基督教尚未获正统地位。普罗提诺的哲学回应了时代的灵性饥渴：
+
+• 神秘主义转向：将柏拉图理念论转化为灵魂上升的神秘体验，提供替代基督教的得救路径。
+
+• 东西方融合：吸纳波斯琐罗亚斯德教的光明二元论、印度《奥义书》的梵我如一思想。
+
+• 精英灵修：在罗马贵族圈推广哲学冥想，称“真正的公民是宇宙城邦的成员”。
+
+二、核心思想体系
+
+2.1 本体论三一结构
+
+1. 太一（τὸ Ἕν）：
+
+  • 终极实在，超越存在与思想，“说它‘是’便已否定其超越性”（《九章集》VI.9.3）。
+
+  • 通过“否定神学”把握：非存在、非一、非多、非动、非静。
+
+2. 理智（Νοῦς）：
+
+  • 太一的首个流溢，包含所有柏拉图理念，是存在与思维的同一体。
+
+  • 理智的自我观照产生“理念的多”（如美本身、善本身）。
+
+3. 灵魂（Ψυχή）：
+
+  • 理智的流溢，分为世界灵魂与个体灵魂，前者推动天体运行，后者堕入物质界受苦。
+
+2.2 流溢说与宇宙生成
+
+1. 放射模式：
+
+  • 太一如太阳辐射光线般流溢出理智，理智流溢出灵魂，灵魂流溢出物质世界。
+
+  • 流溢非主动创造，而是完满者的必然溢出，“光在照亮他物时不减自身”（V.1.6）。
+
+2. 物质（Ὕλη）的恶本质：
+
+  • 物质是流溢的终端，作为“非存在”成为恶的根源，“灵魂因遗忘本源而沉迷肉体”（IV.8.4）。
+
+3. 宇宙永恒论：
+
+  • 驳斥基督教创世观，主张宇宙无始无终，在周期性流溢中更新。
+
+2.3 灵魂回归的修行次第
+
+1. 净化（κάθαρσις）：
+
+  • 通过德性修炼（如节制欲望）摆脱物质束缚，“如雕刻家剔除石料显雕像”（I.6.9）。
+
+2. 默观（θεωρία）：
+
+  • 哲学思辨升至理智界，在辩证法中“看见理念如星辰闪耀”（I.3.4）。
+
+3. 出神（ἔκστασις）：
+
+  • 灵魂与太一神秘合一，“四次体验中，我触及那不可言说者”（IV.8.1）。
+
+三、思想传承与影响
+
+3.1 古代晚期哲学的重镇
+
+• 新柏拉图主义学派：
+
+  ◦ 波菲利系统化其理论，扬布里科引入通神术，普罗克洛发展流溢阶次论。
+
+• 基督教教父哲学：
+
+  ◦ 奥古斯丁吸收其“恶即缺乏”论，伪狄奥尼修斯借用否定神学构建神秘主义。
+
+  ◦ 卡帕多西亚教父以三一论对应本体三结构，但强调位格差异。
+
+• 异教复兴运动：
+
+  ◦ 尤利安皇帝以其哲学对抗基督教，雅典学园延续至529年被查士丁尼关闭。
+
+3.2 中世纪东西方的隐秘线索
+
+• 伊斯兰哲学：
+
+  ◦ 法拉比将流溢说融入伊斯兰教义，阿维森纳《治疗论》以理智论解释天使层级。
+
+• 犹太神秘主义：
+
+  ◦ 卡巴拉文献《光辉之书》吸收灵魂下降与回归模式，改造为“神性放射”（Sefirot）。
+
+• 拜占庭神学：
+
+  ◦ 格列高利·帕拉马斯发展静修主义，将出神体验正统化为“见神之光”。
+
+3.3 现代哲学与艺术的回响
+
+• 德国观念论：
+
+  ◦ 黑格尔辩证法继承流溢的辩证运动，谢林称“太一即绝对同一”。
+
+• 浪漫主义诗歌：
+
+  ◦ 威廉·布莱克《天真与经验之歌》以“灵魂堕落与回归”呼应普罗提诺。
+
+• 抽象艺术：
+
+  ◦ 康定斯基《论艺术中的精神》引用其学说，视抽象绘画为“对太一的直观”。
+
+四、学术争议与批判
+
+4.1 古代哲学交锋
+
+• 柏拉图主义正统性：
+
+  ◦ 中期学园派指其曲解柏拉图，将《巴门尼德篇》解读为神秘主义文本系牵强附会。
+
+• 基督教批判：
+
+  ◦ 德尔图良斥其为“雅典毒蛇”，奥利金辩护称“太一”可指向上帝，但否定道成肉身。
+
+4.2 现代哲学再审视
+
+• 神秘主义污名：
+
+  ◦ 罗素在《西方哲学史》中贬其“败坏柏拉图理性传统”，但哈多特（Pierre Hadot）正名为“精神修炼体系”。
+
+• 性别政治盲点：
+
+  ◦ 虽收女性门徒，但视物质为“阴性被动原则”，遭女性主义哲学批判。
+
+• 生态哲学批判：
+
+  ◦ 深层生态学指其贬低物质界，但过程哲学怀特海改造流溢说为“创造性进化”。
+
+4.3 跨文化诠释争议
+
+• 东方主义误读：
+
+  ◦ 19世纪学者将其比附印度吠檀多，忽视新柏拉图主义的希腊逻辑根基。
+
+• 诺斯替主义关联：
+
+  ◦ 约纳斯（Hans Jonas）指其与诺斯替派共享“灵魂囚禁”主题，但普罗提诺撰文驳斥诺斯替主义。
+
+五、参考文献与原始文献
+
+1. 基础史料
+
+  • 《九章集》（A.H. Armstrong英译本） | 洛布古典丛书
+
+  • 波菲利《普罗提诺生平与著作顺序》 | 洛布古典丛书附录
+
+  • 奥古斯丁《忏悔录》 | 第七卷（记载新柏拉图主义启示）
+
+2. 现代研究
+
+  • Pierre Hadot《普罗提诺或纯粹视界的简朴》 | 芝加哥大学出版社, 1993
+
+  • E.R. Dodds《异教与基督教在宗教时代》 | 牛津大学出版社, 1965
+
+  • Lloyd P. Gerson《普罗提诺》 | 罗德里奇出版社, 1994
+
+3. 跨学科研究
+
+  • 伊利亚德《宗教思想史》 | 芝加哥大学出版社, 1982（神秘主义比较）
+
+  • 玛丽·泰夫茨《新柏拉图主义与文艺复兴艺术》 | 普林斯顿大学出版社, 1983
+
+  • 约翰·米尔班克《神学与社会理论》 | 布莱克威尔出版社, 1990（基督教化用分析）`,
+      augustine: `哲学家 Philosopher #67
+姓名 Name: 奥古斯丁 Augustine of Hippo（Aurelius Augustinus Hipponensis）
+生卒年 Lifespan: 公元354–430年 | 基督教哲学奠基人，中世纪思想体系的建筑师
+学派 School: 教父哲学（融合新柏拉图主义与基督教神学，构建原罪论、恩典论与神圣历史观）
+
+一、生平与历史背景
+
+1.1 从异教徒到圣徒的精神之旅
+
+奥古斯丁生于北非塔加斯特（今阿尔及利亚），父亲为异教徒，母亲莫尼加是虔诚基督徒。青年时期沉迷修辞学与摩尼教，后赴迦太基学习，经历情欲放纵与哲学困惑。公元384年任米兰帝国修辞学教授，受新柏拉图主义与安布罗斯布道影响，逐步转向基督教。公元386年在米兰花园经历“皈依顿悟”，写下《忏悔录》详述心路。391年受洗后返回北非，395年任希波主教，抵御多纳图派与贝拉基主义异端，奠定正统教义。西哥特人围攻希波期间病逝，临终反复书写《忏悔录》名句：“我们的心不安息，直到在你里面找到安息。”
+
+1.2 罗马崩溃与教会崛起
+
+奥古斯丁身处西罗马帝国衰亡期（410年罗马陷落），其思想回应了时代危机：
+
+• 神圣历史的建构：以《上帝之城》驳斥“基督教导致罗马衰败”论，将历史视为“上帝之城”与“世俗之城”的永恒斗争。
+
+• 教会权威的确立：主张教会为“恩典的媒介”，赋予其解释圣经与施行圣礼的绝对权力。
+
+• 神学哲学的融合：用新柏拉图主义框架重构基督教教义，使希腊哲学服务于启示真理。
+
+二、核心思想体系
+
+2.1 神学人类学与原罪论
+
+1. 亚当的堕落与人性捆绑：
+
+  • 亚当滥用自由意志背叛上帝，人性自此被原罪污染，“在罪孽里孕育”（《诗篇51:5》）。
+
+  • 自由意志沦为“选择罪恶的能力”，唯有神恩（gratia）方能解放。
+
+2. 恩典与预定：
+
+  • 神恩非基于功德，而是上帝主权下的“不可抗拒恩典”（gratia irresistibilis）。
+
+  • 双重预定论：上帝拣选部分人得救，余者被公正遗弃（《论圣徒的预定》）。
+
+3. 时间与永恒：
+
+  • 时间是人类心灵的延展（distentio animi），永恒是上帝的当下，“过去与未来皆在神之现在中”（《忏悔录》XI）。
+
+2.2 知识论与光照说
+
+1. 真理的内在性：
+
+  • 反对怀疑论，主张“我疑故我在”（si fallor, sum），早笛卡尔千年提出主体性根基。
+
+  • 真理存于灵魂深处，需通过神圣光照（illuminatio）方能认知，理性为信仰开路。
+
+2. 符号诠释学：
+
+  • 万物是上帝的符号，《圣经》需以寓意解经法破译，“字句杀人，灵意活人”（《基督教教义》III.5）。
+
+3. 恶的形而上学：
+
+  • 恶非实体，而是善的缺乏（privatio boni），“腐败是自然趋向虚无的倾向”（《论自由意志》III）。
+
+2.3 政治神学与教会论
+
+1. 两城对立：
+
+  • 上帝之城（civitas Dei）由爱神者组成，世俗之城（civitas terrena）由爱己者构成，历史终结于末日审判。
+
+  • 教会是上帝之城的尘世投影，国家需服从教会以维持秩序。
+
+2. 正义战争理论：
+
+  • 为纠正不义（如惩罚侵略者）可发动战争，但须由合法权威、正当理由与正确意图引导（《上帝之城》XIX）。
+
+3. 圣礼的救赎效力：
+
+  • 洗礼洗净原罪，圣餐维系属灵生命，“教会之外无救恩”（extra ecclesiam nulla salus）。
+
+三、思想传承与影响
+
+3.1 中世纪基督教的正统基石
+
+• 经院哲学：安瑟伦“信仰寻求理解”源自奥古斯丁，托马斯·阿奎那调和其与亚里士多德。
+
+• 宗教改革：路德与加尔文复兴其恩典论，詹森主义引发天主教内部论战。
+
+• 现代神学：巴特新正统主义重拾其上帝主权观，蒂利希存在主义神学吸收焦虑理论。
+
+3.2 西方哲学的思想原型
+
+• 主体性转向：笛卡尔“我思故我在”与奥古斯丁“我疑故我在”一脉相承。
+
+• 现象学时间观：胡塞尔与海德格尔的时间分析受《忏悔录》第十一卷启发。
+
+• 解释学传统：伽达默尔承认其符号理论为现代解释学前身。
+
+3.3 跨文明对话与批判
+
+• 伊斯兰教：安萨里《哲学家的矛盾》引用其自由意志论，但拒斥三位一体。
+
+• 佛教：与原罪论对比，“业”强调个体责任而非祖先遗传，但皆关注解脱路径。
+
+• 启蒙运动：伏尔泰抨击其原罪观“反人性”，但卢梭《忏悔录》书名致敬其坦诚精神。
+
+四、学术争议与批判
+
+4.1 神学内部张力
+
+• 恩典与自由之争：贝拉基指责其否定人性向善可能，半贝拉基主义试图折衷。
+
+• 预定论的道德困境：若上帝预定一切，人类何来责任？奥古斯丁诉诸“奥秘不可测”。
+
+• 教会权威的悖论：强调教会神圣性，但晚年目睹教会腐败，叹“教会是妓女，亦是母亲”。
+
+4.2 现代哲学批判
+
+• 人性压抑：尼采斥其为“怨恨的形而上学”，将生命贬为赎罪剧。
+
+• 帝国共谋：后殖民理论指其神学美化罗马殖民，将非洲本土信仰污名化为“异教”。
+
+• 性别政治：女性主义批判其将夏娃视为“原罪媒介”，巩固父权制神学结构。
+
+4.3 文本与历史重构
+
+• 《忏悔录》的真实性：部分学者质疑其叙事经过文学加工，但彼得·布朗辩护为“灵魂史的真实”。
+
+• 反犹主义指控：其《反犹太人讲道》被中世纪用作迫害依据，现代教会公开忏悔。
+
+五、参考文献与原始文献
+
+1. 基础史料
+
+  • 《忏悔录》（周士良中译本） | 商务印书馆, 1963
+
+  • 《上帝之城》（王晓朝中译本） | 人民出版社, 2006
+
+  • 《论自由意志》（成官泯中译本） | 上海人民出版社, 2010
+
+2. 现代研究
+
+  • 彼得·布朗《希波的奥古斯丁》 | 加州大学出版社, 1967
+
+  • 亨利·查德威克《奥古斯丁》 | 牛津大学出版社, 1986
+
+  • 汉娜·阿伦特《爱与圣奥古斯丁》 | 芝加哥大学出版社, 1996
+
+3. 跨学科研究
+
+  • 保罗·利科《恶的象征》 | 巴黎出版社, 1986（恶的哲学分析）
+
+  • 查尔斯·泰勒《世俗时代》 | 哈佛大学出版社, 2007（奥古斯丁与现代性）
+
+  • 约翰·米尔班克《神学与社会理论》 | 布莱克威尔出版社, 1990（政治神学批判）`,
+      boethius: `哲学家 Philosopher #68
+姓名 Name: 波爱修斯 Boethius（Anicius Manlius Severinus Boethius）
+生卒年 Lifespan: 约公元477–524年 | 罗马末期哲学家、政治家，中世纪逻辑学与神学桥梁
+学派 School: 拉丁教父哲学（融合新柏拉图主义与基督教，翻译并注释亚里士多德，奠定经院哲学基础）
+
+一、生平与历史背景
+
+1.1 罗马贵族的末世荣光
+
+波爱修斯生于罗马显赫的阿尼奇家族，幼年丧父，由执政官叙马库斯抚养并接受希腊与拉丁古典教育。早年以神童闻名，精通希腊哲学、数学与音乐，立誓“翻译柏拉图与亚里士多德全部著作，证明其思想一致”。30岁任东哥特国王狄奥多里克的首席顾问（Magister Officiorum），成为连接罗马遗民与蛮族政权的关键人物。公元523年突遭叛国罪指控，囚禁于帕维亚期间写下传世之作《哲学的慰藉》（De Consolatione Philosophiae）。公元524年被处决，临终前仍修订《亚里士多德范畴篇注释》，遗体葬于圣彼得大教堂。
+
+1.2 文明断裂中的知识守护者
+
+在西罗马帝国灭亡（476年）后的动荡中，波爱修斯致力于保存古典学术火种：
+
+• 希腊学术拉丁化：将亚里士多德《工具论》、波菲利《导论》译为拉丁文，成为中世纪逻辑学教科书。
+
+• 七艺体系化：定义算术、几何、音乐、天文为“四艺”（Quadrivium），结合语法、修辞、逻辑（Trivium）构成中世纪教育核心。
+
+• 政治理想主义：试图以罗马法精神驯化哥特政权，却因权力倾轧沦为牺牲品。
+
+二、核心思想体系
+
+2.1 存在论与逻辑学奠基
+
+1. 存在与本质的区分：
+
+  • 在《波菲利导论注释》中提出“存在”（esse）与“所是”（quod est）之别，启托马斯·阿奎那的本质存在论。
+
+  • 定义“人格”（persona）为“理性本性的个别实体”，影响中世纪三位一体神学。
+
+2. 共相问题：
+
+  • 共相（如“人类”）是否独立于个别事物存在？波爱修斯调和柏拉图与亚里士多德，主张“共相存于个别中，但可被抽象认知”。
+
+3. 命题逻辑：
+
+  • 发展假言推理与模态逻辑，区分必然性（necessitas）与可能性（possibilitas），为经院辩证法铺路。
+
+2.2 神义论与自由意志
+
+1. 永恒与时间的辩证：
+
+  • 神在永恒中直观全部时间，“过去、现在、未来对神而言皆是当下”（《哲学的慰藉》V）。
+
+  • 人类自由意志与神圣预知的矛盾，通过“神观时间如圆心观圆周”的隐喻化解。
+
+2. 命运的轮盘：
+
+  • 命运（Fortuna）如旋转之轮，智者应超然于外物，“幸福在于内在德性而非外在机运”（II）。
+
+3. 恶的虚妄：
+
+  • 恶人实为软弱，“行恶即自我惩罚，因背离至善本性”（IV）。
+
+2.3 音乐与宇宙和谐
+
+1. 音乐宇宙论：
+
+  • 在《音乐原理》（De Institutione Musica）中将音乐分为宇宙之乐（天体运行）、人类之乐（灵魂和谐）、器乐之乐（物理振动）。
+
+2. 数学本体论：
+
+  • 数作为宇宙本质，“万物皆依数而造”，毕达哥拉斯主义与基督教创世论在此融合。
+
+三、思想传承与影响
+
+3.1 中世纪学术的基石
+
+• 经院哲学：安瑟伦与阿奎那直接引用其存在论，共相争论主导中世纪大学课堂。
+
+• 加洛林文艺复兴：阿尔昆以波爱修斯教材重建欧洲教育体系，查理曼宫廷奉其为学术典范。
+
+• 但丁的向导：《神曲》中波爱修斯位列天堂，象征理性与信仰的和谐。
+
+3.2 跨学科的思想辐射
+
+• 科学革命：哥白尼引用其天体音乐隐喻，开普勒《宇宙谐和论》延续数学宇宙观。
+
+• 文学传统：乔叟《坎特伯雷故事集》与伊丽莎白时代诗歌受《哲学的慰藉》文体影响。
+
+• 音乐理论：中世纪格里高利圣咏调式体系以其《音乐原理》为理论根基。
+
+3.3 东西方哲学纽带
+
+• 伊斯兰哲学：阿拉伯学者通过其译本接触亚里士多德，阿维森纳逻辑学受其启发。
+
+• 拜占庭学术：普塞洛斯重评其著作，影响东正教神秘主义神学。
+
+• 文艺复兴人文主义：彼特拉克称其为“最后一位罗马人与第一位经院学者”。
+
+四、学术争议与批判
+
+4.1 历史谜团与文本疑云
+
+• 叛国罪真相：是否因支持东罗马帝国复兴遭哥特人猜忌？普罗科匹厄斯《秘史》指其为政治阴谋牺牲品。
+
+• 基督教身份争议：《哲学的慰藉》未提基督，引发其信仰深度质疑；但奥古斯丁影响贯穿全书。
+
+• 著作真伪：《论三位一体》等神学短论是否出自其手？现代语文学考证支持真实性。
+
+4.2 哲学体系的矛盾
+
+• 柏拉图与亚里士多德调和：阿奎那指其未能彻底统合两者，共相理论仍存模糊。
+
+• 自由意志论局限：路德称其“半贝拉基主义”，过度依赖人性向善能力。
+
+• 音乐理论形而上学：文艺复兴实证主义批评其忽视听觉经验，陷入抽象思辨。
+
+4.3 现代重估
+
+• 分析哲学：皮尔士赞其符号逻辑先驱，但弗雷格指其未区分命题与判断。
+
+• 存在主义：克尔凯郭尔引用其命运无常论，但拒斥理性慰藉路径。
+
+• 后现代批判：德里达解构其“逻各斯中心主义”，却承认其为西方形而上学枢纽。
+
+五、参考文献与原始文献
+
+1. 基础史料
+
+  • 《哲学的慰藉》（H.F. Stewart英译本） | 洛布古典丛书
+
+  • 《波菲利导论注释》（Eleonore Stump英译本） | 康奈尔大学出版社, 1978
+
+  • 《音乐原理》（Calvin M. Bower英译本） | 耶鲁大学出版社, 1989
+
+2. 现代研究
+
+  • Henry Chadwick《波爱修斯：音乐的慰藉》 | 牛津大学出版社, 1981
+
+  • John Marenbon《波爱修斯：从古代到中世纪》 | 哈佛大学出版社, 2003
+
+  • C.S. Lewis《爱的寓言》 | 剑桥大学出版社, 1936（文学影响分析）
+
+3. 跨学科研究
+
+  • 翁贝托·艾柯《玫瑰之名》 | 1980（中世纪学术隐喻）
+
+  • 迈克尔·莫拉《中世纪音乐与波爱修斯遗产》 | 芝加哥大学出版社, 1995
+
+  • 理查德·萨瑟恩《中世纪人文主义》 | 加州大学出版社, 1970`,
+      eriugena: `哲学家 Philosopher #69
+姓名 Name: 约翰·司各脱·埃里金纳 John Scotus Eriugena（Iohannes Scottus Eriugena）
+生卒年 Lifespan: 约公元815–877年 | 中世纪早期哲学家，爱尔兰新柏拉图主义集大成者
+学派 School: 爱尔兰经院传统（融合基督教神学与新柏拉图主义，构建泛神论哲学体系）
+
+一、生平与历史背景
+
+1.1 爱尔兰学者的欧陆远征
+
+埃里金纳生于爱尔兰，原名“Eriugena”意为“爱尔兰出生者”。早年于修道院学习希腊文与拉丁经典，精通柏拉图、亚里士多德及伪狄奥尼修斯著作。公元845年应西法兰克国王秃头查理之邀，赴巴黎宫廷学校任首席学者，主持加洛林文艺复兴的哲学复兴。翻译伪狄奥尼修斯《天阶体系》等著作，将东方神秘主义引入西方。晚年因神学争议隐退，据传死于英格兰马尔姆斯伯里修道院，死因成谜。
+
+1.2 加洛林文艺复兴的思想先锋
+
+在查理曼帝国分裂后的文化重建中，埃里金纳扮演关键角色：
+
+• 希腊学术桥梁：翻译拜占庭神学文献，填补拉丁西方对希腊思想的认知空白。
+
+• 自由七艺革新：主张“辩证法是哲学的灵魂”，将逻辑学提升为神学研究核心工具。
+
+• 宫廷哲学争议：卷入圣餐礼论战，撰《论圣餐》驳斥化质说，遭兰斯大主教辛克马尔的激烈反对。
+
+二、核心思想体系
+
+2.1 自然四重划分（De Divisione Naturae）
+
+1. 创造而非被创造的自然（Natura quae creat et non creatur）：
+
+  • 即上帝作为终极因，超越存在与非存在，“通过自身无中生有”。
+
+2. 被创造且创造的自然（Natura quae creatur et creat）：
+
+  • 神圣理念（Logos）与原始因，作为万物范型存在于上帝心智中。
+
+3. 被创造而不创造的自然（Natura quae creatur et non creat）：
+
+  • 物质世界，由神圣理念流溢而成，时空中的现象总和。
+
+4. 既不创造也不被创造的自然（Natura quae nec creat nec creatur）：
+
+  • 上帝作为万物的终极归宿，宇宙通过“万有回归”（reditus）与神合一。
+
+2.2 泛神论与神秘主义
+
+1. 神的内在性：
+
+  • “上帝是万物的本质，万物是上帝的表显”（《论自然的区分》I.517A），主张“神即存在自身”（esse ipsum）。
+
+2. 人的神化：
+
+  • 灵魂通过知识（gnosis）上升，最终“与神合一，如一滴水融入大海”（III.678C）。
+
+3. 恶的非实在性：
+
+  • 恶是善的缺失，“如黑暗是光的缺席，无本体可言”（V.909B）。
+
+2.3 理性与信仰的统一
+
+1. 哲学即神学：
+
+  • “真正哲学即真正宗教，真正宗教即真正哲学”（I.508D），主张理性与启示同源。
+
+2. 权威与理性的辩证：
+
+  • “权威源于真理性理性，而理性绝不源于权威”（I.516C），挑战教条主义传统。
+
+3. 隐喻解经法：
+
+  • 圣经需以寓意诠释，如“创世六日”象征灵魂回归神的阶段。
+
+三、思想传承与影响
+
+3.1 中世纪隐秘的思想遗产
+
+• 神秘主义传统：伪狄奥尼修斯与埃克哈特大师间的关键纽带，影响莱茵兰神秘主义。
+
+• 经院哲学先声：其辩证法为安瑟伦与阿伯拉尔铺路，但泛神论遭后世经院学者批判。
+
+• 文艺复兴新柏拉图主义：费奇诺与皮科引其思想，整合基督教与柏拉图主义。
+
+3.2 现代哲学的重估
+
+• 德国观念论：黑格尔称其“中世纪最伟大的哲学家”，谢林吸收自然四重结构。
+
+• 泛神论争议：斯宾诺莎与埃里金纳的思想关联引发学术论战，歌德诗作暗含其影响。
+
+• 过程哲学：怀特海宇宙论中的“创造—回归”模式与埃里金纳的流溢说形成呼应。
+
+3.3 跨文明对话
+
+• 凯尔特基督教：其思想植根爱尔兰修道传统，与东方正教静修主义存在共鸣。
+
+• 印度吠檀多：与商羯罗“梵我一如”说形似，但埃里金纳强调人格神与创世论。
+
+• 伊斯兰苏菲主义：伊本·阿拉比的“存在单一论”与其泛神论共享神秘主义内核。
+
+四、学术争议与批判
+
+4.1 中世纪教会的压制
+
+• 异端指控：1225年教皇洪诺留三世谴责《论自然的区分》，命焚毁其手稿。
+
+• 圣餐论战：化质说支持者斥其“以哲学腐蚀圣礼”，但其观点预示后世变质说争议。
+
+• 理性主义批判：明谷的伯尔纳铎称其“用辩证法亵渎神圣奥秘”。
+
+4.2 现代哲学反思
+
+• 泛神论误解：学者马利坦指其混淆神与世界，但吉尔松辩护为“超泛神论”。
+
+• 历史地位争议：是否属经院哲学先驱？吕格尔强调其与托马斯主义的断裂性。
+
+• 性别隐喻批判：女性主义哲学批评其将“女性”等同于被动物质，强化性别二元论。
+
+4.3 文本与翻译难题
+
+• 伪作问题：部分归于其名下的希腊文注释实为后世伪托，需语文学甄别。
+
+• 版本混乱：《论自然的区分》现存抄本多经删改，现代校勘本力图还原原貌。
+
+五、参考文献与原始文献
+
+1. 基础史料
+
+  • 《论自然的区分》（I.P. Sheldon-Williams英译本） | 都柏林研究所, 1968
+
+  • 《伪狄奥尼修斯著作译注》（Édouard Jeauneau编） | 巴黎出版社, 2008
+
+  • 《约翰·司各脱文集》（Migne《拉丁教父集》第122卷） | 1853
+
+2. 现代研究
+
+  • John J. O'Meara《埃里金纳》 | 哥伦比亚大学出版社, 1988
+
+  • Dermot Moran《埃里金纳哲学》 | 剑桥大学出版社, 1989
+
+  • Bernard McGinn《埃里金纳与神秘主义传统》 | 普林斯顿大学出版社, 1994
+
+3. 跨学科研究
+
+  • 威廉·奥克汉姆《中世纪哲学中的爱尔兰人》 | 牛津大学出版社, 2003
+
+  • 皮埃尔·阿多《中世纪神秘主义与哲学》 | 芝加哥大学出版社, 1995
+
+  • 约翰·米尔班克《神学与社会理论》 | 布莱克威尔出版社, 1990`,
+      anselm: `哲学家 Philosopher #70
+姓名 Name: 安瑟伦 Anselm of Canterbury（Anselmus Cantuariensis）
+生卒年 Lifespan: 1033–1109年 | 中世纪经院哲学奠基人，本体论论证首创者
+学派 School: 经院哲学（主张“信仰寻求理解”，融合奥古斯丁传统与辩证法）
+
+一、生平与历史背景
+
+1.1 从阿尔卑斯到坎特伯雷
+
+安瑟伦生于意大利奥斯塔的伦巴第贵族家庭，少年丧母后与父冲突，1060年逃离家族赴法国贝克修道院，师从兰弗朗克（Lanfranc）。在贝克期间研习奥古斯丁著作与辩证法，提出“信仰寻求理解”（fides quaerens intellectum）的方法论。1078年接替兰弗朗克任贝克院长，1093年受诺曼征服者威廉二世任命为坎特伯雷大主教，成为英格兰教会首脑。因反对国王干涉教会事务两度流亡，1107年与亨利一世达成政教协议后归任，毕生致力于调和理性与启示。
+
+1.2 中世纪学术的转折点
+
+在11世纪“辩证法复兴”背景下，安瑟伦革新神学方法论：
+
+• 辩证法神学：以逻辑论证替代权威引证，将《圣经》诠释纳入理性框架。
+
+• 修道院学校转型：在贝克建立学术共同体，培养出一代经院学者如巴斯的阿德拉德。
+
+• 政教之争：通过《论神何以成人》（Cur Deus Homo）重塑赎罪理论，强化教会权威。
+
+二、核心思想体系
+
+2.1 本体论论证（Ontological Argument）
+
+1. 《宣讲》（Proslogion）中的证明：
+
+  • 定义上帝：“无法设想更伟大的存在者”（aliquid quo nihil maius cogitari possit）。
+
+  • 存在即完善：若上帝仅存于思想中，则可设想更伟大的现实存在者，矛盾。
+
+  • 结论：上帝必然现实存在（II-III章）。
+
+2. 高尼罗的反驳与回应：
+
+  • 完美岛屿悖论：高尼罗以“完美岛屿”类比，安瑟伦辩称“上帝是唯一必然存在者”（《为愚人辩》）。
+
+2.2 赎罪论与自由意志
+
+1. 替代性救赎：
+
+  • 人类因原罪亏欠神的荣耀，基督以无罪之身受难偿还，恢复神人秩序（《论神何以成人》II）。
+
+2. 意志的两种倾向：
+
+  • 正义意志（voluntas iustitiae）：追求属灵之善。
+
+  • 利益意志（voluntas commodi）：追求感官之乐。
+
+  • 自由即“持守正义意志的能力”（《论自由意志》）。
+
+2.3 真理与语言的形而上学
+
+1. 真理层级论：
+
+  • 最高真理即上帝，命题真理（如“雪是白的”）是对神圣真理的有限分有。
+
+2. 语义实在论：
+
+  • 共相（如“白色”）是心智对事物本质的抽象，具有客观实在性（《独白》X）。
+
+三、思想传承与影响
+
+3.1 经院哲学的正统化
+
+• 托马斯·阿奎那：吸收其意志理论，但以亚里士多德主义改造本体论论证。
+
+• 方济各学派：波纳文图拉继承其奥古斯丁主义，强调信仰优先。
+
+• 宗教改革：路德批判其救赎论过度理性化，但加尔文重拾其预定论框架。
+
+3.2 现代哲学的重构
+
+• 笛卡尔：在《第一哲学沉思集》中复兴本体论论证，引发莱布尼茨与康德的批判。
+
+• 分析哲学：哥德尔以模态逻辑重构论证，普兰丁格提出“可能世界”版本。
+
+• 现象学：马里翁（Jean-Luc Marion）以“过剩现象学”重释其上帝观。
+
+3.3 跨文明对话
+
+• 伊斯兰凯拉姆：与安萨里“必然存在”论证形成平行，但安瑟伦拒斥因果链条。
+
+• 佛教空性论：其共相实在论与中观派“假名有”形成认识论对照。
+
+• 犹太哲学：迈蒙尼德批评其逻辑僭越神圣奥秘，但暗合《迷途指津》的否定神学。
+
+四、学术争议与批判
+
+4.1 中世纪的信仰与理性之争
+
+• 罗瑟林的唯名论批判：指责其共相理论导致“三位一体分裂”，安瑟伦斥为“方言粗鄙”（《论信仰》）。
+
+• 贝伦加尔圣餐争议：反对以辩证法解圣餐，但安瑟伦坚持“奥秘需理性照亮”。
+
+4.2 近现代哲学挑战
+
+• 康德的否定：存在非实在谓词，“存在”不能从概念推出（《纯粹理性批判》B626）。
+
+• 尼采的敌意：斥其为“概念偶像崇拜者”，将生命囚禁于逻辑牢笼。
+
+• 分析哲学解构：罗素以“描述理论”消解“存在”的实体性，奎因否定分析性真理。
+
+4.3 文本与历史谜题
+
+• 《哲学对话》真伪：部分归于其名下的辩证法著作被疑为弟子伪托。
+
+• 流亡时期的沉默：1097-1100年流亡期间思想突变，手稿散佚导致研究断层。
+
+五、参考文献与原始文献
+
+1. 基础史料
+
+  • 《安瑟伦著作集》（Jasper Hopkins英译本） | 明尼苏达大学出版社, 2000
+
+  • 《宣讲》《独白》《论神何以为人》 | 牛津世界经典丛书
+
+  • 高尼罗《为愚人辩》 | 收录于《安瑟伦与批评者》
+
+2. 现代研究
+
+  • Brian Davies《安瑟伦的思辨神学》 | 剑桥大学出版社, 1998
+
+  • Sandra Visser《安瑟伦的上帝》 | 牛津大学出版社, 2012
+
+  • Eileen Sweeney《安瑟伦的辩证法》 | 圣母大学出版社, 2006
+
+3. 跨学科研究
+
+  • 查尔斯·泰勒《世俗时代》 | 哈佛大学出版社, 2007（信仰与理性张力）
+
+  • 阿兰·巴迪欧《圣保罗》 | 维索出版社, 2003（赎罪论的政治哲学解读）
+
+  • 理查德·斯温伯恩《上帝的存在》 | 牛津大学出版社, 2004（分析哲学视角）`,
+      abelard: `哲学家 Philosopher #71
+姓名 Name: 彼得·阿伯拉尔 Peter Abelard（Petrus Abaelardus）
+生卒年 Lifespan: 1079–1142年 | 中世纪经院哲学巨擘，辩证法的革新者，概念论创始人
+学派 School: 经院哲学（发展辩证神学，挑战唯实论，提出“理解而后信仰”）
+
+一、生平与历史背景
+
+1.1 从骑士到哲人的叛逆之路
+
+阿伯拉尔生于法国勒帕莱的骑士家庭，早年放弃继承权，游学巴黎师从唯实论者香浦的威廉（William of Champeaux）。因挑战老师观点崭露头角，1113年创办巴黎圣母院学校，吸引全欧学生，声名鹊起。与海洛伊丝（Heloise）的禁忌之恋导致阉割悲剧，退隐修道院后仍以书信传情，写下哲学史罕见的爱情与思想交织的文献。晚年因神学争议被斥为异端，著作遭焚毁，逝于克吕尼修道院，临终前仍在修订《伦理学》（Scito Te Ipsum）。
+
+1.2 12世纪文艺复兴的争议符号
+
+在教会改革与学术自由碰撞的时代，阿伯拉尔推动经院哲学转型：
+
+• 辩证法革命：主张“怀疑是通向真理之路”，以《是与否》（Sic et Non）汇编教父矛盾观点，要求逻辑调和。
+
+• 教育世俗化：打破修道院垄断，建立城市学校，培养出索尔兹伯里的约翰等自由派学者。
+
+• 女性教育先驱：指导海洛伊丝建立女修道院学校，其书信集成为中世纪女性智识生活的罕见见证。
+
+二、核心思想体系
+
+2.1 概念论（Conceptualism）与共相之争
+
+1. 对唯实论与唯名论的超越：
+
+  • 共相（如“人类”）非独立实体，亦非纯词语，而是心智对个别事物相似性的抽象概念（sermo）。
+
+  • “共相诞生于心灵的比较行为，如同城墙由砖石砌成”（《逻辑学初阶》）。
+
+2. 语义功能理论：
+
+  • 词语通过指称（appellatio）与含义（significatio）双重功能表意，区分“苏格拉底”与“人”的逻辑层级。
+
+3. 命题逻辑革新：
+
+  • 发展假言推理与模态命题分析，奠定中世纪逻辑学基础，影响奥卡姆的剃刀原则。
+
+2.2 辩证神学与信仰理性化
+
+1. 神学方法论：
+
+  • “理解以便信仰”（intelligo ut credam），主张以理性检验启示，反对盲目服从权威。
+
+  • 《基督教神学》（Theologia Christiana）用辩证法证明三位一体，引发圣伯尔纳铎激烈反对。
+
+2. 恶的伦理学：
+
+  • 行为道德性取决于意图（intentio），而非结果，“同一行为可善可恶，全凭动机”（《伦理学》）。
+
+3. 救赎论修正：
+
+  • 基督受难非为抵消原罪，而是彰显神圣之爱，推动人类道德觉醒（《论神之智慧》）。
+
+2.3 情感哲学与自我认知
+
+1. 爱情形而上学：
+
+  • 在与海洛伊丝书信中，将爱定义为“灵魂的相互完善”，超越肉欲的灵性合一。
+
+2. 悲剧意识：
+
+  • 以自身遭遇反思命运与自由，“痛苦是智慧的磨石，断剑犹可书写真理”（《我的苦难史》）。
+
+3. 知识社会学：
+
+  • 批判盲目崇拜权威，“真理在质疑中显现，羔羊的沉默招致暴政”（《对话篇》）。
+
+三、思想传承与影响
+
+3.1 经院哲学的分水岭
+
+• 托马斯主义先声：阿奎那吸收其意图伦理学，但以亚里士多德主义改造辩证法。
+
+• 唯名论兴起：其概念论催生奥卡姆的唯名论，推动中世纪晚期哲学转向。
+
+• 大学教育模式：巴黎大学的论辩制度源自其《是与否》的问答教学法。
+
+3.2 文艺复兴与启蒙火种
+
+• 人文主义先驱：彼特拉克赞其为“自由思想的殉道者”，伊拉斯谟继承其批判精神。
+
+• 宗教改革伏笔：路德“因信称义”暗合其意图伦理，但拒斥其理性主义神学。
+
+• 现代哲学奠基：笛卡尔的怀疑方法、康德的道德动机论皆可见其思想烙印。
+
+3.3 跨学科与跨文明回响
+
+• 文学传统：卢梭《新爱洛漪丝》以书信体重构其爱情哲学，存在主义文学重审其悲剧观。
+
+• 女性主义重估：波伏娃在《第二性》中剖析海洛伊丝形象，揭示中世纪女性智识困境。
+
+• 分析哲学溯源：弗雷格语义理论受其指称学说启发，蒯因本体论承诺呼应共相之争。
+
+四、学术争议与批判
+
+4.1 中世纪教会的压制
+
+• 桑斯会议定罪：1140年圣伯尔纳铎指控其“分离基督的人性与神性”，迫其公开焚毁著作。
+
+• 奥古斯丁主义反弹：明谷的伯尔纳铎斥其“以辩证法的毒刃刺伤信仰”，威胁教会权威。
+
+4.2 现代哲学再评价
+
+• 理性主义批判：克尔凯郭尔指责其“将信仰降格为逻辑游戏”，忽视生存的激情维度。
+
+• 历史主义局限：吉尔松指其中世纪语境束缚了理性潜能，未能彻底解放哲学。
+
+• 性别权力解构：当代学者揭示其书信中隐含的男性话语霸权，消解“爱情神话”的浪漫叙事。
+
+4.3 文本真伪与诠释困境
+
+• 书信真实性：19世纪疑其与海洛伊丝书信为后世伪造，但语文学与笔迹学证实为真。
+
+• 神学著作湮没：多数手稿遭教会销毁，现存文本多经敌对者删改，需校勘还原。
+
+五、参考文献与原始文献
+
+1. 基础史料
+
+  • 《阿伯拉尔书信集》（Betty Radice英译本） | 企鹅经典丛书, 1974
+
+  • 《是与否》（B.B. Price英译本） | 多伦多大学出版社, 1992
+
+  • 《伦理学》（D.E. Luscombe英译本） | 牛津大学出版社, 1971
+
+2. 现代研究
+
+  • Marenbon, J.《阿伯拉尔的哲学》 | 剑桥大学出版社, 1997
+
+  • Clanchy, M.T.《阿伯拉尔：中世纪的生涯与神话》 | 牛津大学出版社, 1999
+
+  • Sikes, J.G.《彼得·阿伯拉尔》 | 剑桥大学出版社, 1932
+
+3. 跨学科研究
+
+  • 艾蒂安·吉尔松《中世纪哲学精神》 | 纽约出版社, 1940（经院传统分析）
+
+  • 卡罗琳·拜纳姆《神圣的盛宴与神圣的饥渴》 | 加州大学出版社, 1987（性别视角）
+
+  • 理查德·萨瑟恩《中世纪人文主义》 | 加州大学出版社, 1970（学术史重构）`,
+      thomas_aquinas: `哲学家 Philosopher #72
+姓名 Name: 托马斯·阿奎那 Thomas Aquinas（Thomas Aquinas）
+生卒年 Lifespan: 1225–1274年 | 中世纪经院哲学巅峰，亚里士多德主义神学集大成者
+学派 School: 经院哲学（融合亚里士多德哲学与基督教神学，构建自然神学体系）
+一、生平与历史背景
+1.1 从贵族子第到天使博士
+阿奎那生于意大利罗卡塞卡城堡，出身伦巴第贵族，5岁入卡西诺山修道院接受基础教育。1239年因腓特烈二世与教廷冲突转学那不勒斯大学，接触亚里士多德著作。1244年违背家族意愿加入多明我会，赴科隆师从大阿尔伯特（Albertus Magnus），以“沉默的牛”绰号潜心治学。1252年任教巴黎大学，以《箴言四书注》确立学术地位。1273年神秘体验后停止写作，称“一切著作如稻草”。1274年赴里昂大公会议途中病逝，1323年被封圣，1567年获“天使博士”（Doctor Angelicus）称号。
+1.2 亚里士多德革命的完成者
+在拉丁阿维罗伊主义冲击教会正统的危机中，阿奎那完成思想整合：
+• 知识体系化：以《神学大全》（Summa Theologiae）构建信仰—理性金字塔，涵盖神学、哲学、伦理与法律。
+• 大学教育革新：确立“争议问题”（Quaestio Disputata）教学法，主导中世纪大学课程至宗教改革。
+• 政教关系重塑：在《论君主政治》中提出“神律高于人法”，影响但丁的帝国理想。
+二、核心思想体系
+2.1 自然神学与五路证明
+1. 五路证明（Quinque Viae）：
+  • 第一动者：运动必有终极推动者。
+  • 第一因：因果链需无因之因。
+  • 必然存在：偶然存在依赖必然存在。
+  • 完美等级：最高完美者即上帝。
+  • 目的论：自然秩序指向智慧设计者。
+2. 类比认知论：
+  • 神超越范畴，但可通过受造物类比认知，“如通过效果窥见原因”（ST I.13.5）。
+3. 本质与存在统一：
+  • 上帝是“存在本身”（Ipsum Esse Subsistens），受造物为本质与存在的复合体。
+2.2 伦理学与自然法
+1. 幸福论：
+  • 至福（beatitudo）在于直观上帝，尘世幸福是德性生活的副产品。
+2. 四枢德与三超德：
+  • 谨慎、正义、节制、勇敢构成自然德性；信、望、爱为神学德性（ST I-II.62）。
+3. 自然法等级：
+  • 永恒法→自然法→人法，理性动物分有永恒法即自然法，“行善避恶”为第一原则（ST I-II.94.2）。
+2.3 形而上学综合
+1. 形质论（Hylomorphism）：
+  • 实体由质料（hyle）与形式（morphe）构成，灵魂是肉体的实体形式。
+2. 共相理论：
+  • 共相存于事物中（in re）、后于事物（post rem）且先于事物（ante rem），调和唯名论与唯实论。
+3. 天使本体论：
+  • 天使是无质料的纯形式，个体即物种（ST I.50.4）。
+三、思想传承与影响
+3.1 经院哲学的正统化
+• 托马斯主义学派：卡耶坦（Cajetan）与苏亚雷斯（Suarez）发展其理论，主导反宗教改革神学。
+• 多明我会思想霸权：1323年封圣后，其学说成为天主教官方哲学，1879年教皇利奥十三世颁布《永恒之父》通谕重申其地位。
+3.2 现代世界的思想基石
+• 自然法传统：格劳秀斯与洛克吸收其理论，奠定现代国际法与政治哲学基础。
+• 分析哲学溯源：安斯康姆（G.E.M. Anscombe）复兴德性伦理，称其为“常识哲学家”。
+• 新经院主义：20世纪马里旦（Jacques Maritain）以托马斯主义回应存在主义挑战。
+3.3 跨文明对话
+• 伊斯兰哲学：与伊本·鲁世德（阿维罗伊）的亚里士多德注疏形成批判性对话。
+• 犹太哲学：迈蒙尼德《迷途指津》的五路证明前身启发其宇宙论论证。
+• 东亚哲学：利玛窦以托马斯主义框架向明朝士大夫解释天主教，引发“礼仪之争”。
+四、学术争议与批判
+4.1 中世纪的反对声浪
+• 方济各学派批判：波纳文图拉指责其“用异教哲学污染神学”，邓斯·司各脱发展意志优先论抗衡。
+• 巴黎主教谴责：1277年唐比耶（Tempier）列出219条受其影响的“错误命题”，但丁为其辩护。
+4.2 近现代哲学挑战
+• 宗教改革批判：路德斥其“亚里士多德化信仰”，加尔文否定自然神学可能性。
+• 启蒙运动解构：休谟驳斥设计论，康德否定上帝存在的思辨证明。
+• 存在主义颠覆：克尔凯郭尔称其体系抹杀个体信仰的激情维度。
+4.3 当代理论反思
+• 女性主义批判：艾薇拉·蒂勒（Elisabeth Gössmann）指其性别观固化“男性—主动/女性—被动”范式。
+• 生态哲学盲点：深层生态学批评其人类中心主义自然观，但生态神学家贝瑞（Thomas Berry）重释其共融思想。
+• 科学哲学争议：新托马斯主义者试图调和量子力学与形质论，引发实体概念论战。
+五、参考文献与原始文献
+1. 基础史料
+  • 《神学大全》（Benziger Brothers英译本） | 1947
+  • 《反异教大全》（Anton C. Pegis英译本） | 圣母大学出版社, 1975
+  • 《论存在与本质》（Armand Maurer英译本） | 宗座中世纪研究院, 1968
+2. 现代研究
+  • Etienne Gilson《圣托马斯·阿奎那的基督教哲学》 | 兰登书屋, 1956
+  • Brian Davies《托马斯·阿奎那的思想》 | 牛津大学出版社, 1992
+  • Jean-Pierre Torrell《圣托马斯·阿奎那：人与著作》 | 天主教大学出版社, 1996
+3. 跨学科研究
+  • 阿拉斯代尔·麦金泰尔《德性之后》 | 圣母大学出版社, 1984（德性伦理复兴）
+  • 雅克·马里旦《知识的等级》 | 斯克里布纳出版社, 1937（新托马斯主义宣言）
+  • 约翰·米尔班克《神学与社会理论》 | 布莱克威尔出版社, 1990（政治神学批判）`,
+      duns_scotus: `哲学家 Philosopher #73
+姓名 Name: 邓斯·司各脱 John Duns Scotus（Ioannes Duns Scotus）
+生卒年 Lifespan: 约1266–1308年 | 中世纪方济各会哲学巨擘，“精细博士”，个体性原则的奠基者
+学派 School: 晚期经院哲学（挑战托马斯主义，主张意志优先于理性，发展形而上学的个体性原则）
+一、生平与历史背景
+1.1 苏格兰的方济各之星
+邓斯·司各脱生于苏格兰邓斯镇，早年入方济各会，1291年晋铎。1293年赴牛津大学研习神学，撰《牛津评注》（Ordinatio）奠定学术声誉。1302年因方济各会与教廷的“清贫论战”被派往巴黎，与托马斯派学者激辩。1307年转任科隆方济各会学院教授，次年猝逝，葬于科隆圣方济各堂。其绰号“精细博士”（Doctor Subtilis）源于对逻辑与形而上学的精微分析，但16世纪人文主义者讥讽其追随者为“笨蛋”（dunce），词源即来自其名“Duns”。
+1.2 方济各学派的理论旗手
+在13世纪亚里士多德主义主导的学术环境中，司各脱代表方济各会精神对抗多明我会的托马斯主义：
+• 清贫神学：捍卫方济各会绝对清贫理想，主张基督与使徒无财产权。
+• 意志主义革命：以意志优先论对抗托马斯主义的理性中心论，为宗教改革埋下伏笔。
+• 大学论战焦点：在巴黎大学与根特的亨利（Henry of Ghent）等学者论战，重新定义形而上学范畴。
+二、核心思想体系
+2.1 个体性原则（Haecceitas）
+1. 存在的终极现实：
+  • 个体（如“苏格拉底”）的终极实在性由“此性”（haecceitas）决定，超越形式与质料的复合（《牛津评注》II.3.1.1）。
+  • 共相（如“人类”）是心智从个体中抽象出的自然相似性，无独立存在。
+2. 存在的单义性（Univocity of Being）：
+  • 存在（esse）概念可单义应用于上帝与受造物，打破托马斯主义的类比认知论（《巴黎评注》I.3.1.2）。
+3. 无限者的优先性：
+  • 上帝作为“无限存在”是形而上学的首要对象，哲学须从无限性出发理解有限性（《论第一原则》4.46）。
+2.2 意志主义伦理学与神学
+1. 意志的超越自由：
+  • 意志（voluntas）的本质是自我决定的能力，理性仅为意志提供可能选项（《牛津评注》I.17.1.1-2）。
+  • “意志是灵魂的皇后，理性是它的顾问”（《论意志》3.26）。
+2. 爱的优先性：
+  • 上帝创世出于爱的自由意志，而非理性必然，“爱比智慧更接近神性本质”（《巴黎评注》I.45.2）。
+3. 圣母无染原罪说：
+  • 力证玛利亚在胎中即免受原罪污染，此说1854年被教廷定为信条（《巴黎论战》III.3.1）。
+2.3 自然神学与形而上学革新
+1. 上帝存在的证明：
+  • 从“可能存在的存在者需必然存在者作为原因”出发，修正安瑟伦本体论论证（《牛津评注》I.2.1.3）。
+2. 形式区分论（Distinctio Formalis）：
+  • 区分同一实体内的形式差异（如灵魂的记忆与理智），调和实在论与概念论（《牛津评注》I.2.2.1-4）。
+3. 时间的瞬间理论：
+  • 时间由不可分的“瞬间”（instants）构成，运动变化在瞬间中完成（《论灵魂问题》9.4）。
+三、思想传承与影响
+3.1 中世纪晚期的思想遗产
+• 奥卡姆的威廉：继承其唯名论倾向，发展“剃刀原则”简化实体理论。
+• 宗教改革先声：路德与加尔文吸收其意志优先论，对抗经院理性主义。
+• 西班牙黄金时代：苏亚雷斯（Suarez）等后经院学者重释其形而上学，影响近代早期哲学。
+3.2 现代哲学的隐秘线索
+• 现象学溯源：海德格尔赞其为“中世纪最深刻的存在论者”，个体性原则启发现象学“生活世界”概念。
+• 分析哲学回响：皮尔士称其符号理论为“经院实在论的顶峰”，奎因本体论承诺问题与之呼应。
+• 过程哲学：怀特海有机哲学吸收其动态存在观，强调生成先于存在。
+3.3 跨文明对话
+• 佛教唯识宗：个体性原则与“自证分”理论形成认识论对照，但佛教否定实体我。
+• 伊斯兰凯拉姆：与穆尔太齐赖派“原子论自由意志”存在形而上学对话空间。
+• 中国理学：朱熹“理一分殊”说与司各脱的普遍—个体关系论可作比较研究。
+四、学术争议与批判
+4.1 中世纪的敌意与误解
+• 托马斯派攻击：Capreolus称其学说“以诡辩遮蔽真理”，需以托马斯主义净化。
+• 唯名论颠覆：奥卡姆简化其形而上学体系，导致个体性原则被简化为语言约定。
+• 文艺复兴嘲讽：伊拉斯谟等人文主义者讥其逻辑繁琐，导致“邓斯派”成为迂腐代名词。
+4.2 现代哲学重估
+• 黑格尔的否定：斥其体系为“经院哲学的僵化标本”，但谢林晚年重审其自由哲学。
+• 存在主义误读：马塞尔批评其个体性理论忽视生存的具体性，但马里翁辩护为“存在的现象学先驱”。
+• 女性主义批判：艾薇拉·蒂勒指其圣母论强化性别二元结构，但近年研究揭示其女性神秘主义资源。
+4.3 文本与诠释难题
+• 著作真伪：部分归于其名下的《论灵魂》被疑为弟子伪作，需语文学考证。
+• 版本混乱：手稿多由学生整理，现存《牛津评注》与《巴黎评注》存在校勘争议。
+五、参考文献与原始文献
+1. 基础史料
+  • 《牛津评注》（Vatican Critical Edition） | 梵蒂冈出版社, 1950-2013
+  • 《论第一原则》（Allan Wolter英译本） | 圣文德出版社, 1982
+  • 《巴黎论战》（Bychkov & Wolter英译本） | 圣奥古斯丁出版社, 2008
+2. 现代研究
+  • Etienne Gilson《邓斯·司各脱哲学导论》 | 巴黎出版社, 1952
+  • Richard Cross《邓斯·司各脱的形而上学》 | 牛津大学出版社, 1995
+  • Mary Beth Ingham《司各脱的伦理学》 | 天主教大学出版社, 1996
+3. 跨学科研究
+  • 海德格尔《存在与时间》 | 马克斯·尼迈耶出版社, 1927（现象学溯源）
+  • 怀特海《过程与实在》 | 麦克米兰出版社, 1929（过程哲学对话）
+  • 阿拉斯代尔·麦金泰尔《三种对立的道德探索》 | 圣母大学出版社, 1990（伦理学比较）`,
+      ockham: `哲学家 Philosopher #74
+姓名 Name: 奥卡姆的威廉 William of Ockham（Guillelmus de Ockham）
+生卒年 Lifespan: 约1285–1347年 | 中世纪晚期唯名论宗师，奥卡姆剃刀提出者，政治哲学先驱
+学派 School: 唯名论（主张共相仅为名称，反对实在论；提出“剃刀原则”，推动逻辑与科学方法论革新）
+一、生平与历史背景
+1.1 从牛津学者到异端流亡者
+奥卡姆的威廉生于英国萨里郡奥卡姆村，早年加入方济各会，1310年赴牛津大学研习神学与哲学，因未完成神学博士学位被称“尊敬的初始者”（Venerabilis Inceptor）。1324年因著作涉及神学争议被召至阿维尼翁教廷受审，期间卷入方济各会与教皇约翰二十二世的“清贫论战”，著《论教皇权力之谬误》抨击教权。1328年逃离教廷，受神圣罗马皇帝路易四世庇护，定居慕尼黑直至黑死病去世。临终疾呼“以剑与笔捍卫帝国”，遗体葬于慕尼黑老方济各教堂（今无存）。
+1.2 教会权威的挑战者
+在14世纪教权与皇权激烈对抗的背景下，奥卡姆成为思想革命的关键人物：
+• 清贫神学斗士：支持方济各会绝对清贫理想，主张基督与使徒无财产权，教皇无权篡改福音书原则。
+• 政教分离先驱：提出“凯撒的归凯撒”，主张世俗权力独立于教会，影响后世宗教改革与宪政理论。
+• 大学逻辑革命：以剃刀原则简化经院哲学，推动中世纪学术向经验主义转型。
+二、核心思想体系
+2.1 唯名论与剃刀原则
+1. 共相批判：
+  • 共相（如“人类”）仅为语言符号（flatus vocis），无独立实在性，“存在即个体存在”（《逻辑大全》I.14）。
+  • 知识源于对个别事物的直观认知（notitia intuitiva），抽象概念是心智的构造。
+2. 奥卡姆剃刀（Novacula Occami）：
+  • “如无必要，勿增实体”（Entia non sunt multiplicanda praeter necessitatem），拒斥冗余假设（《箴言书注》I.27.2）。
+  • 应用领域：神学（简化上帝属性）、物理学（拒斥隐秘性质）、逻辑学（缩减范畴数量）。
+2.2 神学与政治哲学
+1. 神学不可知论：
+  • 上帝意志超越理性，三位一体等奥秘无法用逻辑证明，仅能信仰（《神学百论》1.1）。
+2. 权力二元论：
+  • 教会管灵魂，国家管肉体；教皇可谬误，信徒有权抵抗暴政（《对话集》III.1.28）。
+3. 自然权利论：
+  • 财产权源于自然法，教会的财富垄断违背神圣律令（《论皇权与教权》6.2）。
+2.3 逻辑与语义学革新
+1. 词项逻辑：
+  • 区分词项的指代（suppositio）功能：实质指代（“人”指类）、形式指代（“人”指概念）。
+2. 真值条件理论：
+  • 命题真值取决于词项指称是否与事实对应，“‘苏格拉底跑’为真，当且仅当苏格拉底确实在跑”（《逻辑大全》II.3）。
+3. 模态逻辑：
+  • 区分命题模态（必然/可能）与事物模态（本质/偶性），影响莱布尼茨可能世界理论。
+三、思想传承与影响
+3.1 中世纪晚期的思想地震
+• 唯名论学派：让·布里丹、奥特库尔的尼古拉继承其逻辑体系，主导14-15世纪欧洲大学。
+• 宗教改革先声：路德引用其政教分离论，茨温利吸收其圣经权威至上观。
+• 科学革命萌芽：伽利略与牛顿以剃刀原则拒斥亚里士多德目的论，推动力学实证化。
+3.2 现代哲学与科学的基石
+• 经验主义先驱：洛克与休谟的“观念源于经验”论受其直观认知理论启发。
+• 分析哲学鼻祖：弗雷格与罗素的逻辑分析承袭其词项理论，奎因本体论承诺呼应唯名论。
+• 政治自由主义：洛克的社会契约论与密尔自由原则隐含其权力分立思想。
+3.3 跨文明对话
+• 佛教唯识宗：其唯名论与“遍计所执性”形成认识论对照，但佛教否定个体实我。
+• 中国名家学派：公孙龙“白马非马”说与其共相批判形成语言学共鸣。
+• 伊斯兰教凯拉姆：与艾什尔里派原子论共享反本质主义倾向，但拒斥宿命论。
+四、学术争议与批判
+4.1 中世纪的教会谴责
+• 阿维尼翁审判：1326年教皇委员会列出51条“异端命题”，斥其“以逻辑亵渎神学”。
+• 托马斯派反攻：卡普雷奥卢斯（Capreolus）称剃刀原则“割裂存在链条”，威胁形而上学根基。
+4.2 近现代哲学反思
+• 黑格尔批判：称其唯名论为“主观主义深渊”，瓦解普遍真理的可能性。
+• 实用主义误读：皮尔士指责剃刀原则被滥用为“科学保守主义的借口”，需以溯因逻辑补充。
+• 女性主义重估：玛丽·安斯康姆批评其个体论忽视社会关系建构，但近年研究挖掘其权利观的解放潜力。
+4.3 文本与历史难题
+• 著作真伪：《逻辑大全》部分章节被疑为弟子增补，需手稿比对校勘。
+• 剃刀原始表述：其著作中无“如无必要，勿增实体”的原文，实为后世概括，引发诠释争议。
+五、参考文献与原始文献
+1. 基础史料
+  • 《逻辑大全》（Summa Logicae） | 圣文德出版社, 1974（英译本）
+  • 《对话集》（Dialogus） | 牛津大学出版社, 1995（拉丁-英对照本）
+  • 《箴言书注》（Ordinatio） | 方济各学院出版社, 1967-1985
+2. 现代研究
+  • Marilyn McCord Adams《威廉·奥卡姆》 | 圣母大学出版社, 1987（两卷本权威研究）
+  • Ernest A. Moody《奥卡姆的逻辑与形而上学》 | 曼彻斯特大学出版社, 1975
+  • Georges de Lagarde《奥卡姆的政治思想》 | 巴黎出版社, 1948
+3. 跨学科研究
+  • 奎因《从逻辑的观点看》 | 哈佛大学出版社, 1953（本体论承诺理论）
+  • 罗素《西方哲学史》 | 西蒙与舒斯特出版社, 1945（唯名论影响分析）
+  • 约翰·米尔班克《神学与社会理论》 | 布莱克威尔出版社, 1990（政治神学批判）`,
+      nicholas_cusa: `哲学家 Philosopher #75
+姓名 Name: 库萨的尼古拉 Nicholas of Cusa（Nicolaus Cusanus）
+生卒年 Lifespan: 1401–1464年 | 文艺复兴早期哲学家、枢机主教，近代认识论与宇宙论先驱
+学派 School: 新柏拉图主义（提出“有学识的无知”，发展对立统一思想，预表现代科学宇宙观）
+一、生平与历史背景
+1.1 从摩泽尔河到罗马教廷
+尼古拉生于德国库萨小镇，父亲为渔夫兼酒商。1416年入海德堡大学学习数学与哲学，后转学帕多瓦大学获教会法博士学位。1432年以《论大公和谐》参与巴塞尔会议，主张教会改革与普世合一。1448年受教皇尼古拉五世任命为枢机主教，1450年任布里克森主教。晚年致力于数学研究（如圆面积计算）与神秘主义写作，逝于意大利托迪，墓碑铭文“在上帝怀抱中安息”。
+1.2 文艺复兴的破晓者
+在拜占庭陷落（1453年）与印刷术兴起的转折时代，尼古拉架起中世纪与现代的桥梁：
+• 教会改革先锋：主张宗教宽容，提议让胡斯派回归天主教会，反对武力镇压异端。
+• 科学思想萌芽：提出地球运动假说与宇宙无限性，启发哥白尼与布鲁诺。
+• 跨文化对话：研究古兰经与犹太卡巴拉，倡导基督教、伊斯兰教、犹太教和平共存。
+二、核心思想体系
+2.1 有学识的无知（Docta Ignorantia）
+1. 认知的有限性：
+  • 真理如圆周，人类理性如内接多边形，无限接近却永不重合（《论有学识的无知》I.1）。
+  • “对绝对真理的追求恰是对无知的认识，此即最高智慧”（I.3）。
+2. 对立面的一致（Coincidentia Oppositorum）：
+  • 无限者超越矛盾，直线与圆在无限半径时同一，静止与运动在绝对速度中统一（II.1）。
+3. 数学象征主义：
+  • 几何图形为神圣真理的隐喻，如三角象征三位一体，圆象征上帝无限性（《论数学补遗》）。
+2.2 宇宙论革命
+1. 无限宇宙论：
+  • 宇宙无中心与边界，“其中心处处，边界无处”（《论有学识的无知》II.11），否定地心说。
+  • 星体或为有人居住的世界，地球“高贵但不独特”（II.12）。
+2. 相对运动观：
+  • 运动是相对的，“船中人见岸移，岸上人见船行”（II.8），预示伽利略相对性原理。
+3. 动态自然观：
+  • 自然由“折叠”（complicatio）到“展开”（explicatio）的永恒流动，启发表德尔曼的生机论。
+2.3 神学与神秘主义
+1. 否定神学：
+  • 上帝超越一切范畴，“既非存在亦非非存在，既非一亦非多”（《论上帝的观照》5）。
+2. 基督宇宙论：
+  • 基督是宇宙的“极大者”（Maximum），万物通过他回归神圣统一（《论有学识的无知》III.3）。
+3. 灵性炼金术：
+  • 灵魂如金属需经信仰之火提纯，最终与神合一的“神秘婚礼”（《论与上帝的对话》）。
+三、思想传承与影响
+3.1 科学革命的先声
+• 哥白尼革命：《天体运行论》扉页致敬尼古拉，布鲁诺称其为“无限宇宙的宣告者”。
+• 莱布尼茨的单子论：吸收对立统一思想，发展“单子无窗户却反映宇宙”的形而上学。
+• 现代物理学：爱因斯坦相对论宇宙观与尼古拉的相对运动假说形成历史呼应。
+3.2 哲学与神学的现代转型
+• 德国观念论：黑格尔辩证法吸收对立面统一，谢林称其为“思辨神学之父”。
+• 存在主义：雅斯贝尔斯引用“有学识的无知”诠释生存的边界境遇。
+• 普世主义运动：汉斯·昆以尼古拉为典范，推动当代宗教对话。
+3.3 跨学科与跨文明回响
+• 艺术象征主义：丢勒版画《忧郁I》中的幻方暗含尼古拉的数学神秘主义。
+• 中国思想对话：与邵雍“物物一太极”的宇宙观形成形而上学比较。
+• 复杂性科学：分形理论中的“自相似性”概念呼应其无限折叠的宇宙模型。
+四、学术争议与批判
+4.1 中世纪的质疑
+• 教会保守派警告：特里腾大公会议（1545）审查其著作，部分观点被列为“需谨慎阅读”。
+• 人文主义者误解：伊拉斯谟批评其神秘主义“晦涩难解”，偏离古典清晰性。
+• 经院哲学家反驳：加布里埃尔·比尔（Gabriel Biel）指其宇宙论威胁神学秩序。
+4.2 近现代哲学重审
+• 康德的认识论批判：承认其认知有限性洞见，但否定“直觉优于理性”的路径。
+• 实证主义排斥：孔德将尼古拉归为“形而上学阶段”，认为其思想缺乏经验基础。
+• 后现代解构：德里达质疑“对立面一致”实为逻各斯中心主义的变体。
+4.3 当代研究挑战
+• 手稿真伪问题：部分神秘主义短论被疑为伪作，需放射性碳检测与笔迹分析。
+• 跨学科诠释风险：科学史家柯瓦雷警告勿以现代概念附会其思想，应还原中世纪语境。
+• 生态哲学再发现：深层生态学家重审其宇宙论，批判其人类中心主义残余。
+五、参考文献与原始文献
+1. 基础史料
+  • 《论有学识的无知》（Jasper Hopkins英译本） | 明尼苏达大学出版社, 1985
+  • 《论上帝的观照》（H. Lawrence Bond英译本） | 保罗ist出版社, 1997
+  • 《库萨著作集》（四卷本） | 汉堡出版社, 2002
+2. 现代研究
+  • Ernst Cassirer《库萨的尼古拉与文艺复兴哲学》 | 柏林出版社, 1927
+  • Karsten Harries《无限与视角》 | MIT出版社, 2001（科学思想研究）
+  • Bernard McGinn《库萨的神秘主义》 | 十字路口出版社, 2005
+3. 跨学科研究
+  • 亚历山大·柯瓦雷《从封闭世界到无限宇宙》 | 约翰·霍普金斯大学出版社, 1957
+  • 大卫·伯尔曼《尼古拉的数学宇宙》 | 剑桥大学出版社, 2001
+  • 米歇尔·德·塞托《神秘主义与理性》 | 加利福尼亚大学出版社, 1986`,
+      machiavelli: `哲学家 Philosopher #76
+姓名 Name: 尼科洛·马基雅维利 Niccolò Machiavelli
+生卒年 Lifespan: 1469–1527年 | 文艺复兴政治哲学奠基人，现实主义政治理论开创者
+学派 School: 政治现实主义（主张“目的证成手段”，解构道德与政治的关系，奠基现代政治科学）
+一、生平与历史背景
+1.1 佛罗伦萨的政坛浮沉
+马基雅维利生于佛罗伦萨没落贵族家庭，父亲为法学学者。1498年萨沃纳罗拉政权倒台后，29岁的他出任第二国务厅秘书长，主管外交与军事。任内创建国民军、改革税制，并出使法国、神圣罗马帝国、教廷，亲历切萨雷·博吉亚的权谋统治。1512年美第奇家族复辟，他被诬陷参与反叛，遭监禁拷打后流放至圣卡夏诺庄园。蛰居期间写下《君主论》《论李维》等著作，晚年短暂重返政坛编撰《佛罗伦萨史》，1527年美第奇再度倒台后病逝，葬于圣十字教堂。
+1.2 意大利分裂时代的观察者
+身处法国入侵（1494）、城邦混战与教权腐败的乱局，马基雅维利的思考聚焦于：
+• 政治生存困境：小国如何在列强夹缝中生存？其军事改革失败促成现实主义转向。
+• 共和理想挫败：目睹佛罗伦萨共和国的脆弱，反思古典共和制的现代适应性。
+• 人文主义危机：文艺复兴人文主义的道德理想与政治现实的割裂，催生价值中立的政治分析。
+二、核心思想体系
+2.1 政治现实主义方法论
+1. 事实与价值的分离：
+  • 政治研究应基于“事物实际如何”（verità effettuale）而非“应当如何”（《君主论》XV）。
+  • 道德评判让位于效能分析，“善政的标准是国家的存续与强大”（《论李维》I.9）。
+2. 权力动力学：
+  • 权力源于武力（armi）与同意（consenso）的平衡，“依赖雇佣军等于自掘坟墓”（《君主论》XII）。
+  • 恐惧比爱戴更可靠，“人因恐惧而服从，因爱戴而背叛”（XVII）。
+2.2 Virtù与Fortuna的辩证法
+1. 能力（Virtù）：
+  • 君主需兼具狮子的勇猛与狐狸的狡诈，在危机中果断行动（《君主论》XVIII）。
+  • 公民的Virtù体现为捍卫自由的勇气，如罗马共和国的公民兵（《论李维》I.43）。
+2. 命运（Fortuna）：
+  • 命运如泛滥的河流，唯有筑堤（制度）与灵活应变可驯服其破坏（XXV）。
+  • “命运是女性，需用暴力征服”（XXVI）。
+2.3 共和主义的隐秘内核
+1. 混合政体优越性：
+  • 结合君主、贵族与平民权力的共和制最具稳定性，“冲突是自由的守护者”（《论李维》I.4-5）。
+2. 公民武装的必要性：
+  • 常备军腐蚀自由，唯有武装公民能抵御内外威胁（I.21）。
+3. 历史的循环论：
+  • 政体在君主制→暴政→贵族制→寡头制→民主制→无政府间循环，混合政体延缓衰败（I.2）。
+三、思想传承与影响
+3.1 现代政治科学的诞生
+• 现实主义学派：汉斯·摩根索的“权力政治”理论与乔治·凯南的遏制战略皆承其余绪。
+• 国家理性（Ragion di Stato）：乔万尼·波特罗与腓特烈大帝发展其思想，形成近代主权理论。
+• 共和主义复兴：哈灵顿、卢梭与汉娜·阿伦特重拾其共和理念，影响现代民主理论。
+3.2 哲学与社会理论的争议遗产
+• 韦伯的合法性理论：“支配社会学”吸收其权力非道德化分析，区分信念伦理与责任伦理。
+• 马克思主义批判：葛兰西称其为“消极革命”理论家，揭示意识形态与暴力的统治结构。
+• 后现代解构：福柯以“马基雅维利时刻”指涉权力技术的现代转型，阿尔都塞重读其反人道主义。
+3.3 跨文明与跨学科对话
+• 中国法家思想：与韩非“法、术、势”理论形成权谋哲学对话，但马氏强调制度而非个人权术。
+• 伊斯兰政治哲学：伊本·赫勒敦的《历史绪论》与之共享历史循环论与权力动力学洞察。
+• 管理学应用：企业战略中的“马基雅维利式领导力”研究，探讨威权与协商的平衡。
+四、学术争议与批判
+4.1 “马基雅维利主义”污名化
+• 教会与人文主义者的敌视：1559年其著作被列入《禁书目录》，莎士比亚称其为“凶残的马基雅维尔”（《亨利六世》）。
+• 自由主义的批判：伯克斥其“恶魔导师”，罗尔斯否定其理论在正义社会中的合法性。
+4.2 现代辩护与重释
+• 共和主义解读：剑桥学派（波考克、斯金纳）揭示其思想中的自由传统，平衡《君主论》与《论李维》。
+• 技术治国论：斯特劳斯指其将政治降格为权力技术，但卡西尔赞其为“政治祛魅的先驱”。
+• 女性主义视角：部分学者批判其性别观念固化“男性—权力”关联，近年研究关注其著作中的女性角色缺失。
+4.3 文本与历史语境难题
+• 著作意图之谜：《君主论》是求职美第奇的谏言，还是共和派的讽喻？学术圈争议未休。
+• 概念翻译困境：Virtù被误译为“德行”，丧失其“能力”“魄力”的原始含义，扭曲思想解读。
+五、参考文献与原始文献
+1. 基础史料
+  • 《君主论》（潘汉典中译本） | 商务印书馆, 1985
+  • 《论李维》（冯克利中译本） | 上海人民出版社, 2005
+  • 《佛罗伦萨史》（李活中译本） | 商务印书馆, 1982
+2. 现代研究
+  • 以赛亚·伯林《马基雅维利的原创性》 | 载《反潮流》 | 普林斯顿大学出版社, 1981
+  • 昆廷·斯金纳《现代政治思想的基础》 | 剑桥大学出版社, 1978
+  • 列奥·施特劳斯《关于马基雅维利的思考》 | 芝加哥大学出版社, 1958
+3. 跨学科研究
+  • 约瑟夫·奈《软实力》 | 公共事务出版社, 2004（权力形态分析）
+  • 约翰·米尔斯海默《大国政治的悲剧》 | 诺顿出版社, 2001（现实主义国际关系理论）
+  • 詹姆斯·斯科特《国家的视角》 | 耶鲁大学出版社, 1998（技术治国批判）`,
+      thomas_more: `哲学家 Philosopher #77
+姓名 Name: 托马斯·莫尔 Thomas More
+生卒年 Lifespan: 1478–1535年 | 文艺复兴人文主义者，空想社会主义先驱，《乌托邦》作者
+学派 School: 基督教人文主义（融合古典哲学与基督教伦理，批判资本原始积累，构想理想社会）
+一、生平与历史背景
+1.1 从法律精英到殉道圣人
+莫尔生于伦敦法律世家，1492年入牛津大学研习古典文学，师从科利特（John Colet）与伊拉斯谟。1504年进入议会，1517年任王室枢密顾问，1529年晋升大法官，成为亨利八世最信赖的幕僚。因反对《至尊法案》拒绝承认亨利为英国教会领袖，1535年被控叛国罪处决，临终宣称“作为国王的忠仆，但首先是上帝的仆人”。1935年封圣，1980年被教皇封为“政治殉道者主保”。
+1.2 资本黎明期的批判者
+16世纪英国处于圈地运动与宗教改革风暴中心，莫尔的思想聚焦于：
+• 社会正义：目睹“羊吃人”的圈地惨剧，在《乌托邦》中揭露私有制之恶。
+• 宗教宽容：反对路德新教与天主教极端派，主张信仰自由但拒斥政教合一。
+• 教育改革：创办家庭学校，让女儿玛格丽特学习希腊文，挑战女性教育禁忌。
+二、核心思想体系
+2.1 乌托邦社会主义蓝图
+1. 制度设计：
+  • 财产公有：金银用于便溺器具，消除货币与阶级，“贫困因贪婪而生”（《乌托邦》第二部）。
+  • 六小时工作制：闲暇用于学术与艺术，全民轮流务农以消灭城乡差别。
+2. 政治机制：
+  • 选举民主：每30户选一名飞拉哈（Phylarch），总督由秘密投票产生，可被罢免。
+  • 战争伦理：雇佣雇佣兵作战以减少公民伤亡，胜利后解放被压迫者而非掠夺。
+3. 宗教哲学：
+  • 自然神论：允许多神信仰，但无神论者不得担任公职，“灵魂不朽”为普世底线。
+2.2 基督教人文主义实践
+1. 法律改革：
+  • 任大法官期间废除刑讯逼供，主张“宁可错放十罪人，不可冤杀一无辜”。
+2. 语言革命：
+  • 以拉丁文写《乌托邦》却用母语写《理查三世史》，推动英语文学合法化。
+3. 死亡哲学：
+  • 在《安慰的对话》中借柏拉图《斐多篇》论述“殉道是灵魂的最高自由”。
+2.3 政治伦理的悖论
+1. 异端迫害矛盾：
+  • 理论上反对暴力镇压，但任大法官时默许焚烧路德派教徒，晚年忏悔“以火刑捍卫信仰是基督之敌”。
+2. 忠君与良知冲突：
+  • 承认君权神授但拒绝对抗教会，“若王命违抗上帝，臣民当服从天庭而非宫廷”。
+三、思想传承与影响
+3.1 社会主义思想的先声
+• 空想社会主义：康帕内拉《太阳城》与傅立叶法郎吉直接继承其乌托邦模型。
+• 马克思主义：马克思在《资本论》中称《乌托邦》揭露“原始积累的血腥法则”。
+• 生态社会主义：莫里斯《乌有乡消息》将其理想与手工业复兴结合，启发生态社区运动。
+3.2 人文主义与宗教改革张力
+• 伊拉斯谟同盟：与伊拉斯谟合编《希腊语新约》，推动圣经人文主义研究。
+• 英国国教调和论：圣公会将其殉道史纳入《公祷书》，塑造“忠诚反对派”传统。
+• 普世教会运动：20世纪普世宗教对话以其宗教宽容论为思想资源。
+3.3 跨学科与跨文明对话
+• 中国大同思想：康有为《大同书》与其乌托邦形成东西方理想社会对话。
+• 印度村社制度：甘地称乌托邦农业公社与印度传统村社（Panchayat）精神相通。
+• 科幻文学：赫胥黎《美丽新世界》与奥威尔《1984》以反乌托邦重审其理想危险性。
+四、学术争议与批判
+4.1 历史污名与平反
+• 都铎王朝抹黑：官方史家霍林斯赫德称其为“顽固的罗马余孽”，莎士比亚《亨利八世》隐去其殉道。
+• 启蒙运动批判：伏尔泰讥讽乌托邦是“修士的幼稚幻想”，卢梭却赞其“最早看透文明之恶”。
+4.2 现代理论挑战
+• 极权主义隐喻：波普尔在《开放社会及其敌人》中警告乌托邦工程导致专制。
+• 女性主义批判：伍尔夫指其理想国仍属父权制，女儿教育实验未转化为制度设计。
+• 后殖民反思：萨义德批评乌托邦殖民叙事，“土著自愿归顺”美化帝国扩张。
+4.3 文本诠释困境
+• 反讽解读：考据派认为《乌托邦》是政治讽刺而非蓝图，第二部开篇“莫尔说：我愿倾听，不愿苟同”被指为免责声明。
+• 手稿之谜：1516年初版拉丁文本与1518年增订版的差异引发作者真实意图争议。
+五、参考文献与原始文献
+1. 基础史料
+  • 《乌托邦》（戴镏龄中译本） | 商务印书馆, 1982
+  • 《托马斯·莫尔书信集》（Elizabeth Frances Rogers编） | 耶鲁大学出版社, 1947
+  • 《托马斯·莫尔审判记录》（J.B. Trapp校注） | 耶鲁大学出版社, 1979
+2. 现代研究
+  • Richard Marius《托马斯·莫尔传》 | 哈佛大学出版社, 1999
+  • Alistair Fox《托马斯·莫尔：历史与启示》 | 牛津大学出版社, 1982
+  • J.H. Hexter《莫尔的乌托邦：观念传记》 | 普林斯顿大学出版社, 1952
+3. 跨学科研究
+  • 卡尔·曼海姆《意识形态与乌托邦》 | 商务印书馆, 2000（知识社会学分析）
+  • 埃里克·霍布斯鲍姆《资本的年代》 | 江苏人民出版社, 1999（经济思想史定位）
+  • 玛格丽特·阿特伍德《使女的故事》 | 上海译文出版社, 2017（文学影响研究）`,
+      erasmus: `哲学家 Philosopher #78
+姓名 Name: 德西德里乌斯·伊拉斯谟 Desiderius Erasmus
+生卒年 Lifespan: 1466–1536年 | 文艺复兴人文主义巨擘，基督教人文主义奠基人，欧洲知识界的“思想之王”
+学派 School: 基督教人文主义（调和古典学术与基督教精神，主张回归《圣经》本源，批判教权腐败）
+一、生平与历史背景
+1.1 从私生子到欧洲导师
+伊拉斯谟生于荷兰鹿特丹，父亲为神甫，母亲早逝后被监护人送入修道院。1492年晋铎，但厌恶经院哲学，逃往巴黎大学研习古典文学。1500年出版《格言集》成名，游历欧洲结识莫尔、科利特等学者。1516年编订首部希腊文《新约》，颠覆拉丁文武加大译本权威。1521年定居巴塞尔，拒绝支持路德宗教改革，晚年卷入新旧教冲突，逝于巴塞尔，墓碑铭“人类愚昧的终结者”。
+1.2 印刷时代的文化革命者
+在印刷术普及与宗教改革风暴中，伊拉斯谟以笔为剑推动变革：
+• 学术革新：将人文主义方法引入神学，主张“回归《圣经》本源”，挑战教廷解释垄断。
+• 教育革命：撰写《论基督教君主的教育》《论童蒙的自由教育》，塑造欧洲精英教育范式。
+• 和平主义：反对宗教战争，著《和平的抱怨》呼吁宽容，被誉“欧洲良心”。
+二、核心思想体系
+2.1 基督教人文主义纲领
+1. 基督哲学（Philosophia Christi）：
+  • 信仰核心是基督的教导而非教会仪式，“真正的虔敬在内心，不在朝圣与圣物”（《基督教骑士手册》）。
+  • 融合苏格拉底“认识自己”与保罗“内在之人”，主张道德实践优先于神学辩论。
+2. 圣经革命：
+  • 通过希腊文《新约》校勘，揭露拉丁译本错误（如将“悔改”（metanoia）误译为“补赎”），动摇赎罪券理论基础。
+3. 批判性讽刺：
+  • 《愚人颂》借“愚夫人”之口嘲讽教士贪婪、学者迂腐、君主好战，“整个世界是愚人的剧场”。
+2.2 教育改革蓝图
+1. 通识教育：
+  • 课程应融合古典文学（西塞罗）、圣经研究（保罗）与实用学科（修辞学），培养“基督教绅士”。
+2. 温和训导：
+  • 反对体罚，“教师如园丁，以榜样与爱培育幼苗”（《论童蒙的自由教育》）。
+3. 女性教育：
+  • 支持精英女性研习古典语言，但反对普及，“妇女的智慧当照亮家庭而非广场”。
+2.3 和平主义与国际主义
+1. 反战伦理：
+  • “最不义的和平也胜于最正义的战争”，君主应以仲裁解决争端（《和平的抱怨》）。
+2. 欧洲共同体：
+  • 构想以学术与贸易联结的基督教联邦，预言“分裂的欧洲将沦为奥斯曼的猎物”。
+3. 文化超越性：
+  • 学者应超越民族偏见，“我的祖国是缪斯的领地，我的同胞是所有热爱智慧之人”。
+三、思想传承与影响
+3.1 宗教改革的矛盾遗产
+• 新教先驱：路德受其《新约》启发，但伊拉斯谟拒绝割裂教会，“我下蛋，路德孵出了斗鸡”。
+• 天主教改革：特伦特会议部分采纳其圣经研究建议，但谴责其《愚人颂》“危害教会权威”。
+• 英国国教：克兰麦将伊拉斯谟思想注入《公祷书》，塑造安立甘宗的中间道路。
+3.2 人文主义的知识遗产
+• 教育体系：梅兰希顿（路德宗）与罗耀拉（耶稣会）皆以其理念设计学校课程。
+• 启蒙运动先声：伏尔泰称其为“宽容的使徒”，莱辛继承其宗教对话精神。
+• 现代学术规范：确立文本校勘、脚注与批判性注释标准，影响现代学术写作。
+3.3 跨文明的普世回响
+• 犹太-基督教对话：研究希伯来文本，主张“亚伯拉罕诸教共享神圣真理”。
+• 东方想象：在《格言集》中引用孔子箴言，误将儒家伦理视为“东方基督教的回声”。
+• 联合国精神：1958年设立的“伊拉斯谟奖”表彰跨文化贡献，欧盟学生交流计划以其命名。
+四、学术争议与批判
+4.1 夹缝中的妥协者
+• 路德派的抨击：称其“懦弱的怀疑主义者”，《论自由意志》被路德驳为“毫无信仰的墙头草”。
+• 天主教会的敌视：1559年其著作全数被列入《禁书目录》，西班牙宗教裁判所以焚毁其书。
+• 启蒙运动的批评：吉本在《罗马帝国衰亡史》中贬其“缺乏改革勇气，止步于优雅的抱怨”。
+4.2 现代重估的困境
+• 相对主义嫌疑：以赛亚·伯林指其调和主义削弱道德明确性，“在狂热时代，中间道路成为泥沼”。
+• 精英主义局限：葛兰西批评其教育观服务于贵族阶层，忽视大众启蒙。
+• 殖民主义共谋：萨义德指其“欧洲中心论”将非基督教文明视为“待启蒙的愚昧世界”。
+4.3 文本与历史谜题
+• 匿名写作疑云：部分讽刺文是否出自其手（如《尤里乌斯被拒天国门外》）仍存争议。
+• 书信真伪：与路德的通信在宗教战争中被双方阵营篡改，需语文学考辨。
+• 晚年转向：1533年《论教会的和谐》是否暗示对新教的有限接纳？学界观点分裂。
+五、参考文献与原始文献
+1. 基础史料
+  • 《愚人颂》（许崇信中译本） | 辽宁教育出版社, 2001
+  • 《基督教骑士手册》（李康化中译本） | 华夏出版社, 2010
+  • 《伊拉斯谟书信集》（R.A.B. Mynors英译本） | 多伦多大学出版社, 1974-2020
+2. 现代研究
+  • 斯蒂芬·茨威格《伊拉斯谟传》 | 三联书店, 1996（思想传记经典）
+  • Lisa Jardine《伊拉斯谟：欧洲的灯塔》 | 哈珀柯林斯出版社, 1993
+  • James D. Tracy《伊拉斯谟与宗教改革》 | 剑桥大学出版社, 1997
+3. 跨学科研究
+  • 玛格丽特·阿特伍德《债与偿》 | 上海译文出版社, 2016（文学影响分析）
+  • 尤尔根·哈贝马斯《公共领域的结构转型》 | 学林出版社, 1999（知识传播研究）
+  • 彼得·伯克《欧洲文艺复兴》 | 北京大学出版社, 2013（文化史定位）`,
+      calvin: `哲学家 Philosopher #79
+姓名 Name: 约翰·加尔文 John Calvin（Jean Calvin）
+生卒年 Lifespan: 1509–1564年 | 宗教改革核心领袖，加尔文主义创始人，日内瓦神权政体缔造者
+学派 School: 改革宗神学（发展预定论，构建“教会纪律”，影响现代民主与资本主义伦理）
+一、生平与历史背景
+1.1 从人文主义者到宗教改革家
+加尔文生于法国努瓦永，父亲为教会法律顾问。1523年入巴黎大学研习神学与法律，受伊拉斯谟人文主义影响。1533年经历“突然归信”，转向新教，因躲避迫害流亡瑞士巴塞尔。1536年出版《基督教要义》（Institutio Christianae Religionis），系统阐述改革宗教义。1541年定居日内瓦，建立政教合一的神权政体，推行严格道德规范，处决异端塞尔维特引发争议。逝于日内瓦，葬于无标记墓地，遵其遗嘱“不立墓碑，荣耀归于上帝”。
+1.2 日内瓦的“新耶路撒冷”
+在宗教战争与欧洲政治分裂的背景下，加尔文重塑社会秩序：
+• 教会纪律：设立长老会（Consistory）监督信徒生活，惩罚酗酒、赌博与亵渎行为。
+• 教育革新：创办日内瓦学院（今日内瓦大学），培养传教士与改革宗精英。
+• 经济伦理：将劳动视为“天职”（vocatio），为资本主义精神提供神学背书。
+二、核心思想体系
+2.1 预定论（Predestination）与救赎观
+1. 双重预定：
+  • 上帝永恒旨意预定选民得救、弃民沉沦，“救恩不依赖人的行为，唯独出于神的主权”（《基督教要义》III.21.5）。
+  • 预定论旨在消除焦虑，“信徒当以善行印证蒙召，而非质疑神意”（III.24.5）。
+2. 全然败坏：
+  • 人类因原罪彻底堕落，理性与意志皆受捆绑，唯靠神恩得自由。
+2.2 教会论与圣礼观
+1. 教会双重性：
+  • 不可见教会（全体选民）与可见教会（制度性组织），后者需严格施行纪律。
+2. 圣礼简化：
+  • 仅承认洗礼与圣餐，主张“属灵临在”（spiritual presence）而非化质论。
+3. 政教关系：
+  • “两剑论”：教会掌管灵魂，国家维持秩序，但政权须服从神圣律法（IV.20）。
+2.3 圣经诠释与生活规范
+1. 解经原则：
+  • “以经解经”，拒绝教廷传统与私人启示，强调圣经自明性。
+2. 道德法典：
+  • 制定《日内瓦法规》，禁止奢侈服饰、舞蹈与戏剧，强制主日礼拜。
+3. 经济伦理：
+  • 谴责高利贷，但允许适度利息，“财富是神的托管，须用于公益”（III.10.4-6）。
+三、思想传承与影响
+3.1 改革宗全球扩张
+• 欧洲：荷兰起义（1568）以加尔文主义为旗帜，苏格兰长老会（诺克斯）确立国教地位。
+• 北美：清教徒移民将改革宗伦理注入美国宪政，影响“山巅之城”理想。
+• 亚非拉：19世纪传教运动在韩国、南非建立改革宗教会，塑造本土基督教形态。
+3.2 现代社会的精神基因
+• 资本主义：马克斯·韦伯《新教伦理与资本主义精神》揭示其劳动观与资本积累的关联。
+• 民主政治：长老制代议模式影响美国联邦制，托克维尔称“加尔文主义是民主的摇篮”。
+• 科学革命：预定论削弱目的论，为牛顿机械宇宙观提供神学铺垫。
+3.3 跨文明对话
+• 犹太教对话：加尔文赞赏旧约律法，但坚持“基督是律法的终结”，引发犹太学者批判。
+• 儒家伦理比较：利玛窦将“天职”类比于“天命”，但拒斥其人性悲观论。
+• 伊斯兰教对比：与逊尼派宿命论（Qadar）形似而神异，加尔文强调神的主权而非被动服从。
+四、学术争议与批判
+4.1 神学与道德争议
+• 塞尔维特事件：1553年处决否定三位一体的西班牙医生，被伏尔泰斥为“暴政标本”。
+• 预定论困境：阿明尼乌派挑战其神义论，引发荷兰宗教分裂（1618-1619多特会议）。
+• 道德专制：茨温利批评日内瓦体制“以神圣之名行法利赛人之实”。
+4.2 现代批判与平反
+• 人权视角：罗尔斯指其政教合一压制思想自由，但伯尔曼赞其为“法律神圣性的守护者”。
+• 殖民共谋：南非改革宗教会支持种族隔离，1994年后公开忏悔“滥用加尔文主义”。
+• 女性主义重估：近年研究挖掘其支持女性教育的书信，但制度设计仍属父权制。
+4.3 文本与历史重构
+• 《要义》版本演变：1536年初版至1559年终版反映思想变迁，需对比拉丁文与法文本。
+• 书信真伪：部分反天主教信件被疑为后人伪造，需语文学考辨。
+• 形象神话化：19世纪荷兰与美国将其塑造为“自由英雄”，掩盖其威权实践。
+五、参考文献与原始文献
+1. 基础史料
+  • 《基督教要义》（钱曜诚中译本） | 三联书店, 2010
+  • 《加尔文书信集》（Jules Bonnet编） | 伦敦出版社, 1858
+  • 《日内瓦教会法规》（William G. Naphy英译本） | 曼彻斯特大学出版社, 1994
+2. 现代研究
+  • 马克斯·韦伯《新教伦理与资本主义精神》 | 广西师范大学出版社, 2007
+  • 约翰·麦克尼尔《加尔文生平与思想》 | 牛津大学出版社, 1954
+  • 阿利斯泰尔·麦格拉思《加尔文传》 | 上海三联书店, 2014
+3. 跨学科研究
+  • 佩里·米勒《美国思想中的清教》 | 哈佛大学出版社, 1939（美国文化影响）
+  • 迈克尔·沃尔泽《圣徒的革命》 | 哈佛大学出版社, 1965（政治哲学分析）
+  • 查尔斯·泰勒《世俗时代》 | 商务印书馆, 2016（世俗化批判视角）`,
+      boehme: `哲学家 Philosopher #80
+姓名 Name: 雅各布·波墨 Jacob Böhme（Jakob Böhme）
+生卒年 Lifespan: 1575–1624年 | 德国神秘主义哲学家，自然哲学先驱，“条顿哲学家”
+学派 School: 基督教神秘主义（融合新教神学与赫尔墨斯主义，提出神性的辩证显现与宇宙生成论）
+一、生平与历史背景
+1.1 鞋匠的灵性觉醒
+波墨生于上卢萨蒂亚的阿尔特塞登贝格（今属波兰），家境贫寒，童年放牧，后成为鞋匠学徒。1600年经历神秘异象，自称“瞥见宇宙本质如一锡壶般透明”。1612年撰写《曙光》（Aurora），因内容激进被路德教会斥为异端，遭禁言令限制写作。晚年完成《论神圣观照》《论神的选择》等著作，1624年逝于格尔利茨，临终遗言“我的书为千年而写”。
+1.2 三十年战争前的精神躁动
+在宗教战争阴影与科学革命萌芽的张力下，波墨的思想回应了时代的灵性饥渴：
+• 神秘主义复兴：对抗路德宗僵化教义，重拾艾克哈特与陶勒尔的德意志灵性传统。
+• 自然哲学的挑战：帕拉塞尔苏斯炼金术与哥白尼宇宙论激发其宇宙神学体系。
+• 底层知识生产：作为手工业者，其思想打破学术垄断，标志平民哲学的崛起。
+二、核心思想体系
+2.1 神性的辩证显现
+1. 神的自我生成：
+  • 神在永恒中经历“无根基”（Ungrund）到“意志觉醒”的过程，“神必须成为祂所是”（《论神圣观照》I.2）。
+  • 神性包含对立统一：爱与怒、光明与黑暗、收缩与扩张（《曙光》XIX.1）。
+2. 永恒自然（Ewige Natur）：
+  • 宇宙是神性的七重流溢：从“苦涩源泉”（酸性）到“光之世界”，物质与精神同源（《论神圣本原》III.7）。
+3. 人的神性火花：
+  • 灵魂核心存有“神之火花”（Fünklein），通过灵性炼金术可回归神圣本源（《论灵魂》IV.3）。
+2.2 恶的形而上学
+1. 恶的必然性：
+  • 恶是神性自我实现的必要张力，“无怒则爱无意义”（《论神的选择》II.15）。
+2. 自由意志的悖论：
+  • 亚当堕落实为“神圣戏剧”，人类通过犯罪与救赎完成神的自我认知（《论人的堕落》V.9）。
+3. 宇宙救赎论：
+  • 基督受难不仅是人类救赎，更是宇宙能量的调和，“十字架贯穿天地”（《论基督的生死》VII.2）。
+2.3 象征语言与自然秘义
+1. 自然作为圣书：
+  • “每一株草皆是符号，揭示神的奥秘”（《曙光》XII.4），主张通过直观（Schauen）阅读自然。
+2. 炼金术的灵性化：
+  • 将硫、汞、盐对应于灵魂的三重状态：意志、理性、身体（《论三重生活》I.6）。
+3. 辩证语法：
+  • 以矛盾修辞（如“黑暗之光”“苦涩之甜”）表达超越理性的真理（《四十个问题》序言）。
+三、思想传承与影响
+3.1 神秘主义与哲学的交织
+• 浪漫主义先驱：谢林称其为“哲学中的曙光”，黑格尔赞其“首次将辩证法引入神学”。
+• 唯心主义资源：叔本华“意志哲学”受其神性意志论启发，荣格集体无意识理论吸收其原型象征。
+• 灵知派复兴：20世纪沃格林与约纳斯将其与古代诺斯替主义比较，揭示灵知主义现代性。
+3.2 科学与艺术的隐喻
+• 自然哲学影响：莱布尼茨单子论吸收其“微观宇宙”思想，歌德色彩学受其光暗辩证影响。
+• 文学象征主义：布莱克《天堂与地狱的婚姻》与诺瓦利斯《夜颂》皆承袭其神秘诗学。
+• 生态神学：当代深生态学将其自然圣化论视为“生态灵性的古典资源”。
+3.3 跨文明对话
+• 印度吠檀多：与商羯罗“梵我如一”说形成神秘主义共鸣，但波墨强调动态生成。
+• 道教内丹学：比较其灵性炼金术与“性命双修”理论，共享身心转化隐喻。
+• 苏菲主义：伊本·阿拉比的“存在单一论”与其神性流溢论构成东西方神秘对话。
+四、学术争议与批判
+4.1 宗教权威的压制
+• 路德教会审判：1613年格尔利茨牧师格雷戈尔斥其“鞋匠妄议天使等级”，迫其沉默六年。
+• 启蒙运动贬斥：莱辛虽翻译其著作，但批评其语言“晦涩如炼金术士的呓语”。
+• 科学主义批判：笛卡尔称其自然哲学“混淆隐喻与逻辑”，阻碍理性认知。
+4.2 现代哲学重估
+• 非理性主义指控：卢卡奇在《理性的毁灭》中将其归为“法西斯思想先驱”，引发长期争议。
+• 性别隐喻批判：女性主义神学指其将“男性—主动/女性—被动”编码入神性结构。
+• 生态批评：深生态学肯定其自然圣化论，但批评其人类中心主义残余。
+4.3 文本与诠释困境
+• 手稿传抄讹误：早期作品多由信徒秘密誊写，现存版本差异巨大，需校勘学重建。
+• 象征诠释风险：荣格学派与神智学过度附会，模糊历史语境与哲学实质。
+• 跨学科误读：科学史家质疑其“宇宙生成论”与近代物理学的类比合理性。
+五、参考文献与原始文献
+1. 基础史料
+  • 《雅各布·波墨全集》（Will-Erich Peuckert编） | 斯图加特出版社, 1955-1961
+  • 《曙光》（Andrew Weeks英译本） | 剑桥大学出版社, 2006
+  • 《论神圣观照》（Cyril O’Regan评注本） | 耶鲁大学出版社, 2014
+2. 现代研究
+  • Alexandre Koyré《从封闭世界到无限宇宙》 | 约翰·霍普金斯大学出版社, 1957（科学思想史章节）
+  • Cyril O’Regan《波墨与黑格尔的异端》 | 圣母大学出版社, 2002
+  • Andrew Weeks《波墨：欧洲思想史上的异端天才》 | 纽约州立大学出版社, 1991
+3. 跨学科研究
+  • 荣格《心理学与炼金术》 | 普林斯顿大学出版社, 1968（原型理论分析）
+  • 莫里斯·梅洛-庞蒂《可见与不可见》 | 西北大学出版社, 1968（现象学重读）
+  • 大卫·沃尔佩《生态与神圣》 | 加州大学出版社, 2006（生态哲学视角）`,
+      bacon: `哲学家 Philosopher #81
+姓名 Name: 弗兰西斯·培根 Francis Bacon（Francis Bacon, 1st Viscount St Alban）
+生卒年 Lifespan: 1561–1626年 | 英国经验主义先驱，科学方法论奠基人，启蒙运动思想先驱
+学派 School: 经验主义（提出归纳法，倡导科学革命，主张知识即权力）
+一、生平与历史背景
+1.1 从政坛巅峰到科学先知
+培根生于伦敦约克府，父亲为伊丽莎白一世掌玺大臣。12岁入剑桥三一学院，16岁任英国驻法大使随员。1584年入选议会，历任副检察长、总检察长、大法官等职，1618年封圣奥尔本子爵。1621年因受贿指控政治生涯终结，晚年专注科学写作，1626年因雪地实验肺炎去世，临终自嘲“为科学殉道”。
+1.2 文艺复兴末期的知识革命
+在经院哲学僵化与地理大发现冲击下，培根推动认知范式转型：
+• 方法论批判：指摘亚里士多德演绎法“如蜘蛛结网，空谈无物”，主张“蚂蚁式”经验积累与“蜜蜂式”加工提炼。
+• 科学乌托邦：《新大西岛》描绘“所罗门宫”——集体协作、实验导向的研究机构，预示现代实验室与科学院雏形。
+• 知识实用化：将哲学从思辨转向实践，“知识的目的不是愉悦或争辩，而是赋予人类驾驭自然的力量”。
+二、核心思想体系
+2.1 归纳法与科学方法论
+1. 三表法：
+  • 本质表（表存在）：收集现象正例（如热与摩擦）。
+  • 差异表（表缺失）：收集反例（如冰无热）。
+  • 程度表（表比较）：观察现象强度变化（《新工具》II.11-13）。
+2. 排除法：
+  • 通过逐步排除偶然因素逼近本质，“真理是时间的女儿，而非权威的产物”（《学术的进展》I.3）。
+3. 科学阶梯论：
+  • 知识进阶路径：自然志（phenomena）→自然哲学（axioms）→实用技艺（works）（《新工具》II.4）。
+2.2 四假象说（Idola）
+1. 种族假象（Idola Tribus）：
+  • 人性固有的认知扭曲，如过度拟人化自然（《新工具》I.39）。
+2. 洞穴假象（Idola Specus）：
+  • 个体教育、习惯导致的偏见，“每人都有自己的认知洞穴”（I.42）。
+3. 市场假象（Idola Fori）：
+  • 语言交流中的概念混淆，“词语暴政阻碍理解”（I.59）。
+4. 剧场假象（Idola Theatri）：
+  • 盲目崇拜传统哲学体系，“真理被学派戏剧遮蔽”（I.44）。
+2.3 知识分类与改革
+1. 人类知识图谱：
+  • 历史（记忆之学）、诗歌（想象之学）、哲学（理性之学）三分法（《学术的进展》II.1）。
+2. 学科交叉论：
+  • 倡导自然哲学与技艺（技术）结合，“钟表匠与天文学家同属真理探索者”（《新工具》I.85）。
+3. 法学改革：
+  • 任大法官期间推动判例法典化，主张“法律应如泉眼清明，而非沼泽浑浊”。
+三、思想传承与影响
+3.1 科学革命的哲学蓝图
+• 皇家学会奠基：1660年成立时奉培根为精神导师，胡克《显微术》践行其方法论。
+• 启蒙运动先声：狄德罗《百科全书》以培根知识体系为纲，孔狄亚克发展感觉主义认识论。
+• 实证主义源头：密尔《逻辑体系》完善归纳法，维也纳学派视其为“反形而上学先驱”。
+3.2 跨学科的思想辐射
+• 法学实证化：边沁“功利主义立法”受其经验主义影响，霍姆斯“法律的生命在于经验”致敬其方法论。
+• 管理学起源：泰勒科学管理理论中的观察-实验-优化路径暗合培根模式。
+• 文学实验性：乔伊斯《芬尼根守灵》运用“培根式”碎片化叙事探索语言边界。
+3.3 全球文明的智识对话
+• 中国实学回应：明末徐光启译《几何原本》时引培根“格物致知”比附，清季严复译《新工具》助推维新思潮。
+• 伊斯兰现代化：19世纪埃及改革派塔赫塔维将培根思想引入阿拉伯世界，调和传统与现代。
+• 生态批判资源：深层生态学重审其“征服自然”观，主张转向“培根未完成的生态维度”。
+四、学术争议与批判
+4.1 方法论局限性
+• 休谟问题：归纳法无法证明普遍必然性，“太阳千次升起不担保明日再现”（《人性论》I.3.6）。
+• 科学主义批判：霍克海默指其工具理性导致“自然奴役与人异化”，海德格尔斥技术思维遮蔽存在真理。
+• 性别盲点：卡罗琳·麦钱特揭示其将自然喻为“待解剖的女性”，强化科学父权叙事。
+4.2 道德与权力悖论
+• 殖民共谋指控：科学赋能论被帝国扩张利用，“知识即权力”异化为“权力即知识”（福柯《规训与惩罚》）。
+• 政治污点：受贿案引发“哲人能否清白从政”的伦理争议，雪莱诗剧《钦契》影射其道德双重性。
+• 实用主义困境：罗蒂批评其真理观沦为“社会效用的婢女”，消解知识内在价值。
+4.3 历史形象重构
+• 手稿之谜：《新大西岛》是否隐含玫瑰十字会密码？共济会传说长期附会其形象。
+• 作者权争议：莎士比亚真伪论者（如迪莉娅·培根）牵强建构其文学隐秘创作，主流学界否定。
+• 当代科技反思：基因编辑与AI伦理问题促使重读其“科学需道德导航”的晚年警示。
+五、参考文献与原始文献
+1. 基础史料
+  • 《培根全集》（James Spedding编） | 伦敦出版社, 1857-1874
+  • 《新工具》（许宝骙中译本） | 商务印书馆, 1984
+  • 《新大西岛》（何新中译本） | 商务印书馆, 2012
+2. 现代研究
+  • 安东尼·昆顿《培根》 | 牛津大学出版社, 1980
+  • 丽莎·贾丁《弗兰西斯·培根：发现与探究的技艺》 | 剑桥大学出版社, 1974
+  • 佩雷斯·拉莫斯《培根的科学与人的统治》 | 芝加哥大学出版社, 1996
+3. 跨学科研究
+  • 卡罗琳·麦钱特《自然之死》 | 上海译文出版社, 2007（生态女性主义批判）
+  • 尤尔根·哈贝马斯《知识与人类兴趣》 | 波士顿灯塔出版社, 1971（认识论分析）
+  • 斯蒂芬·高克罗格《培根与摩登时代》 | 哈佛大学出版社, 2016（科学史定位）`,
+      descartes: `哲学家 Philosopher #82
+姓名 Name: 勒内·笛卡尔 René Descartes（Renatus Cartesius）
+生卒年 Lifespan: 1596–1650年 | 近代哲学之父，理性主义奠基人，“我思故我在”提出者
+学派 School: 理性主义（倡导普遍怀疑，构建身心二元论，奠基现代科学方法论）
+一、生平与历史背景
+1.1 从贵族军官到孤独哲人
+笛卡尔生于法国安德尔-卢瓦尔省的拉艾镇，父亲为布列塔尼高等法院法官。1606年入耶稣会皇家公学，接受经院哲学与数学训练。1618年加入荷兰奥兰治亲王军队，结识数学家贝克曼（Isaac Beeckman），开启科学探索。1620年参加白山战役，1628年移居荷兰，完成《指导心智的规则》。1637年匿名发表《方法论》，提出“我思故我在”（Cogito, ergo sum）。1649年应瑞典女王克里斯蒂娜之邀赴斯德哥尔摩，因严寒感染肺炎去世，葬于巴黎圣日耳曼德佩教堂。
+1.2 科学革命与三十年战争的思想实验室
+在伽利略受审（1633）与欧洲宗教战争背景下，笛卡尔开创哲学新范式：
+• 数学化宇宙：将几何学升华为解析几何，主张“自然之书以数学语言写成”（《方法论》V）。
+• 方法论革命：以普遍怀疑扫清传统权威，重建知识体系的“阿基米德支点”。
+• 身心分离实验：解剖动物研究神经反射，提出“动物是机器”（《论人》）。
+二、核心思想体系
+2.1 认识论与方法论
+1. 普遍怀疑：
+  • 悬置感官经验、数学真理甚至上帝存在，唯“怀疑行为本身不可疑”成为第一原理（《第一哲学沉思集》I）。
+2. 我思故我在：
+  • 思维主体（res cogitans）的绝对自明性，“怀疑即思考，思考即存在”（II）。
+3. 真理标准：
+  • 清晰分明（clara et distincta）的观念即真理，“上帝保证观念与实在的对应”（III-IV）。
+2.2 形而上学与二元论
+1. 身心二元论：
+  • 心灵（非广延、能思）与物质（广延、被动）本质不同，松果腺（pineal gland）为互动中介（《论灵魂的激情》I.31）。
+2. 上帝存在证明：
+  • 本体论证明：完满存在必含存在属性（《方法论》IV）；
+  • 因果论证明：有限心灵不能自因无限观念（《沉思集》III）。
+3. 机械自然观：
+  • 宇宙如钟表，遵循惯性定律与动量守恒，涡旋理论解释天体运动（《哲学原理》II.37）。
+2.3 科学与伦理实践
+1. 解析几何：
+  • 创立坐标系，统一代数与几何，“将几何问题化为方程求解”（《几何学》）。
+2. 反射弧理论：
+  • 提出神经刺激-肌肉反应的机械传导模型，启发现代生理学。
+3. 临时道德准则：
+  • 怀疑时期的行为规范：服从法律、坚定行动、克制欲望、追求真理（《方法论》III）。
+三、思想传承与影响
+3.1 哲学与科学革命
+• 理性主义学派：斯宾诺莎发展一元论，莱布尼茨提出单子论，马勒伯朗士继承偶因论。
+• 启蒙运动基石：伏尔泰赞其“照亮黑暗的火炬”，康德调和经验论与理性论时称“哥白尼式转向”。
+• 现代心理学：反射理论影响行为主义，身心问题启发现代心身关系研究。
+3.2 跨学科辐射
+• 数学物理：牛顿力学吸收其惯性定律（《自然哲学的数学原理》定义III）；
+• 计算机科学：布尔代数受“思维法则”启发，图灵机概念隐含“机械心智”隐喻；
+• 认知科学：具身认知挑战二元论，但计算主义延续“心灵程序”模型。
+3.3 跨文明对话
+• 中国理学回应：耶稣会士傅圣泽译介笛卡尔，李之藻比附“格物致知”；
+• 日本兰学影响：杉田玄白《解体新书》引其解剖学，推动江户科学革命；
+• 佛教唯识论：与“唯识无境”形成认识论比较，但拒斥“我执”观念。
+四、学术争议与批判
+4.1 同时代挑战
+• 霍布斯质疑：“我思”实为三段论，预设“凡思者存在”（《反驳与答辩》）；
+• 伽桑狄反驳：经验论者指其“天赋观念”虚妄，知识源于感官（《对笛卡尔沉思的诘难》）；
+• 帕斯卡批评：心之理性不能理解无限，“心灵有理性未知的理由”（《思想录》§423）。
+4.2 现代哲学反思
+• 现象学解构：胡塞尔批判其“自然态度”，海德格尔指其强化主体-客体分裂；
+• 女性主义批判：苏珊·波尔多揭露二元论隐含“理性（男性）-自然（女性）对立”；
+• 动物伦理争议：“动物机器论”被指为活体实验辩护，遭彼得·辛格等抨击。
+4.3 科学理论证伪
+• 物理学的否定：牛顿万有引力推翻涡旋理论，爱因斯坦相对论颠覆绝对空间观；
+• 神经科学挑战：脑成像技术揭示思维与脑区关联，质疑松果腺假说。
+五、参考文献与原始文献
+1. 基础史料
+  • 《笛卡尔全集》（Charles Adam & Paul Tannery编） | 巴黎出版社, 1897-1913
+  • 《第一哲学沉思集》（庞景仁中译本） | 商务印书馆, 1986
+  • 《方法论》（王太庆中译本） | 商务印书馆, 2000
+2. 现代研究
+  • 吉尔松《笛卡尔与经院哲学》 | 巴黎出版社, 1930
+  • 丹尼尔·加哈特《笛卡尔的形而上学》 | 芝加哥大学出版社, 1984
+  • 斯蒂芬·高克罗格《笛卡尔：传记》 | 剑桥大学出版社, 1995
+3. 跨学科研究
+  • 安东尼奥·达马西奥《笛卡尔的错误》 | 社会科学文献出版社, 2018（神经科学视角）
+  • 理查德·罗蒂《哲学与自然之镜》 | 商务印书馆, 2003（分析哲学批判）
+  • 莫里斯·梅洛-庞蒂《行为的结构》 | 商务印书馆, 2010（现象学重读）`,
+      spinoza: `哲学家 Philosopher #83
+姓名 Name: 巴鲁赫·斯宾诺莎 Baruch Spinoza（Benedictus de Spinoza）
+生卒年 Lifespan: 1632–1677年 | 理性主义巅峰，泛神论哲学宗师，近代民主思想先驱
+学派 School: 理性主义（发展一元论体系，主张“神即自然”，倡导思想自由与政治世俗化）
+一、生平与历史背景
+1.1 从犹太社区到哲学隐士
+斯宾诺莎生于阿姆斯特丹葡萄牙犹太社区，父亲为商人。幼年学习希伯来经典，后接触笛卡尔哲学与布鲁诺自然主义。1656年因“异端思想”被犹太教会革除教籍（cherem），被迫迁居莱顿郊区，以磨镜片为生。1670年匿名出版《神学政治论》，引发欧洲学界震动。1675年完成《伦理学》，因“无神论”指控放弃出版。逝于海牙，遗言“自由人绝少思考死亡”，墓碑铭“真理使他自由”。
+1.2 荷兰黄金时代的思想实验
+在宗教宽容与商业帝国的矛盾中，斯宾诺莎重构哲学基础：
+• 宗教批判：解构圣经权威，主张“《圣经》需以历史-语法法解读”（《神学政治论》VII）。
+• 政治世俗化：提出“民主是最自然政体”，国家应保障思想自由（XVI）。
+• 科学自然主义：以几何学方法构建哲学体系，消解目的论宇宙观。
+二、核心思想体系
+2.1 实体一元论
+1. 神即自然（Deus sive Natura）：
+  • 唯一实体是自因、无限且不可分的“神-自然”，属性无限但人类仅知思维与广延（《伦理学》I.命题14-15）。
+  • 泛神论非无神论，“否定人格神，但肯定无限神圣本质”（I.附录）。
+2. 样态理论：
+  • 万物为实体的有限样态（modes），“人非帝国中的帝国，而是自然整体的部分”（III.序言）。
+3. 决定论宇宙：
+  • 自由是“认识必然性”，“石头若有意识，会认为自由选择落地”（假想对话）。
+2.2 知识三等级
+1. 意见（Imaginatio）：
+  • 基于感官与传言，如“太阳绕地转”（II.命题40）。
+2. 理性（Ratio）：
+  • 通过共同概念（如数学法则）把握因果关系。
+3. 直观（Scientia Intuitiva）：
+  • 直接洞察本质，“在永恒形式下理解事物”（V.命题30）。
+2.3 伦理学与自由
+1. 情感分析：
+  • 激情（passions）源于观念混乱，理性可转化为主动情感（actiones）（III.命题1-3）。
+2. 至善（beatitudo）：
+  • 对神的理智爱（Amor Dei Intellectualis）即最高幸福，超越恐惧与希望（V.命题33）。
+3. 政治哲学：
+  • 自然权利先于社会契约，国家权力限于行为规范，“思想不可让渡”（《政治论》III.10）。
+三、思想传承与影响
+3.1 启蒙运动的隐秘火种
+• 泛神论争议：莱辛称“斯宾诺莎主义是哲学终极结论”，雅可比引发“泛神论论战”（1785）。
+• 德国观念论：黑格尔赞其“哲学始于斯宾诺莎”，谢林吸收实体一元论。
+• 马克思辩证法：继承其自然主义，改造为历史唯物主义。
+3.2 现代哲学与科学
+• 分析哲学：罗素称其“最可爱的哲学家”，维特根斯坦《逻辑哲学论》结构受《伦理学》影响。
+• 心理学革命：弗洛伊德引其情感理论，马斯洛“自我实现”呼应至善论。
+• 生态哲学：深层生态学视其为“生态整体论先驱”。
+3.3 跨文明对话
+• 道教自然观：与“道法自然”形成形而上共鸣，但拒斥神秘体验。
+• 印度吠檀多：与商羯罗“梵我一如”比较，差异在于否定个体灵魂（jiva）。
+• 伊斯兰哲学：伊本·鲁世德（阿维罗伊）的理性主义被其激进发展。
+四、学术争议与批判
+4.1 历史污名与平反
+• 无神论指控：1674年荷兰总督禁毁《神学政治论》，教会称其“魔鬼门徒”。
+• 犹太教驱逐：革除教籍令措辞严厉，“白昼诅咒，黑夜诅咒，醒来诅咒，睡时诅咒”。
+• 现代正名：海涅称“所有现代哲学家透过斯宾诺莎磨制的镜片看世界”。
+4.2 哲学挑战
+• 莱布尼茨批判：单子论反对实体单一性，主张多元活力宇宙。
+• 康德道德批判：拒斥其决定论，主张“自由是实践理性公设”。
+• 存在主义质疑：萨特指其体系消解个体自由，但德勒兹重释为“内在性平面”。
+4.3 科学再诠释
+• 物理宇宙论：爱因斯坦认同“斯宾诺莎的神”，但量子力学挑战严格决定论。
+• 神经伦理学：安东尼奥·达马西奥以脑科学验证情感理论，但否定理性至上。
+五、参考文献与原始文献
+1. 基础史料
+  • 《伦理学》（贺麟中译本） | 商务印书馆, 1983
+  • 《神学政治论》（温锡增中译本） | 商务印书馆, 1997
+  • 《斯宾诺莎书信集》（洪汉鼎中译本） | 商务印书馆, 2016
+2. 现代研究
+  • 史蒂文·纳德勒《斯宾诺莎传》 | 上海人民出版社, 2021
+  • 吉尔·德勒兹《斯宾诺莎与表现问题》 | 吉林人民出版社, 2011
+  • 约维尔《斯宾诺莎与异端想象》 | 普林斯顿大学出版社, 1989
+3. 跨学科研究
+  • 安东尼奥·达马西奥《寻找斯宾诺莎》 | 教育科学出版社, 2009
+  • 阿尔都塞《斯宾诺莎的幽灵》 | 南京大学出版社, 2019
+  • 乔纳森·伊斯雷尔《激进启蒙》 | 商务印书馆, 2011（思想史定位）`,
+      leibniz: `哲学家 Philosopher #84
+姓名 Name: 戈特弗里德·莱布尼茨 Gottfried Wilhelm Leibniz（Gottfried Wilhelm Leibniz）
+生卒年 Lifespan: 1646–1716年 | 通才哲学家，微积分创立者，单子论体系构建者
+学派 School: 理性主义（调和机械论与目的论，发展“前定和谐”学说，奠基现代逻辑与计算理论）
+一、生平与历史背景
+1.1 从神童到宫廷智者
+莱布尼茨生于莱比锡法学教授家庭，6岁自学拉丁文，15岁入莱比锡大学，20岁获法学博士学位。1672年任美因茨选帝侯外交官赴巴黎，结识惠更斯与马勒伯朗士，发展微积分。1676年任汉诺威公爵图书馆长，遍游欧洲搜集史料编撰《不伦瑞克编年史》。1700年促成柏林科学院成立，任首任院长。晚年卷入与牛顿的微积分优先权之争，1716年逝于汉诺威，墓碑铭“他的智慧如宇宙般包罗万象”。
+1.2 启蒙运动前夜的智识整合
+在宗教战争尾声与科学革命高潮中，莱布尼茨致力于知识综合：
+• 跨学科对话：调解笛卡尔派与牛顿派争端，沟通东西方文化（《中国近事》）。
+• 技术改良：设计采矿机械、计算器与二进制系统，提议欧洲联邦与通用语言。
+• 神学辩护：以理性捍卫上帝正义，回应培尔（Bayle）对神义论的怀疑（《神义论》）。
+二、核心思想体系
+2.1 单子论（Monadology）
+1. 单子性质：
+  • 宇宙由无限非物质单子构成，“无窗户，无广延”，通过知觉（perception）反映宇宙（《单子论》§1-7）。
+  • 单子等级：裸单子→灵魂→精神，人类灵魂具自我意识（apperception）（§18-30）。
+2. 前定和谐：
+  • 上帝预设单子间完美协调，“如两钟表永远同步”（《新系统》§14）。
+3. 最佳可能世界：
+  • 恶的存在为整体善的必要条件，“局部恶成就全局完美”（《神义论》§10）。
+2.2 逻辑与科学方法论
+1. 普遍字符（Characteristica Universalis）：
+  • 以符号代数表达一切知识，“争议可借计算器解决”（《论组合术》）。
+2. 微积分创立：
+  • 独立发明微分符号（dx）与积分符号（∫），奠定分析数学基础（《数学笔记》）。
+3. 动力学革新：
+  • 提出活力（vis viva）守恒定律，E=mv²概念雏形（《动力学样本》）。
+2.3 法学与政治哲学
+1. 自然法理论：
+  • 正义即“智慧之爱”（caritas sapientis），法律应促进普遍幸福（《法学教学新方法》）。
+2. 欧洲和平计划：
+  • 提议基督教国家联盟对抗奥斯曼，以仲裁替代战争（《埃及计划》）。
+3. 文化相对主义：
+  • 盛赞中国伦理与科举制，“欧洲需借鉴孔子智慧”（《中国近事》序言）。
+三、思想传承与影响
+3.1 哲学与科学的双重遗产
+• 德国观念论：沃尔夫系统化其体系，黑格尔辩证法吸收“矛盾统一”思想。
+• 数理逻辑奠基：布尔代数与弗雷格概念文字受普遍字符启发，哥德尔称其为“逻辑学先祖”。
+• 计算机科学：二进制论文影响冯·诺依曼，图灵机理论继承“可计算性”思想。
+3.2 跨学科辐射
+• 经济学：博弈论中的“最大最小原则”溯源其政治著作。
+• 生态哲学：深层生态学借用“万物互联”概念，批判人类中心主义。
+• 人工智能：联结主义神经网络隐喻“单子网络”，符号AI继承其逻辑理想。
+3.3 文明对话与全球影响
+• 中西交流：白晋将二进制与《易经》卦象联系，引发莱布尼茨对中国哲学的终生兴趣。
+• 俄罗斯现代化：彼得大帝采纳其科学院建设方案，叶卡捷琳娜二世收藏其手稿。
+• 伊斯兰研究：《单子论》被译为阿拉伯语，与苏菲主义“万物一体论”形成对话。
+四、学术争议与批判
+4.1 同时代交锋
+• 牛顿争端：英国皇家学会裁定微积分剽窃案，引发民族主义科学史叙事。
+• 洛克批判：《人类理解论》评其天赋观念论“如虚空中的回声”，莱布尼茨撰《人类理智新论》反驳。
+• 伏尔泰讽刺：《老实人》以“最佳可能世界”为靶，塑造“盲目乐观主义”刻板印象。
+4.2 现代哲学反思
+• 分析哲学批判：罗素指其单子论是“精致幻想”，但晚年重审其逻辑贡献。
+• 过程哲学重释：怀特海机体哲学继承其动态宇宙观，批判机械论残余。
+• 后现代解构：德勒兹《褶子》以巴洛克美学重构单子论，强调差异与生成。
+4.3 科学理论修正
+• 相对论冲击：爱因斯坦时空观否定绝对空间，但称其“直觉超越时代”。
+• 量子力学挑战：非定域性现象似乎否定前定和谐，但隐变量理论重燃决定论讨论。
+• 复杂性科学：自组织理论批判其预定论，但承认整体论预见性。
+五、参考文献与原始文献
+1. 基础史料
+  • 《莱布尼茨著作集》（柏林科学院版） | 1923-至今
+  • 《单子论》（陈修斋中译本） | 商务印书馆, 2002
+  • 《神义论》（朱雁冰中译本） | 三联书店, 2007
+2. 现代研究
+  • 罗素《对莱布尼茨哲学的批判性解释》 | 商务印书馆, 2005
+  • 尼古拉斯·乔里《莱布尼茨与理性时代》 | 剑桥大学出版社, 2006
+  • 陈乐民《莱布尼茨与中国》 | 国际文化出版公司, 1997
+3. 跨学科研究
+  • 怀特海《过程与实在》 | 商务印书馆, 2012（机体哲学发展）
+  • 德勒兹《褶子：莱布尼茨与巴洛克》 | 湖南美术出版社, 2001
+  • 冯·诺依曼《计算机与人脑》 | 北京大学出版社, 2010（计算理论溯源）`,
+      locke: `哲学家 Philosopher #85
+姓名 Name: 约翰·洛克 John Locke
+生卒年 Lifespan: 1632–1704年 | 英国经验主义奠基人，启蒙运动先驱，自由主义之父
+学派 School: 经验主义（主张知识源于经验，倡导自然权利与有限政府理论）
+一、生平与历史背景
+1.1 从医学学者到革命智囊
+洛克生于英国萨默塞特郡的灵顿村，父亲为清教徒乡村律师。1652年入牛津大学基督教堂学院，学习古典哲学与医学，受笛卡尔科学方法影响。1667年任沙夫茨伯里伯爵的私人医生兼政治顾问，参与反对绝对王权的辉格党活动。1683年因“莱伊宅阴谋”牵连流亡荷兰，期间撰写《人类理解论》与《政府论》。1688年“光荣革命”后返英，任贸易与殖民委员会委员。逝于埃塞克斯，墓碑铭“他的著作塑造了自由世界”。
+1.2 英国政治剧变的哲学回应
+在复辟时期专制与宗教迫害的背景下，洛克的思想回应了时代核心问题：
+• 宗教宽容：1689年《论宗教宽容》主张政教分离，批驳“君权神授”。
+• 宪政革命：为“光荣革命”辩护，将1688年政变正当化为“人民主权”实践。
+• 殖民扩张：参与制定《卡罗来纳基本宪法》，其财产权理论为殖民经济背书。
+二、核心思想体系
+2.1 经验主义认识论
+1. 白板说（Tabula Rasa）：
+  • 心灵初生如白纸，一切观念来自感觉（外部经验）与反省（内部经验）（《人类理解论》II.1.2）。
+2. 简单观念与复杂观念：
+  • 简单观念（如冷热）不可分解，复杂观念（如美、正义）由心智组合而成（II.12.1）。
+3. 知识界限：
+  • 人类无法认知实体本质，“科学应限于观念关系研究”（IV.3.6）。
+2.2 政治哲学与自然权利
+1. 自然状态：
+  • 非霍布斯的“战争状态”，而是“自由平等但缺乏执行力的状态”（《政府论》II.2）。
+2. 社会契约：
+  • 政府为保护生命、自由、财产而建立，违约则人民有权革命（II.19）。
+3. 财产权理论：
+  • 劳动赋予自然资源所有权，“将橡实拾起即脱离公有”（II.27）。
+2.3 教育与社会改革
+1. 绅士教育：
+  • 反对经院灌输，提倡体能训练、实践学习与理性培养（《教育漫话》§30）。
+2. 货币伦理：
+  • 货币突破自然法对财产积累的限制，推动商业社会形成（《政府论》II.46）。
+3. 宗教宽容：
+  • 国家无权干预灵魂救赎，“教义分歧不威胁公民服从”（《论宗教宽容》）。
+三、思想传承与影响
+3.1 启蒙运动与民主革命
+• 美国建国：杰斐逊《独立宣言》引用其自然权利论，麦迪逊吸收有限政府思想。
+• 法国启蒙：伏尔泰称其“理性时代的苏格拉底”，孟德斯鸠三权分立论受其启发。
+• 自由主义传统：密尔《论自由》深化个人权利理论，诺齐克以洛克制反驳罗尔斯。
+3.2 跨学科辐射
+• 心理学：哈特莱联想心理学继承经验主义，行为主义拒斥先天观念。
+• 经济学：亚当·斯密劳动价值论溯源其财产观，洛克式产权影响新制度经济学。
+• 教育学：杜威进步主义教育批判其“白板说”，但继承“经验中心”原则。
+3.3 全球思想对话
+• 中国维新运动：严复译《群己权界论》引介自由思想，梁启超称其“西学第一人”。
+• 伊斯兰改革：埃及改革派塔赫塔维译介洛克著作，调和伊斯兰法与宪政。
+• 印度民族主义：罗易（Raja Ram Mohan Roy）以洛克理论批判种姓制度。
+四、学术争议与批判
+4.1 同时代交锋
+• 绝对主义批判：菲尔默《先祖论》斥其契约论颠覆传统秩序，洛克驳斥为“奴隶制辩护”。
+• 唯理论反驳：莱布尼茨《人类理智新论》指其忽视数学与逻辑的先天基础。
+• 宗教保守派：圣公会指责宽容论纵容无神论，威胁国教权威。
+4.2 现代哲学反思
+• 殖民共谋指控：其财产论为殖民掠夺背书，“美洲原住民劳动被系统性无视”（C.B. Macpherson）。
+• 性别盲点：女性主义指其“自然权利”限于男性，玛丽·沃斯通克拉夫特《女权辩护》纠偏。
+• 历史局限：虽批判奴隶制，却投资皇家非洲公司，暴露理论与实践矛盾。
+4.3 理论修正
+• 罗尔斯批判：洛克式自由放任导致不平等，需“差异原则”调节（《正义论》）。
+• 社群主义挑战：桑德尔批评其“无牵绊的自我”虚妄，忽略共同体价值。
+• 认知科学更新：乔姆斯基“普遍语法”理论否定白板说，但联结主义神经网络重释经验论。
+五、参考文献与原始文献
+1. 基础史料
+  • 《人类理解论》（关文运中译本） | 商务印书馆, 1983
+  • 《政府论》（叶启芳、瞿菊农中译本） | 商务印书馆, 1964
+  • 《教育漫话》（徐大建中译本） | 上海人民出版社, 2005
+2. 现代研究
+  • 彼得·拉斯莱特《洛克〈政府论〉导论》 | 三联书店, 2007
+  • C.B.麦克弗森《占有性个人主义的政治理论》 | 浙江大学出版社, 2016
+  • 约翰·邓恩《洛克的政治思想》 | 商务印书馆, 2015
+3. 跨学科研究
+  • 阿尔伯特·赫希曼《激情与利益》 | 浙江大学出版社, 2015（经济学视角）
+  • 斯蒂芬·平克《白板》 | 中信出版社, 2018（认知科学批判）
+  • 迈克尔·桑德尔《自由主义与正义的局限》 | 译林出版社, 2011（伦理学批判）`,
+      hume: `哲学家 Philosopher #87
+姓名 Name: 大卫·休谟 David Hume
+生卒年 Lifespan: 1711–1776年 | 苏格兰启蒙运动巨擘，彻底经验主义者，怀疑论哲学宗师
+学派 School: 经验主义（解构因果关系，提出“事实与价值二分”，挑战理性与宗教的绝对性）
+一、生平与历史背景
+1.1 从法学弃儿到哲学反叛者
+休谟生于苏格兰爱丁堡，父亲为律师，幼年丧父。12岁入爱丁堡大学学习法律，后辍学自学哲学。1734年旅居法国，于拉弗莱什完成《人性论》（1739），因观点激进遭学界冷遇。1741年以《道德与政治论文集》成名，1752年任爱丁堡律师图书馆馆长，撰写《英国史》确立史学声誉。1763年任驻法大使秘书，与卢梭短暂交恶。晚年修订《自然宗教对话录》，逝于爱丁堡，墓碑铭“生于1711，逝于1776——此碑仅志时间”。
+1.2 启蒙时代的怀疑风暴
+在牛顿科学胜利与宗教权威松动的背景下，休谟的怀疑论直指认知根基：
+• 理性祛魅：揭示因果关系的主观性，瓦解科学必然性神话。
+• 宗教批判：以经验主义逻辑否定神迹与设计论，动摇自然神学基础。
+• 情感转向：将道德与审美归于情感反应，挑战理性主义伦理学。
+二、核心思想体系
+2.1 经验主义认识论
+1. 知觉二分：
+  • 印象（直接感受）与观念（记忆与想象），所有知识源于印象（《人性论》1.1.1）。
+  • 复杂观念可分解为简单印象，“黄金山”即“黄金”与“山”的观念组合（1.1.7）。
+2. 因果关系解构：
+  • 因果性源于经验中的恒常联结与心理习惯，“太阳晒热石头”无逻辑必然性（1.3.6）。
+3. 自我消解：
+  • “自我”只是知觉束，“进入内心只发现冷热、苦乐等知觉流”（1.4.6）。
+2.2 情感伦理学与政治哲学
+1. 理性是激情的奴隶：
+  • 道德判断基于情感而非理性，“杀婴在特定文化中可能被赞许”（《道德原则研究》5.1）。
+2. 效用（Utility）原则：
+  • 道德赞许源于行为对社会福祉的效用，“正义因促进人类利益而被尊崇”（3.1）。
+3. 自由与必然的调和：
+  • 自由即“依意愿行动而无强制”，与因果决定论兼容（《人类理解研究》8.1）。
+2.3 宗教批判与怀疑主义
+1. 神迹不可信：
+  • 神迹证据的可靠性永远低于自然律的恒常性（《人类理解研究》10.1）。
+2. 设计论反驳：
+  • 宇宙设计类比不成立，“房屋与宇宙的相似性纯属幻想”（《自然宗教对话录》V）。
+3. 怀疑的节制：
+  • 理论怀疑不可用于生活，“玩双陆棋时我暂忘哲学”（《人性论》1.4.7）。
+三、思想传承与影响
+3.1 哲学史的范式革命
+• 康德的觉醒：承认休谟“打破独断论迷梦”，催生《纯粹理性批判》。
+• 实证主义源头：孔德继承其反形而上学立场，维也纳学派奉为逻辑经验主义先驱。
+• 实用主义桥梁：詹姆斯与杜威吸收其“信念即习惯”理论，发展真理工具论。
+3.2 跨学科的思想辐射
+• 经济学奠基：亚当·斯密师承其情感伦理学，构建“理性经济人”模型。
+• 心理学启蒙：弗洛伊德潜意识理论受其“知觉流”启发，行为主义借鉴因果习惯论。
+• 分析哲学基石：罗素与艾耶尔重审其语言分析价值，奎因称其为“自然主义先驱”。
+3.3 全球文明对话
+• 中国实学回应：严复译《人性论》片段，梁启超引其怀疑精神批判儒学教条。
+• 佛教空观比较：与龙树“缘起性空”共享反本质主义，但休谟拒斥超越性真理。
+• 伊斯兰哲学：阿拉伯启蒙思想家塔哈·侯赛因借其怀疑论解构传统经注权威。
+四、学术争议与批判
+4.1 同时代敌意与误解
+• 教会谴责：《自然宗教对话录》被禁至其死后出版，长老会试图以“无神论”审判。
+• 学界冷遇：《人性论》初版滞销，休谟自嘲“从印刷机死产”。
+• 卢梭猜忌：1766年收留卢梭却遭其指控“阴谋迫害”，舆论哗然。
+4.2 现代哲学挑战
+• 因果实在论反驳：科学实在论者指其忽视量子纠缠等非经验可观察的因果机制。
+• 道德客观性批判：麦金泰尔称其情感主义导致道德相对主义，削弱伦理规范。
+• 宗教护教反击：普兰丁格以“改革宗认识论”辩护宗教信仰的合理性。
+4.3 理论与实践的张力
+• 历史写作偏见：其《英国史》美化斯图亚特王朝，被辉格史观支持者抨击为“托利党偏见”。
+• 殖民矛盾：批判奴隶制却投资东印度公司，暴露启蒙思想家的时代局限。
+五、参考文献与原始文献
+1. 基础史料
+  • 《人性论》（关文运中译本） | 商务印书馆, 1980
+  • 《人类理解研究》（关文运中译本） | 商务印书馆, 1997
+  • 《自然宗教对话录》（陈修斋中译本） | 商务印书馆, 2002
+2. 现代研究
+  • 诺曼·肯普·史密斯《大卫·休谟的哲学》 | 商务印书馆, 2020
+  • 艾耶尔《休谟》 | 牛津大学出版社, 1980
+  • 唐纳德·利文斯顿《休谟的怀疑主义哲学》 | 浙江大学出版社, 2018
+3. 跨学科研究
+  • 哈耶克《科学的反革命》 | 译林出版社, 2003（社会科学方法论）
+  • 丹尼尔·卡尼曼《思考，快与慢》 | 中信出版社, 2012（心理学印证）
+  • 阿马蒂亚·森《正义的理念》 | 中国人民大学出版社, 2013（伦理学发展）`,
+      rousseau: `哲学家 Philosopher #88
+姓名 Name: 让-雅克·卢梭 Jean-Jacques Rousseau
+生卒年 Lifespan: 1712–1778年 | 启蒙运动矛盾之子，浪漫主义先驱，社会契约理论革新者
+学派 School: 社会契约论（批判文明异化，主张“回归自然”，构建“公意”政治哲学）
+一、生平与历史背景
+1.1 从流浪者到思想巨擘
+卢梭生于瑞士日内瓦，父亲为钟表匠，母亲因难产去世。10岁遭父亲遗弃，16岁逃离日内瓦开始流浪生涯。1742年赴巴黎，结识狄德罗等启蒙哲人，为《百科全书》撰稿音乐条目。1750年以《论科学与艺术》获第戎学院奖成名，1762年因《爱弥儿》与《社会契约论》被法、瑞当局通缉，逃亡普鲁士与英国。晚年患被害妄想症，1778年逝于巴黎近郊埃默农维尔，葬于先贤祠，心脏存放于蒙特莫朗西庄园。
+1.2 启蒙时代的反启蒙者
+在理性主义高歌猛进的时代，卢梭以“文明批判者”姿态开辟新路径：
+• 自然与文明对立：指摘科学艺术腐蚀道德，“高贵的野蛮人”优于巴黎沙龙知识分子。
+• 民主理论奠基：以“公意”（volonté générale）重构主权合法性，预言法国大革命精神。
+• 教育革命：《爱弥儿》颠覆传统教育，主张“消极教育”与自然成长，启发现代儿童心理学。
+二、核心思想体系
+2.1 社会契约与公意理论
+1. 自然状态假说：
+  • 前文明的人类自由平等，私有制导致“人人对抗的战争状态”（《论不平等》第二部分）。
+2. 社会契约重构：
+  • 通过契约建立“道德共同体”，个人让渡权利给公意，“强迫自由”以维护集体利益（《社会契约论》I.6-7）。
+3. 主权不可分割：
+  • 反对孟德斯鸠分权理论，“主权者即集体人格，意志不可分割”（II.2）。
+2.2 自然教育与人性哲学
+1. 消极教育：
+  • 12岁前禁止书本知识，“让身体先于心灵发展，感官先于理性”（《爱弥儿》I）。
+2. 自爱（amour de soi）与虚荣（amour-propre）：
+  • 自爱是天然善性，虚荣是文明社会扭曲的攀比心（《论不平等》注释15）。
+3. 女性教育悖论：
+  • 苏菲应“取悦并服从男性”，暴露启蒙思想的性别局限（《爱弥儿》V）。
+2.3 宗教与道德观
+1. 萨瓦牧师信仰告白：
+  • 自然宗教无需教会中介，“良知是神性的内在声音”（《爱弥儿》IV）。
+2. 公民宗教：
+  • 国家需统一信仰强化凝聚力，但教条不得违背社会契约（《社会契约论》IV.8）。
+3. 道德情感论：
+  • 同情心（pitié）是道德基石，“见他人受苦即感痛苦”（《论不平等》序言）。
+三、思想传承与影响
+3.1 政治革命的哲学蓝图
+• 法国大革命：罗伯斯庇尔奉其为精神导师，《人权宣言》吸收社会契约思想。
+• 浪漫主义运动：歌德、拜伦以“回归自然”对抗启蒙理性，梭罗《瓦尔登湖》承其余绪。
+• 现代民主理论：罗尔斯“正义论”吸收公意概念，哈贝马斯审议民主理论受其启发。
+3.2 教育与心理学的范式转型
+• 进步教育运动：裴斯泰洛齐与杜威发展“儿童中心”教育观。
+• 发展心理学：皮亚杰认知阶段论呼应自然教育理念。
+• 生态批判：深层生态学借其自然观批判工业文明异化。
+3.3 跨文明思想对话
+• 中国民本思想：梁启超以卢梭比附孟子“民贵君轻”，但卢梭更重制度建构。
+• 印度甘地主义：文明批判与乡村自治思想形成精神共鸣。
+• 美洲原住民研究：列维-斯特劳斯借其“高贵的野蛮人”反思西方中心主义。
+四、学术争议与批判
+4.1 思想的内在矛盾
+• 自由与强制的悖论：公意如何避免沦为暴政？“强迫自由”被指为极权主义伏笔。
+• 个人实践污点：将五名亲生子送孤儿院，与《爱弥儿》的教育理想形成尖锐反讽。
+• 科学批判的偏激：伏尔泰讥讽《论科学与艺术》“反智”，称其“用四足爬行攻击文明”。
+4.2 现代理论挑战
+• 女性主义批判：波伏瓦《第二性》指其女性观固化“他者”地位。
+• 多元主义质疑：伯林批评公意压制个体价值多元性，助长“积极自由”暴政。
+• 殖民主义共谋：虽批判欧洲文明，却支持波兰民族主义，忽视非西方主体性。
+4.3 历史重构难题
+• 自传的真实性：《忏悔录》美化或扭曲生平？精神分析学派解读其受虐幻想。
+• 手稿删改争议：死后出版的《孤独漫步者遐想》是否忠实于原始思想？
+• 卢梭与启蒙的张力：卡西勒辩称其思想属“辩证启蒙”，非简单反动。
+五、参考文献与原始文献
+1. 基础史料
+  • 《社会契约论》（何兆武中译本） | 商务印书馆, 2003
+  • 《爱弥儿》（李平沤中译本） | 商务印书馆, 1994
+  • 《忏悔录》（范希衡中译本） | 人民文学出版社, 1982
+2. 现代研究
+  • 恩斯特·卡西勒《卢梭问题》 | 译林出版社, 2009
+  • 朱迪丝·施克莱《政治思想与政治思想家》 | 上海人民出版社, 2020（卢梭章节）
+  • 让·斯塔罗宾斯基《透明与障碍》 | 华东师范大学出版社, 2019
+3. 跨学科研究
+  • 皮亚杰《发生认识论》 | 商务印书馆, 1997（教育心理学视角）
+  • 汉娜·阿伦特《论革命》 | 译林出版社, 2007（政治哲学分析）
+  • 布鲁诺·拉图尔《自然的政治》 | 河南大学出版社, 2020（生态哲学对话）`,
+      kant: `哲学家 Philosopher #89
+姓名 Name: 伊曼努尔·康德 Immanuel Kant
+生卒年 Lifespan: 1724–1804年 | 德国古典哲学奠基人，批判哲学体系构建者，“哥白尼式转向”提出者
+学派 School: 先验哲学（调和理性主义与经验主义，创立“三大批判”体系，重塑形而上学与伦理学根基）
+一、生平与历史背景
+1.1 哥尼斯堡的哲学生涯
+康德生于普鲁士哥尼斯堡（今俄罗斯加里宁格勒），父亲为马具匠。1740年入哥尼斯堡大学学习神学与牛顿物理学，1755年匿名出版《自然通史与天体理论》提出星云假说。1770年任逻辑学与形而上学教授，进入“批判时期”。1781年《纯粹理性批判》问世，引发哲学革命，此后完成《实践理性批判》（1788）与《判断力批判》（1790）。终生未婚，生活刻板如钟表，每日下午散步成市民对表依据。逝于故乡，墓志铭“位我上者灿烂星空，道德律令在我心中”。
+1.2 启蒙运动的自我批判者
+在法国大革命与德国狂飙突进运动中，康德以理性批判回应时代命题：
+• 科学合法性：调和牛顿物理学与自由意志的矛盾，为科学划定界限。
+• 道德自主性：在宗教衰微中重构义务论伦理学，确立“人为自身立法”原则。
+• 永久和平构想：提出共和制联邦方案，预言全球化时代的国际秩序。
+二、核心思想体系
+2.1 认识论革命：纯粹理性批判
+1. 哥白尼式转向：
+  • 知识非被动反映对象，而是主体以先天范畴（如因果性）建构现象界（Bxvi）。
+2. 先天综合判断：
+  • “7+5=12”兼具先天必然性与经验扩展性，为数学与自然科学奠基（B14-15）。
+3. 物自体（Ding an sich）：
+  • 现象界之外的本体界不可知，“限制知识为信仰留地盘”（Bxxx）。
+2.2 道德哲学：实践理性批判
+1. 绝对命令（Kategorischer Imperativ）：
+  • “只按你同时愿意成为普遍法则的准则行动”（4:421），道德律令先于具体情境。
+2. 目的王国：
+  • 理性存在者皆为目的自身，“决不可仅作手段使用”（4:428）。
+3. 至善（höchstes Gut）：
+  • 德福一致需预设灵魂不朽与上帝存在，此为实践理性公设（5:122-124）。
+2.3 美学与目的论：判断力批判
+1. 无目的的合目的性：
+  • 美引发想象与知性的自由游戏，超越功利与概念（§10-11）。
+2. 崇高（Erhabene）：
+  • 面对自然伟力时唤醒理性超越感，体现人性尊严（§23-29）。
+3. 自然目的论：
+  • 有机体作为自组织整体，暗示“自然终极目的——文化人”（§83）。
+三、思想传承与影响
+3.1 哲学史的范式转换
+• 德国观念论：费希特、谢林、黑格尔发展其体系，马克思称其为“德国哲学革命起点”。
+• 分析哲学先声：弗雷格与维特根斯坦的逻辑分析受其先验逻辑启发，斯特劳森重释“描述的形而上学”。
+• 现象学运动：胡塞尔“回到事物本身”呼应现象界理论，海德格尔解构其主体性哲学。
+3.2 跨学科辐射
+• 认知科学：皮亚杰发生认识论吸收先天范畴说，乔姆斯基普遍语法论受其影响。
+• 国际法理论：联合国宪章与欧盟架构暗含永久和平论精神。
+• 生态伦理学：阿多诺以“自然美”批判工具理性，约纳斯责任伦理扩展目的王国。
+3.3 跨文明对话
+• 儒家伦理比较：牟宗三以“道德主体”会通康德与陆王心学，但质疑其排斥情感。
+• 佛教哲学：龙树“二谛说”类比现象/物自体区分，但否定本体界不可知。
+• 伊斯兰教义学：阿富汗尼以实践理性重释伊斯兰现代主义，调和信仰与理性。
+四、学术争议与批判
+4.1 同时代挑战
+• 雅可比悖论：否定物自体导致唯我论，承认则陷不可知论，费希特试图消解矛盾。
+• 黑格尔批判：称其道德律令为“空洞形式主义”，缺乏历史与社群维度。
+• 叔本华颠覆：将意志置于理性之上，斥其伦理学“迂腐的绝对命令”。
+4.2 现代理论反思
+• 后现代解构：福柯批判其人类学立场隐含权力规训，利奥塔质疑普遍理性霸权。
+• 女性主义批判：吉利根指其伦理学忽视“关怀伦理”，强化男性理性中心主义。
+• 种族理论污点：早期人类学论文包含种族等级观，遭后殖民理论严厉清算。
+4.3 科学哲学争议
+• 非欧几何挑战：先天时空观被黎曼几何证伪，新康德主义马堡学派转向符号哲学。
+• 量子力学冲击：因果范畴在微观世界失效，引发先验哲学当代适用性争论。
+• 神经科学质疑：自由意志的脑机制研究动摇“本体自由”预设。
+五、参考文献与原始文献
+1. 基础史料
+  • 《纯粹理性批判》（邓晓芒中译本） | 人民出版社, 2004
+  • 《实践理性批判》（韩水法中译本） | 商务印书馆, 1999
+  • 《判断力批判》（宗白华中译本） | 商务印书馆, 1985
+2. 现代研究
+  • 亨利·阿利森《康德的自由理论》 | 辽宁教育出版社, 2001
+  • 保罗·盖耶《康德》 | 译林出版社, 2011
+  • 奥特弗里德·赫费《康德：生平、著作与影响》 | 人民出版社, 2007
+3. 跨学科研究
+  • 约翰·罗尔斯《道德哲学史讲义》 | 三联书店, 2003（康德章节）
+  • 苏珊·奈曼《为什么长大？》 | 上海文艺出版社, 2016（启蒙视角）
+  • 汉娜·阿伦特《康德政治哲学讲稿》 | 上海人民出版社, 2013`,
+      hegel: `哲学家 Philosopher #90
+姓名 Name: 格奥尔格·威廉·弗里德里希·黑格尔 Georg Wilhelm Friedrich Hegel
+生卒年 Lifespan: 1770–1831年 | 德国观念论集大成者，辩证法哲学开创者，历史哲学巨擘
+学派 School: 绝对观念论（以辩证法统摄存在与思维，构建“绝对精神”自我实现的体系）
+一、生平与历史背景
+1.1 从神学生到哲学王者
+黑格尔生于德国斯图加特，父亲为税务官。1788年入图宾根神学院，与谢林、荷尔德林同窗。1801年任教耶拿大学，亲历拿破仑战争，称“马背上的世界精神”。1807年《精神现象学》出版，奠定辩证法纲领。1818年任柏林大学教授，成普鲁士官方哲学代言人。逝于柏林霍乱疫情，临终修订《法哲学原理》，葬于柏林多罗滕施塔特公墓。
+1.2 后拿破仑时代的体系建构者
+在启蒙理性与浪漫主义的张力中，黑格尔回应时代命题：
+• 历史终结论：法国大革命象征“自由意识的完成”，普鲁士国家为历史终点。
+• 民族国家崛起：以理性国家论支持德意志统一，批判封建残余。
+• 科学体系化：哲学应如科学严密，构建包罗万象的概念网络。
+二、核心思想体系
+2.1 辩证法与绝对精神
+1. 正-反-合运动：
+  • 存在（正题）→虚无（反题）→变易（合题），贯穿逻辑学、自然哲学与精神哲学（《逻辑学》§79）。
+2. 实体即主体：
+  • 绝对精神通过人类历史自我认识，“密涅瓦的猫头鹰黄昏起飞”（《法哲学原理》序言）。
+3. 真理是全体：
+  • 哲学是“思想中把握的时代”，碎片知识需在体系内获意义（《精神现象学》序言）。
+2.2 历史哲学与自由理论
+1. 理性的狡计：
+  • 历史通过个体激情实现理性目的，“拿破仑是世界精神的工具”（《历史哲学》导论）。
+2. 主奴辩证法：
+  • 主人依赖奴隶劳动丧失自由，奴隶通过劳动获得自我意识（《精神现象学》第四章）。
+3. 国家作为伦理实体：
+  • 家庭→市民社会→国家的演进，国家是“在地上行走的神”（《法哲学原理》§258）。
+2.3 美学与宗教哲学
+1. 艺术终结论：
+  • 古典艺术让位于哲学反思，“荷马史诗不可复现于报纸时代”（《美学讲演录》）。
+2. 宗教表象思维：
+  • 宗教以象征表达绝对精神，哲学以概念把握同一真理（《宗教哲学讲演录》）。
+3. 上帝之死预兆：
+  • 基督教“道成肉身”预示精神彻底内在化，为无神论铺路（《基督教的精神及其命运》）。
+三、思想传承与影响
+3.1 哲学史的分水岭
+• 青年黑格尔派：费尔巴哈、马克思翻转其体系，从思辨转向实践批判。
+• 新黑格尔主义：布拉德雷、克罗齐重释辩证法，影响20世纪历史主义。
+• 存在主义先声：克尔凯郭尔批判其“体系吞噬个体”，萨特吸收主奴辩证法。
+3.2 跨学科辐射
+• 马克思主义：唯物辩证法改造为革命工具，《资本论》方法论显其烙印。
+• 社会学奠基：韦伯“理性化”概念与科耶夫“主奴斗争”论受其启发。
+• 后现代解构：福柯批判总体化历史叙事，德里达重读“扬弃”逻辑。
+3.3 全球思想对话
+• 中国现代化：严复译《群己权界论》引介自由理论，新儒家牟宗三会通“良知坎陷”说。
+• 日本明治维新：井上哲次郎以国家哲学助推天皇制意识。
+• 拉美解放哲学：黑格尔主奴论启发殖民地觉醒叙事。
+四、学术争议与批判
+4.1 同时代交锋
+• 谢林决裂：指责其“否定哲学”陷入虚无，谢林晚年转向启示哲学。
+• 叔本华敌视：斥其体系为“空洞诡辩”，哲学应直指生存痛苦。
+• 浪漫派反叛：诺瓦利斯批判理性吞噬诗意，历史目的论扼杀个性。
+4.2 现代理论挑战
+• 波普尔批判：历史决定论助长极权，开放社会需“零星工程”（《开放社会及其敌人》）。
+• 女性主义解构：主奴辩证法忽视性别压迫，家庭伦理固化父权（露西·伊利格瑞）。
+• 生态批判：人类中心主义忽视自然内在价值（深生态学）。
+4.3 文本与历史重构
+• 早期手稿之谜：耶拿时期经济学笔记与成熟体系差异引发“两个黑格尔”争论。
+• 普鲁士辩护争议：国家哲学是否沦为专制背书？晚年著作删改引发诠释分歧。
+• 东方哲学误读：中国被归为“历史儿童期”，暴露欧洲中心论局限。
+五、参考文献与原始文献
+1. 基础史料
+  • 《精神现象学》（先刚中译本） | 人民出版社, 2013
+  • 《法哲学原理》（邓安庆中译本） | 人民出版社, 2016
+  • 《历史哲学》（王造时中译本） | 上海书店出版社, 1999
+2. 现代研究
+  • 查尔斯·泰勒《黑格尔》 | 译林出版社, 2009
+  • 科耶夫《黑格尔导读》 | 译林出版社, 2005
+  • 马尔库塞《理性与革命》 | 上海人民出版社, 2007
+3. 跨学科研究
+  • 弗朗西斯·福山《历史的终结与最后的人》 | 广西师范大学出版社, 2014（政治哲学视角）
+  • 柄谷行人《跨越性批判》 | 中央编译出版社, 2011（马克思与黑格尔对话）
+  • 朱迪斯·巴特勒《权力的精神生活》 | 江苏人民出版社, 2009（性别理论重读）`,
+      schopenhauer: `哲学家 Philosopher #91
+姓名 Name: 亚瑟·叔本华 Arthur Schopenhauer
+生卒年 Lifespan: 1788–1860年 | 悲观主义哲学宗师，意志形而上学开创者，印度哲学欧洲传播者
+学派 School: 唯意志论（批判理性霸权，主张“生命意志”为世界本质，融合东西方悲观智慧）
+一、生平与历史背景
+1.1 从银行家之子到哲学隐士
+叔本华生于但泽（今波兰格但斯克），父亲为富商，母亲为沙龙作家。1809年入哥廷根大学学医，转攻哲学。1813年博士论文《论充足理由律的四重根》出版。1818年完成《作为意志与表象的世界》，销量惨淡。1820年与黑格尔柏林大学擂台演讲失利，隐居法兰克福。晚年因《附录与补遗》成名，逝于法兰克福，墓碑仅刻“亚瑟·叔本华”。
+1.2 后启蒙时代的逆流
+在理性崇拜与工业革命中，叔本华以悲观主义回应时代病症：
+• 生存虚无：揭露进步叙事的虚伪，科学无法解决意义危机。
+• 东方智慧：融合印度《奥义书》与佛教“苦谛”，批判基督教乐观主义。
+• 艺术救赎：以审美静观对抗意志奴役，启发现代非理性思潮。
+二、核心思想体系
+2.1 意志形而上学
+1. 世界作为表象与意志：
+  • 表象是摩耶之幕，意志是盲目冲动，“人体是意志的客体化”（《作为意志与表象的世界》Ⅰ.§21）。
+2. 痛苦的普遍性：
+  • 意志永不满足，幸福如钟摆悬于痛苦与无聊间（Ⅰ.§56）。
+3. 否定意志的解脱：
+  • 禁欲与艺术可暂熄欲火，佛教涅槃为终极解脱（Ⅳ.§68）。
+2.2 美学与伦理学
+1. 天才艺术论：
+  • 天才通过柏拉图式理念直观本质，音乐直接表现意志本身（Ⅲ.§52）。
+2. 同情伦理学：
+  • 看穿个体化原理，他者痛苦即自身痛苦（Ⅳ.§66）。
+3. 性别形而上学：
+  • 性欲是意志最强烈表达，爱情是“物种精灵的诡计”（Ⅱ.§44）。
+2.3 悲观主义实践哲学
+1. 自杀批判：
+  • 自杀肯定而非否定意志，是生命力的极端表达（Ⅳ.§69）。
+2. 修身格言：
+  • 推崇斯多葛式内心宁静，“要么孤独，要么庸俗”（《附录与补遗》）。
+3. 政治冷感：
+  • 国家仅为防恶工具，历史是无意义的循环（《论国家》）。
+三、思想传承与影响
+3.1 现代哲学与艺术革命
+• 尼采的翻转：从“否定意志”转向“权力意志”肯定，但承认叔本华为思想起点。
+• 存在主义先声：加缪《西西弗神话》呼应荒谬抗争，萨特吸收“自在-自为”结构。
+• 精神分析学派：弗洛伊德“本能理论”与荣格“集体无意识”受其启发。
+3.2 跨学科辐射
+• 文学现代主义：托马斯·曼《死于威尼斯》、卡夫卡《变形记》渗透悲观意识。
+• 生态批判：反人类中心论呼应深层生态学“生命网络”观。
+• 心理学发展：马斯洛需求层次论逆写其意志层级，意义治疗回应虚无问题。
+3.3 东西方智慧桥梁
+• 佛教欧洲化：促发19世纪欧洲佛学研究，叔本华称“佛陀是最伟大哲学家”。
+• 道家思想比较：无为与否定意志相通，但缺乏叔本华的体系化建构。
+• 印度哲学复兴：推动《奥义书》德译，影响浪漫派与神智学运动。
+四、学术争议与批判
+4.1 同时代蔑视
+• 黑格尔讥讽：柏林大学冷遇其课程，“绝对精神”压倒“盲目意志”。
+• 学界冷眼：《作为意志与表象的世界》初版仅售百余册，大部分被回收制纸浆。
+• 女性歧视指控：厌女言论遭密尔批判，却吸引女性读者群（如玛尔维达·冯·迈森堡）。
+4.2 现代哲学反思
+• 生命哲学批判：柏格森斥其“静态意志观”忽视创造性进化。
+• 分析哲学排斥：罗素称其体系“不科学”，但维特根斯坦私淑其美学观。
+• 性别理论解构：女性主义重审“物种意志”中的性别权力结构。
+4.3 理论内在矛盾
+• 禁欲可行性：否定意志是否可能？尼采指其仍陷基督教逻辑。
+• 艺术救赎悖论：审美静观是否另一种意志表现？
+• 东方主义误读：简化佛教为悲观主义，忽视“中道”实践智慧。
+五、参考文献与原始文献
+1. 基础史料
+  • 《作为意志与表象的世界》（石冲白中译本） | 商务印书馆, 1982
+  • 《附录与补遗》（韦启昌中译本） | 上海人民出版社, 2014
+  • 《叔本华论道德与自由》（韦启昌中译本） | 上海人民出版社, 2011
+2. 现代研究
+  • 萨弗兰斯基《叔本华与哲学的狂野年代》 | 商务印书馆, 2020
+  • 托马斯·曼《叔本华》 | 上海文艺出版社, 2013
+  • 布莱恩·马吉《叔本华的哲学》 | 译林出版社, 2011
+3. 跨学科研究
+  • 弗洛伊德《超越快乐原则》 | 国际文化出版公司, 2007（心理学对话）
+  • 米兰·昆德拉《小说的艺术》 | 上海译文出版社, 2011（文学影响）
+  • 阿诺德·汤因比《历史研究》 | 上海人民出版社, 2005（文明悲观论比较）`,
+      nietzsche: `哲学家 Philosopher #92
+姓名 Name: 弗里德里希·尼采 Friedrich Nietzsche
+生卒年 Lifespan: 1844–1900年 | 权力意志理论家，超人哲学倡导者，现代性批判先驱
+学派 School: 生命哲学（解构传统道德，主张价值重估，提出“上帝已死”与永恒回归）
+一、生平与历史背景
+1.1 从古典学者到精神漫游者
+尼采生于普鲁士萨克森州的勒肯镇，父亲为路德宗牧师。1864年入波恩大学学习神学与古典语言学，后转至莱比锡大学。24岁任巴塞尔大学古典语言学教授，结识瓦格纳。1879年因病辞职，开启十年漫游生涯，辗转意大利、瑞士、法国。1889年在都灵精神崩溃，由妹妹伊丽莎白监护至1900年逝世。主要著作包括《悲剧的诞生》《查拉图斯特拉如是说》《论道德的谱系》等。
+1.2 维多利亚时代的反叛先知
+在基督教伦理衰落与科学理性扩张中，尼采的哲学直指现代文明危机：
+• 价值真空：宣称“上帝已死”，批判启蒙理性与民主平等导致末人（Last Man）泛滥。
+• 文化诊断：以酒神精神对抗苏格拉底式逻辑霸权，呼吁复兴悲剧性生命态度。
+• 超人理想：主张超越善恶，以权力意志（Will to Power）创造新价值。
+二、核心思想体系
+2.1 权力意志与价值重估
+1. 上帝之死：
+  • 基督教道德压抑生命本能，“怜悯与谦卑是奴隶的复仇”（《论道德的谱系》I.10）。
+2. 超人（Übermensch）：
+  • 超越人性局限，成为“意义的创造者而非发现者”（《查拉图斯特拉如是说》序言）。
+3. 永恒回归：
+  • 最高肯定形式是“愿此生命无限重复”（《快乐的科学》§341）。
+2.2 谱系学方法
+1. 道德起源批判：
+  • 善恶对立源于贵族/奴隶道德斗争，“好-坏”让位于“善-恶”（《论道德的谱系》I.2）。
+2. 真理作为隐喻：
+  • 语言是流动的隐喻系统，真理是“遗忘其为幻觉的幻觉”（《超善恶》§21）。
+3. 视角主义：
+  • 无事实只有解释，知识是权力意志的透视产物（《权力意志》§481）。
+2.3 美学与生命哲学
+1. 悲剧的诞生：
+  • 希腊悲剧融合日神（形式）与酒神（冲动），苏格拉底理性主义扼杀艺术（《悲剧的诞生》§12）。
+2. 艺术救赎：
+  • “唯有作为审美现象，存在才被合理化”（《悲剧的诞生》§5）。
+3. 主人道德：
+  • 肯定强力、创造与自我超越，反对群氓道德（《查拉图斯特拉如是说》I.5）。
+三、思想传承与影响
+3.1 现代哲学的分水岭
+• 存在主义先驱：海德格尔称其为“形而上学的终结者”，萨特吸收自由创造论。
+• 后现代主义源泉：福柯的谱系学、德勒兹的差异哲学皆受其启发。
+• 批判理论：阿多诺以否定辩证法回应其权力批判，霍克海默反思工具理性。
+3.2 跨学科辐射
+• 心理学革命：弗洛伊德承认尼采预见了潜意识理论，荣格吸收酒神原型。
+• 文学现代主义：托马斯·曼《死于威尼斯》、黑塞《荒原狼》渗透超人意识。
+• 政治哲学争议：纳粹扭曲其超人理论，左翼尼采主义者（如巴塔耶）重释权力。
+3.3 全球思想对话
+• 佛教比较：永恒回归与轮回观形似神异，尼采拒斥佛教“消极虚无主义”。
+• 道家重估：无为与权力意志的张力引发跨文化诠释争议。
+• 伊斯兰复兴：库特布《路标》以超人精神批判西方现代性。
+四、学术争议与批判
+4.1 历史污名与误用
+• 纳粹挪用：妹妹伊丽莎白篡改遗稿，将尼采包装为反犹主义者。
+• 女性主义批判：厌女言论遭波伏瓦抨击，但近年研究揭示其性别观复杂性。
+• 相对主义指控：罗尔斯指其否定普遍伦理，助长道德虚无主义。
+4.2 理论内在张力
+• 超人可行性：超人是否新形而上偶像？海德格尔批判其未彻底摆脱主体哲学。
+• 权力意志悖论：若一切皆权力意志，如何区分创造与压迫？
+• 科学态度矛盾：既斥科学为虚无主义工具，又赞其诚实于无意义（《快乐的科学》§344）。
+五、参考文献与原始文献
+1. 基础史料
+  • 《尼采全集》（KSA校勘本） | 柏林出版社, 1967-1977
+  • 《查拉图斯特拉如是说》（孙周兴中译本） | 商务印书馆, 2010
+  • 《论道德的谱系》（谢地坤中译本） | 上海人民出版社, 2005
+2. 现代研究
+  • 海德格尔《尼采》 | 商务印书馆, 2002
+  • 吉尔·德勒兹《尼采与哲学》 | 社会科学文献出版社, 2001
+  • 萨弗兰斯基《尼采思想传记》 | 商务印书馆, 2018
+3. 跨学科研究
+  • 福柯《尼采、谱系学、历史》 | 载《福柯集》 | 上海远东出版社, 1998
+  • 米兰·昆德拉《小说的艺术》 | 上海译文出版社, 2011（文学视角）
+  • 玛莎·努斯鲍姆《善的脆弱性》 | 译林出版社, 2018（伦理学批判）`,
+      marx: `哲学家 Philosopher #93
+姓名 Name: 卡尔·马克思 Karl Marx
+生卒年 Lifespan: 1818–1883年 | 历史唯物主义创立者，科学社会主义奠基人，资本主义批判巨擘
+学派 School: 马克思主义（融合辩证法与政治经济学，揭示阶级斗争与社会发展规律）
+一、生平与历史背景
+1.1 从叛逆青年到流亡学者
+马克思生于普鲁士特里尔城，父亲为犹太律师。1835年入波恩大学学习法律，后转柏林大学攻读哲学，加入青年黑格尔派。1843年迁居巴黎，与恩格斯结盟。1848年发表《共产党宣言》，参与欧洲革命。1849年流亡伦敦，在大英博物馆研撰《资本论》。晚年贫病交加，逝于伦敦海格特公墓，墓碑铭“全世界无产者联合起来”。
+1.2 工业革命下的理论爆破
+在资本扩张与工人运动兴起中，马克思的理论回应时代矛盾：
+• 异化劳动：揭露机器生产下人的非人化，商品拜物教遮蔽社会关系。
+• 历史规律：提出生产力-生产关系矛盾推动社会形态更替。
+• 革命实践：号召无产阶级通过暴力革命消灭私有制。
+二、核心思想体系
+2.1 历史唯物主义
+1. 基础与上层建筑：
+  • 经济基础决定政治、法律与意识形态，“不是意识决定生活，而是生活决定意识”（《德意志意识形态》I.1）。
+2. 阶级斗争：
+  • “至今一切社会的历史都是阶级斗争的历史”（《共产党宣言》I）。
+3. 社会形态演进：
+  • 原始社会→奴隶制→封建制→资本主义→共产主义（《政治经济学批判》序言）。
+2.2 政治经济学批判
+1. 剩余价值理论：
+  • 资本家通过剥削工人剩余劳动（剩余价值）积累资本（《资本论》I.7）。
+2. 商品拜物教：
+  • 社会关系被物化为商品交换关系，掩盖剥削本质（I.1）。
+3. 资本积累规律：
+  • 利润率下降趋势与周期性危机必然导致资本主义崩溃（III.15）。
+2.3 科学社会主义
+1. 无产阶级使命：
+  • 工人阶级是资本主义掘墓人，革命需建立无产阶级专政（《哥达纲领批判》）。
+2. 共产主义愿景：
+  • “各尽所能，按需分配”，国家消亡，自由人联合体实现（《德意志意识形态》I.1）。
+3. 国际主义：
+  • 超越民族国家界限，全球无产者联合解放（《共产党宣言》IV）。
+三、思想传承与影响
+3.1 全球政治实践
+• 十月革命：列宁发展帝国主义论，建立首个社会主义国家。
+• 中国革命：毛泽东思想结合农民革命，实现农村包围城市。
+• 西方新左派：法兰克福学派与阿尔都塞重构马克思主义。
+3.2 跨学科辐射
+• 社会学奠基：韦伯、涂尔干与马克思并称古典社会学三大家。
+• 文化研究：威廉斯、霍尔以文化唯物主义分析意识形态。
+• 生态批判：奥康纳与福斯特发展生态马克思主义。
+3.3 文明批判对话
+• 后殖民理论：法农结合马克思主义批判殖民主义。
+• 女性主义：社会主义女性主义（如朱丽叶·米切尔）分析阶级与性别交叉压迫。
+• 拉美解放神学：古铁雷斯融合基督教与马克思主义反贫困理论。
+四、学术争议与批判
+4.1 理论挑战
+• 修正主义：伯恩施坦主张和平过渡，否定暴力革命必要性。
+• 经济决定论：波普尔批判其历史预言伪科学，忽略知识增长变量。
+• 人道主义争议：青年马克思（异化理论）与成熟马克思（科学分析）是否断裂？
+4.2 实践困境
+• 苏联解体：计划经济僵化与官僚腐败引发对马克思主义可行性质疑。
+• 生态批判：传统马克思主义是否忽视自然极限？（生态社会主义回应）
+• 全球化悖论：无产阶级分化，阶级矛盾跨国转移（哈维“空间修复”理论）。
+五、参考文献与原始文献
+1. 基础史料
+  • 《马克思恩格斯全集》（MEGA2版） | 柏林学院出版社, 1975-至今
+  • 《资本论》（郭大力、王亚南中译本） | 上海三联书店, 2009
+  • 《共产党宣言》（中央编译局中译本） | 人民出版社, 2014
+2. 现代研究
+  • 大卫·哈维《资本的限度》 | 中信出版社, 2017
+  • 特里·伊格尔顿《马克思为什么是对的》 | 新星出版社, 2011
+  • 艾蒂安·巴利巴尔《马克思的哲学》 | 南京大学出版社, 2020
+3. 跨学科研究
+  • 弗雷德里克·詹明信《晚期资本主义的文化逻辑》 | 三联书店, 1997
+  • 南希·弗雷泽《正义的尺度》 | 上海人民出版社, 2009（批判理论视角）
+  • 约翰·贝拉米·福斯特《生态危机与资本主义》 | 上海译文出版社, 2006`,
+      kierkegaard: `哲学家 Philosopher #94
+姓名 Name: 索伦·克尔凯郭尔 Søren Kierkegaard
+生卒年 Lifespan: 1813–1855年 | 存在主义哲学先驱，个体生存的探索者，基督教辩证法的革新者
+学派 School: 存在主义（强调个体选择、信仰的激情与生存的焦虑，批判黑格尔体系哲学）
+一、生平与历史背景
+1.1 哥本哈根的孤独哲人
+克尔凯郭尔生于丹麦哥本哈根，父亲为富商，自幼受严格的宗教教育。1840年入哥本哈根大学学习神学，后转向哲学。1841年与雷吉娜·奥尔森订婚，次年解除婚约，成为其思想转折点。1843年起以笔名出版《非此即彼》《恐惧与战栗》等著作，抨击丹麦国家教会与黑格尔主义。1855年病逝于哥本哈根，临终前拒绝与教会和解，墓碑铭“那个个体”。
+1.2 黑格尔主义霸权的挑战者
+在丹麦教会僵化与欧洲理性主义盛行的背景下，克尔凯郭尔重释基督教信仰：
+• 个体生存优先：反对黑格尔的“绝对精神”，主张真理即主体性。
+• 信仰的荒谬：亚伯拉罕献祭以撒展示信仰超越伦理的悖论性。
+• 审美-伦理-宗教三阶段：提出生存境界的跃升路径。
+二、核心思想体系
+2.1 生存的三重境界
+1. 审美阶段：
+  • 追求感官愉悦与即时满足，“要么选择，要么被选择”（《非此即彼》卷一）。
+2. 伦理阶段：
+  • 承担普遍道德责任，如婚姻承诺（卷二）。
+3. 宗教阶段：
+  • 个体直面上帝，以信仰的激情超越理性（《恐惧与战栗》）。
+2.2 焦虑（Angst）与绝望
+1. 自由的眩晕：
+  • 焦虑是“自由的可能性”，揭示生存的无限可能（《焦虑的概念》）。
+2. 绝望的类型：
+  • 不愿成为自我、不能成为自我，最终指向与上帝关系的断裂（《致死的疾病》）。
+3. 信仰的跳跃：
+  • 在理性悬崖边跃入信仰，接受基督的“悖论性真理”（《哲学片段》）。
+2.3 间接沟通与反体系
+1. 笔名写作策略：
+  • 使用多笔名（如“沉默的约翰”）迫使读者主动选择立场。
+2. 反黑格尔辩证法：
+  • 生存不可被体系化，“真理是主观的，系统是客观的谎言”（《最后的非科学附言》）。
+3. 基督教批判：
+  • 国家教会将信仰庸俗化为“集体仪式”，真基督徒必是少数。
+三、思想传承与影响
+3.1 存在主义运动的源泉
+• 海德格尔与萨特：吸收其焦虑与自由选择理论，发展“存在先于本质”。
+• 宗教存在主义：卡尔·巴特辩证神学与保罗·蒂利希“终极关怀”受其启发。
+• 后现代主义：德里达解构“绝对真理”时援引其反体系立场。
+3.2 跨学科辐射
+• 心理学：罗洛·梅存在心理学以焦虑理论分析现代人精神危机。
+• 文学现代主义：卡夫卡《审判》、加缪《西西弗神话》渗透生存荒诞感。
+• 教育学：批判灌输式教育，强调个体反思与抉择的重要性。
+3.3 跨文明对话
+• 禅宗公案比较：间接沟通类似“棒喝”打破逻辑执念，但克尔凯郭尔坚持人格神信仰。
+• 儒家心学：与王阳明“知行合一”共享实践优先性，但拒斥伦理普遍化。
+四、学术争议与批判
+4.1 同时代误解
+• 教会谴责：被指为“信仰的破坏者”，著作遭神学界冷遇。
+• 学界忽视：生前鲜有哲学界认可，死后半世纪方被重新发现。
+4.2 现代理论挑战
+• 女性主义批判：个体论忽视性别结构压迫，婚恋观强化父权伦理（露西·伊利格瑞）。
+• 相对主义风险：极端主体性是否导致道德虚无？（哈贝马斯交往理性批判）
+• 神学争议：辩证神学能否避免反智主义？巴特与朋霍费尔给出不同答案。
+五、参考文献与原始文献
+1. 基础史料
+  • 《克尔凯郭尔全集》（SKS校勘本） | 哥本哈根出版社, 1997-2013
+  • 《恐惧与战栗》（刘继中译本） | 华夏出版社, 1999
+  • 《非此即彼》（京不特中译本） | 中国社会科学出版社, 2009
+2. 现代研究
+  • 威廉·巴雷特《非理性的人》 | 商务印书馆, 1995（存在主义章节）
+  • 约阿希姆·加尔夫《克尔凯郭尔传》 | 浙江大学出版社, 2020
+  • 马克·C·泰勒《克尔凯郭尔的隐秘遗产》 | 北京大学出版社, 2013
+3. 跨学科研究
+  • 保罗·蒂利希《存在的勇气》 | 中国轻工业出版社, 1988
+  • 罗洛·梅《焦虑的意义》 | 广西师范大学出版社, 2010
+  • 卡夫卡《城堡》 | 上海译文出版社, 2007（文学影响例证）`,
+      husserl: `哲学家 Philosopher #95
+姓名 Name: 埃德蒙德·胡塞尔 Edmund Husserl
+生卒年 Lifespan: 1859–1938年 | 现象学之父，意识分析的革新者，欧洲科学危机的诊断者
+学派 School: 现象学（提出“回到事物本身”，以悬置与还原法探究意识本质，奠基现代哲学方法论）
+一、生平与历史背景
+1.1 从数学家到哲学先知
+胡塞尔生于奥匈帝国普罗斯尼茨（今捷克），早年在莱比锡大学学习数学，1883年获博士学位。1884年转攻哲学，师从布伦塔诺。1900年《逻辑研究》出版，开创现象学运动。1916年任弗莱堡大学教授，海德格尔为其助手。1933年纳粹上台后被剥夺教职，在学术孤立中完成《欧洲科学的危机》。逝于弗莱堡，骨灰葬于当地墓地。
+1.2 科学危机与意义重构
+在一战创伤与实证主义泛滥中，胡塞尔的现象学回应时代困境：
+• 科学祛魅：批判自然科学遗忘生活世界，导致意义虚无。
+• 意识哲学重建：以严格科学精神革新哲学，对抗心理主义与历史主义。
+• 主体性保卫：在纳粹极权下捍卫理性与人道主义价值。
+二、核心思想体系
+2.1 现象学方法
+1. 悬置（Epoche）：
+  • 中止对自然态度的信念，“加括号”存而不论（《纯粹现象学通论》§32）。
+2. 本质直观（Wesensschau）：
+  • 通过自由变异法把握意识行为的本质结构（《现象学的观念》§9）。
+3. 意向性理论：
+  • 意识总是指向某物，“每个思都是对某物的思”（《逻辑研究》第五研究）。
+2.2 先验现象学转向
+1. 先验还原：
+  • 从经验自我转向先验主体性，揭示意识的构成功能（《笛卡尔式的沉思》§8）。
+2. 生活世界（Lebenswelt）：
+  • 前科学的直观世界是意义根源，科学抽象化遮蔽此基础（《欧洲科学的危机》§9）。
+3. 主体间性：
+  • 他者经验如何可能？通过“共现”与“移情”构建交互主体性（《笛卡尔式的沉思》第五沉思）。
+三、思想传承与影响
+3.1 现象学运动谱系
+• 存在主义：海德格尔、萨特、梅洛-庞蒂发展其生存论转向。
+• 解释学：伽达默尔吸收“前见”理论，构建哲学解释学。
+• 分析哲学：塞尔与麦克道威尔以语言分析重释意向性。
+3.2 跨学科辐射
+• 心理学：格式塔心理学受本质直观启发，认知科学探讨意识结构。
+• 建筑学：诺伯格-舒尔茨以“场所精神”应用生活世界理论。
+• 教育学：范梅南发展现象学教育学，强调“教育智慧”。
+3.3 全球思想对话
+• 佛学唯识宗：意识分析与“唯识无境”形成方法论比较。
+• 中国心学：与王阳明“心外无物”对话主体构成性，差异在于先验性界定。
+• 伊斯兰哲学：塔哈·阿卜杜勒以现象学重释《古兰经》诠释学。
+四、学术争议与批判
+4.1 理论内部张力
+• 先验自我难题：先验主体是否新形而上学实体？（海德格尔存在论批判）
+• 生活世界悖论：如何从先验回归经验？后期理论是否自相矛盾？（梅洛-庞蒂质疑）
+• 历史性忽视：静态分析能否解释意识的历史生成？（利科历史现象学修正）
+4.2 现代哲学挑战
+• 解构主义批判：德里达指其“在场形而上学”压抑差异与延异。
+• 自然主义反驳：奎因斥先验现象学为“教条”，主张自然化认识论。
+• 技术哲学反思：斯蒂格勒指其未预见技术对意识的构型作用。
+五、参考文献与原始文献
+1. 基础史料
+  • 《胡塞尔全集》（Husserliana） | 尼伊霍夫出版社, 1950-至今
+  • 《逻辑研究》（倪梁康中译本） | 商务印书馆, 2015
+  • 《欧洲科学的危机》（王炳文中译本） | 商务印书馆, 2001
+2. 现代研究
+  • 丹·扎哈维《胡塞尔现象学》 | 上海译文出版社, 2007
+  • 梅洛-庞蒂《知觉现象学》 | 商务印书馆, 2001（发展脉络）
+  • 倪梁康《现象学及其效应》 | 三联书店, 1994（汉语学界研究）
+3. 跨学科研究
+  • 约翰·塞尔《意向性》 | 上海人民出版社, 2007（分析哲学视角）
+  • 爱德华·S·凯西《空间之现象学》 | 江苏教育出版社, 2017（地理学应用）
+  • 唐·伊德《技术中的身体》 | 北京大学出版社, 2012（技术哲学延伸）`,
+      heidegger: `哲学家 Philosopher #96
+姓名 Name: 马丁·海德格尔 Martin Heidegger
+生卒年 Lifespan: 1889–1976年 | 存在论哲学革命者，现象学继承者，技术批判先驱
+学派 School: 现象学存在论（提出“此在”分析，解构形而上学史，追问存在意义）
+一、生平与历史背景
+1.1 从黑森林到纳粹泥潭
+海德格尔生于德国梅斯基希，父亲为教堂司事。1909年入弗莱堡大学学习神学与哲学，师从胡塞尔。1927年出版《存在与时间》，震动学界。1933年任弗莱堡大学校长，卷入纳粹活动，次年辞职。战后被禁止教学至1951年，隐居托特瑙山小屋。晚年探讨技术与栖居问题，逝于弗莱堡，葬于家乡教堂墓地，遗嘱禁止出版部分手稿。
+1.2 技术时代的哲学突围
+在两次世界大战与技术异化中，海德格尔的思考聚焦于：
+• 存在遗忘：批判形而上学史遮蔽存在真义，沦为“存在者”研究。
+• 技术本质：现代技术非工具，而是“座架”（Gestell）促逼自然与人类。
+• 诗意栖居：以荷尔德林诗学对抗技术统治，呼吁天地人神四重整体。
+二、核心思想体系
+2.1 基础存在论
+1. 此在（Dasein）分析：
+  • 人作为“存在发问者”，通过“在世界中存在”揭示存在意义（《存在与时间》§4）。
+2. 向死而在：
+  • 直面死亡开启本真生存，“先行到死”挣脱常人（das Man）沉沦（§53）。
+3. 时间性：
+  • 时间非线性序列，而是此在存在的境域，“曾在-当前-将来”三维缠绕（§65）。
+2.2 形而上学解构
+1. 存在史批判：
+  • 从柏拉图到尼采皆遗忘存在差异，技术是形而上学终结形态（《哲学的终结》）。
+2. 真理作为无蔽：
+  • 真理（aletheia）是存在者的去蔽，非命题符合（《论真理的本质》）。
+3. 语言是存在之家：
+  • 诗性语言保存存在真义，技术语言沦为信息工具（《通向语言之途》）。
+2.3 后期技术哲学
+1. 座架（Gestell）：
+  • 技术本质促逼万物为“持存物”，人亦沦为资源（《技术的追问》）。
+2. 泰然任之（Gelassenheit）：
+  • 非消极退让，而是沉思性开放于存在（《泰然任之》）。
+3. 四重整体：
+  • 拯救需重建天、地、人、神的诗意共属（《筑·居·思》）。
+三、思想传承与影响
+3.1 哲学范式转型
+• 存在主义：萨特发展“存在先于本质”，但海德格尔拒斥此标签。
+• 解释学：伽达默尔将理解本体论化，构建哲学解释学。
+• 后现代主义：德里达解构逻各斯中心主义，福柯考古学受其启发。
+3.2 跨学科辐射
+• 环境哲学：深生态学吸收其技术批判，倡导“守护自然”。
+• 建筑理论：诺伯格-舒尔茨提出“场所精神”，呼应栖居思想。
+• 文学批评：布鲁姆“影响的焦虑”暗合存在诗学分析。
+3.3 全球思想对话
+• 道家比较：泰然任之与“无为”相通，但海德格尔拒绝对等解读。
+• 禅宗公案：语言困境与“不立文字”形成跨文化互释。
+• 伊斯兰苏菲主义：诗性真理观与鲁米灵知论产生共鸣。
+四、学术争议与批判
+4.1 纳粹牵连污点
+• 校长任期争议：1933年演讲含纳粹意识形态，晚年回避直接忏悔。
+• 反犹主义指控：黑色笔记本暴露歧视性言论，引发学界激烈批判。
+4.2 理论内部张力
+• 本真性悖论：本真生存是否可能？阿多诺斥其为“精英主义神话”。
+• 语言神秘化：诗性拯救是否乌托邦？哈贝马斯指其缺乏实践路径。
+• 东方主义挪用：对东亚思想的片段化引用被指文化猎奇。
+五、参考文献与原始文献
+1. 基础史料
+  • 《海德格尔全集》（GA版） | 维多里奥·克劳斯特曼出版社, 1975-至今
+  • 《存在与时间》（陈嘉映中译本） | 三联书店, 2006
+  • 《技术的追问》（孙周兴中译本） | 商务印书馆, 2018
+2. 现代研究
+  • 吕迪格尔·萨弗兰斯基《海德格尔传》 | 商务印书馆, 1999
+  • 朱利安·扬《海德格尔 哲学 纳粹主义》 | 辽宁教育出版社, 2001
+  • 张祥龙《海德格尔思想与中国天道》 | 三联书店, 1996
+3. 跨学科研究
+  • 汉娜·阿伦特《人的境况》 | 上海人民出版社, 2009（政治哲学对话）
+  • 布鲁诺·拉图尔《自然的政治》 | 河南大学出版社, 2020（技术哲学比较）
+  • 爱德华·凯西《海德格尔的空间》 | 南京大学出版社, 2020（空间现象学）`,
+      wittgenstein: `哲学家 Philosopher #97
+姓名 Name: 路德维希·维特根斯坦 Ludwig Wittgenstein
+生卒年 Lifespan: 1889–1951年 | 分析哲学革命者，语言游戏理论创立者，哲学治疗倡导者
+学派 School: 分析哲学（前期逻辑原子主义，后期日常语言哲学，解构传统哲学问题）
+一、生平与历史背景
+1.1 从工程师到哲学隐士
+维特根斯坦生于维也纳钢铁巨头家族，1908年赴曼彻斯特学习航空工程。1911年转投罗素门下研究逻辑。一战参军期间撰写《逻辑哲学论》。1929年重返剑桥，放弃遗产隐居，任研究员。二战期间做医院护工。1951年逝于剑桥，临终遗言“告诉他们我度过了美好的一生”。主要著作《哲学研究》死后出版。
+1.2 语言转向的旗手
+在逻辑实证主义与日常语言学派争鸣中，维特根斯坦重塑哲学任务：
+• 逻辑澄清：前期以真值函项理论划定言说界限。
+• 语言游戏：后期转向语用分析，揭示意义即使用。
+• 治疗哲学：哲学问题源于语言误用，需“治疗”而非理论建构。
+二、核心思想体系
+2.1 前期逻辑哲学
+1. 图像论：
+  • 命题是现实的逻辑图像，原子事实对应原子命题（《逻辑哲学论》2.1-2.18）。
+2. 不可说者：
+  • 伦理、美学等超越语言，“对不可说者须保持沉默”（6.54）。
+3. 梯子隐喻：
+  • 理解理论后需抛弃之，“登上屋顶后扔掉梯子”（6.54）。
+2.2 后期语言哲学
+1. 语言游戏：
+  • 意义在于使用，“想象一种语言即想象一种生活形式”（《哲学研究》§19）。
+2. 家族相似：
+  • 概念无本质定义，靠重叠相似性关联（§67）。
+3. 私有语言批判：
+  • 内在体验无法私有指称，规则需公共性（§258）。
+2.3 哲学方法论
+1. 治疗式分析：
+  • 哲学病根于语言迷惑，治疗即描述语法（§109）。
+2. 遵守规则悖论：
+  • 规则无法穷尽应用，实践奠定意义（§201）。
+3. 确定性根基：
+  • “世界图景”构成怀疑的基底（《论确定性》§94）。
+三、思想传承与影响
+3.1 分析哲学运动
+• 逻辑实证主义：维也纳学派误读其前期思想，引发多年论争。
+• 日常语言学派：奥斯汀、塞尔发展言语行为理论。
+• 实用主义复兴：罗蒂以“后哲学文化”继承治疗理念。
+3.2 跨学科辐射
+• 认知科学：联结主义挑战经典符号模型，呼应语言游戏论。
+• 人类学：格尔茨“深描”方法受家族相似启发。
+• 艺术理论：维特根斯坦美学影响分析美学与观念艺术。
+3.3 跨文明对话
+• 禅宗公案：语言悖论与“不立文字”形成方法论对照。
+• 维特根斯坦与中国哲学：冯友兰尝试以“负的方法”呼应不可说论。
+四、学术争议与批判
+4.1 理论转折之谜
+• 前后期断裂：是否彻底否定前期？学者分为“新旧维派”争论不休。
+• 政治沉默：纳粹时期未公开表态，被批逃避知识分子责任。
+4.2 哲学界限争议
+• 相对主义风险：语言游戏是否导致意义碎片化？（戴维森批判）
+• 治疗有效性：哲学问题真能被消解？普特南指其回避实质。
+五、参考文献与原始文献
+1. 基础史料
+  • 《维特根斯坦全集》（安斯康姆编） | 布莱克威尔出版社, 2001
+  • 《哲学研究》（陈嘉映中译本） | 上海人民出版社, 2005
+  • 《逻辑哲学论》（贺绍甲中译本） | 商务印书馆, 1996
+2. 现代研究
+  • 瑞·蒙克《维特根斯坦：天才之为责任》 | 浙江大学出版社, 2014
+  • 索尔·克里普克《维特根斯坦论规则与私人语言》 | 中国人民大学出版社, 2010
+  • 陈嘉映《说理》 | 华夏出版社, 2011（汉语学界解读）
+3. 跨学科研究
+  • 克利福德·格尔茨《文化的解释》 | 上海人民出版社, 1999（人类学应用）
+  • 约翰·塞尔《心灵、语言与社会》 | 上海译文出版社, 2001（语言哲学发展）
+  • 阿瑟·丹托《艺术的终结》 | 江苏人民出版社, 2005（美学影响）`,
+      sartre: `哲学家 Philosopher #98
+姓名 Name: 让-保罗·萨特 Jean-Paul Sartre
+生卒年 Lifespan: 1905–1980年 | 存在主义旗手，自由哲学倡导者，介入知识分子典范
+学派 School: 存在主义（主张“存在先于本质”，强调绝对自由与责任，融合现象学与马克思主义）
+一、生平与历史背景
+1.1 从巴黎高师到诺奖拒领者
+萨特生于巴黎军官家庭，1924年入巴黎高师攻读哲学，与雷蒙·阿隆、梅洛-庞蒂同窗。1933年赴柏林学习胡塞尔现象学，二战期间参军被俘，后参与抵抗运动。1943年出版《存在与虚无》，奠定存在主义哲学地位。1964年拒领诺贝尔文学奖，声明“作家不应被体制化”。晚年支持学生运动与第三世界解放，逝于巴黎，葬礼吸引五万群众自发送行。
+1.2 战后欧洲的精神代言人
+在冷战格局与殖民体系崩溃中，萨特的思想回应时代命题：
+• 自由的重负：纳粹暴行与阿尔及利亚战争催生对个体责任的极端强调。
+• 介入文学：主张作家必须通过写作介入社会，“沉默即共谋”（《什么是文学？》）。
+• 马克思主义调适：试图以存在主义补充历史唯物主义的决定论缺陷。
+二、核心思想体系
+2.1 存在主义自由论
+1. 存在先于本质：
+  • 人无先定本性，“首先存在，然后通过选择创造自身”（《存在主义是一种人道主义》）。
+2. 绝对自由与焦虑：
+  • 自由是命运的诅咒，“人被判定为自由”（《存在与虚无》IV.1）。
+3. 自欺（mauvaise foi）：
+  • 逃避自由的方式，如咖啡馆侍者机械扮演社会角色（I.2）。
+2.2 辩证理性批判
+1. 匮乏（rareté）理论：
+  • 物质稀缺引发人际异化，历史是克服匮乏的暴力循环（《辩证理性批判》）。
+2. 实践惰性：
+  • 制度固化导致自由异化，“系列”群体沦为机械集合（II.3）。
+3. 总体化历史：
+  • 个体通过“总体化”行动赋予历史意义，但永远未完成（I.4）。
+2.3 介入伦理学
+1. 境遇中的选择：
+  • 自由需在具体历史条件下实现，“犹太人问题也是反犹者的困境”（《关于犹太人问题》）。
+2. 他者地狱：
+  • “他人即地狱”揭示主体间性的冲突本质（《禁闭》第五幕）。
+3. 革命乌托邦：
+  • 支持古巴革命与五月风暴，视毛主义为克服异化的实验（《造反有理》）。
+三、思想传承与影响
+3.1 存在主义运动
+• 法国新浪潮：戈达尔电影《筋疲力尽》渗透存在主义气质。
+• 女权主义发展：波伏瓦《第二性》深化性别境遇分析。
+• 左翼激进主义：法农《全世界受苦的人》吸收其殖民批判。
+3.2 跨学科辐射
+• 心理学：罗洛·梅存在心理学应用自由焦虑理论。
+• 教育学：批判灌输式教育，强调选择与责任意识培养。
+• 戏剧革新：《苍蝇》《肮脏的手》开创哲理剧范式。
+3.3 全球思想对话
+• 禅宗自由观：与“当下解脱”形成张力，萨特否定任何预设本质。
+• 拉美解放神学：古铁雷斯结合存在主义与基督教穷人优先论。
+• 非洲存在主义：桑戈尔、法农重释黑人主体性的自由建构。
+四、学术争议与批判
+4.1 理论内在矛盾
+• 自由与决定论：后期转向马克思主义是否背叛存在主义？（梅洛-庞蒂质疑）
+• 主体性过剩：列维纳斯批判其忽视他者伦理优先性。
+• 实践困境：支持斯大林与红色高棉引发道德争议。
+4.2 政治立场争议
+• 知识分子责任：阿隆斥其“革命浪漫主义”助长暴力乌托邦。
+• 性别盲点：女性主义指其自由论以男性经验为中心。
+五、参考文献与原始文献
+1. 基础史料
+  • 《存在与虚无》（陈宣良中译本） | 三联书店, 2007
+  • 《辩证理性批判》（林骧华中译本） | 安徽文艺出版社, 1998
+  • 《萨特文集》（沈志明等译） | 人民文学出版社, 2005
+2. 现代研究
+  • 安妮·科恩-索拉尔《萨特传》 | 上海人民出版社, 2009
+  • 贝尔纳-亨利·莱维《萨特的世纪》 | 商务印书馆, 2005
+  • 徐贲《萨特论艺术》 | 广西师大出版社, 2017
+3. 跨学科研究
+  • 弗朗茨·法农《黑皮肤，白面具》 | 上海人民出版社, 2022（殖民批判延伸）
+  • 汉娜·阿伦特《人的境况》 | 上海人民出版社, 2009（自由理论比较）
+  • 朱迪斯·巴特勒《性别麻烦》 | 上海三联书店, 2009（性别视角批判）`,
+      foucault: `哲学家 Philosopher #99
+姓名 Name: 米歇尔·福柯 Michel Foucault
+生卒年 Lifespan: 1926–1984年 | 权力-知识系谱学家，后结构主义先驱，现代性批判巨擘
+学派 School: 后结构主义（解构理性、疯癫与性态的历史，揭示权力微观物理学）
+一、生平与历史背景
+1.1 从边缘到中心的叛逆者
+福柯生于法国普瓦捷，父亲为外科医生。1946年入巴黎高师，师从阿尔都塞。1961年以《疯癫与文明》获博士学位。1966年《词与物》引发“人之死”论战。1970年任法兰西公学院教授，创立“话语形构”分析方法。支持监狱改革与同性权益，1984年因艾滋病逝于巴黎，临终研究《性史》未完成。
+1.2 1968年后的知识考古
+在结构主义危机与新社会运动中，福柯解构现代性根基：
+• 理性霸权：疯癫、疾病与犯罪如何被建构为“他者”。
+• 生命政治：从君主“杀生权”到现代“治理术”的权力转型。
+• 主体真相游戏：自我技术如何被知识-权力机制塑造。
+二、核心思想体系
+2.1 权力-知识分析
+1. 话语形构：
+  • 知识是权力关系的产物，“真理政权”决定何者可说（《知识考古学》）。
+2. 规训社会：
+  • 全景敞视监狱象征现代权力微观控制（《规训与惩罚》III.3）。
+3. 生命权力（Biopolitique）：
+  • 人口管理、公共卫生与性态成为政治干预领域（《性史》I.5）。
+2.2 主体化批判
+1. 作者功能：
+  • 作者是话语分类原则，非创造性源头（《作者是什么？》）。
+2. 自我的技术：
+  • 古代修身实践对比现代主体被知识建构（《主体解释学》）。
+3. 生存美学：
+  • 以“自我创造”抵抗规范化，将生活变为艺术品（《论伦理系谱学》）。
+三、思想传承与影响
+3.1 后现代理论矩阵
+• 女性主义：巴特勒操演理论解构性别本质论。
+• 后殖民研究：萨义德“东方主义”吸收话语分析。
+• 酷儿理论：权力机制如何生产性少数身份。
+3.2 跨学科革命
+• 文化研究：霍尔解码媒体中的权力话语。
+• 教育学批判：揭示学校作为规训装置。
+• 医学人文：疯癫史重写精神病学合法性。
+四、学术争议与批判
+4.1 相对主义风险
+• 真理虚无化：哈贝马斯批评其否定解放潜能。
+• 政治悲观：缺乏规范性基础，无法指引反抗（南希·弗雷泽）。
+4.2 历史方法论争议
+• 档案选择偏见：史料碎片化处理遭年鉴学派质疑。
+五、参考文献与原始文献
+1. 基础史料
+  • 《规训与惩罚》（刘北成中译本） | 三联书店, 2003
+  • 《性史》（张廷琛中译本） | 上海科技文献出版社, 1989
+  • 《福柯文选》（汪民安编） | 北京大学出版社, 2016
+2. 现代研究
+  • 詹姆斯·米勒《福柯的生死爱欲》 | 上海人民出版社, 2005
+  • 汪民安《福柯的界线》 | 南京大学出版社, 2008
+  • 保罗·韦纳《福柯：其思其人》 | 河南大学出版社, 2018
+3. 跨学科研究
+  • 爱德华·萨义德《东方学》 | 三联书店, 1999（话语分析应用）
+  • 朱迪斯·巴特勒《性别麻烦》 | 上海三联书店, 2009（性别解构）
+  • 大卫·哈维《后现代状况》 | 商务印书馆, 2003（空间政治延伸）`,
+      merleau_ponty: `哲学家 Philosopher #100
+姓名 Name: 莫里斯·梅洛-庞蒂 Maurice Merleau-Ponty
+生卒年 Lifespan: 1908–1961年 | 知觉现象学创立者，身体哲学先驱，存在主义现象学代表人物
+学派 School: 现象学（发展身体主体理论，融合存在主义与结构主义，批判笛卡尔身心二元论）
+一、生平与历史背景
+1.1 从巴黎高师到左翼知识领袖
+梅洛-庞蒂生于法国罗什福尔，1926年入巴黎高师攻读哲学，与萨特、波伏瓦结为挚友。二战期间参与抵抗运动，战后任里昂大学、巴黎高师教授。1952年因政治分歧与萨特决裂，转向结构主义研究。1961年猝逝于巴黎，未完成遗作《可见的与不可见的》由勒福尔整理出版。
+1.2 战后现象学的身体转向
+在现象学与马克思主义对话中，梅洛-庞蒂重构哲学根基：
+• 知觉优先性：批判笛卡尔视觉中心主义，主张“身体是世界的媒介”。
+• 政治介入：支持非共产主义左翼，反思斯大林主义与殖民暴力。
+• 科学哲学批判：揭示知觉经验是科学抽象化的前提。
+二、核心思想体系
+2.1 知觉现象学
+1. 身体主体（Corps propre）：
+  • 身体非客体，而是“在世存在”的原初场域，“我用身体理解世界”（《知觉现象学》前言）。
+2. 知觉的暧昧性：
+  • 物体在视角变动中保持同一性，知觉是“未完成的综合”（III.1）。
+3. 空间性分析：
+  • 空间非几何容器，而是身体运动的可能性系统（II.3）。
+2.2 语言与表达哲学
+1. 言语现象学：
+  • 语言非符号系统，而是身体意向的“姿势”（《世界的散文》）。
+2. 交织（Chiasme）理论：
+  • 可见者与不可见者在肉身中相互渗透（《可见的与不可见的》IV）。
+3. 结构主义对话：
+  • 认可索绪尔语言差异系统，但坚持意义源于身体实践（《符号》）。
+2.3 政治哲学批判
+1. 辩证法的暧昧：
+  • 历史无预定目的，革命需在偶然性中创造意义（《辩证法的历险》）。
+2. 非暴力伦理：
+  • 反对萨特暴力正当化，主张“承认他者自由是政治起点”（《人道主义与恐怖》）。
+三、思想传承与影响
+3.1 现象学发展
+• 具身认知科学：加拉格尔、瓦雷拉发展身体认知模型。
+• 后结构主义：福柯“身体政治”与德里达触觉理论受其启发。
+• 生态现象学：阿布拉姆以交织理论重释人与自然关系。
+3.2 跨学科辐射
+• 艺术理论：梅洛-庞蒂美学影响现象学艺术批评与具象绘画。
+• 心理学：吉布森生态心理学吸收其空间性理论。
+• 建筑学：诺伯格-舒尔茨场所理论应用身体空间分析。
+3.3 全球思想对话
+• 中国气论：身体作为气化存在与“体知”传统形成对话。
+• 日本现象学：九鬼周造“粹”美学吸收其暧昧性概念。
+四、学术争议与批判
+4.1 理论内在张力
+• 结构主义转向：晚年是否背叛现象学主体性？（利科质疑）
+• 政治模糊性：非暴力立场被批缺乏实践效力（萨特批评）。
+五、参考文献与原始文献
+1. 基础史料
+  • 《知觉现象学》（姜志辉中译本） | 商务印书馆, 2001
+  • 《可见的与不可见的》（罗国祥中译本） | 商务印书馆, 2008
+  • 《世界的散文》（杨大春中译本） | 商务印书馆, 2019
+2. 现代研究
+  • 泰勒·卡迈克尔《梅洛-庞蒂的哲学》 | 南京大学出版社, 2015
+  • 莫伟民《从意识哲学到身体哲学》 | 上海人民出版社, 2018
+  • 杨大春《感性的诗学》 | 人民出版社, 2019
+3. 跨学科研究
+  • 阿尔方斯·德·瓦亨斯《具身认知》 | 浙江大学出版社, 2020
+  • 爱德华·凯西《身体与场所》 | 江苏教育出版社, 2017`,
+      beauvoir: `哲学家 Philosopher #101
+姓名 Name: 西蒙娜·德·波伏瓦 Simone de Beauvoir
+生卒年 Lifespan: 1908–1986年 | 女性主义理论奠基人，存在主义作家，性别社会建构论先驱
+学派 School: 存在主义女性主义（揭示“第二性”的社会建构，提出“女人非天生，而是被造就”）
+一、生平与历史背景
+1.1 从巴黎高师到女性主义偶像
+波伏瓦生于巴黎中产家庭，1929年以哲学教师资格考试第二名毕业（萨特第一）。二战期间创作小说《女宾》，战后以《第二性》震动全球。终身伴侣萨特，但保持开放关系。支持阿尔及利亚独立与堕胎合法化，1986年逝于巴黎，与萨特合葬蒙帕纳斯公墓。
+1.2 父权制下的理论爆破
+在战后性别秩序松动中，波伏瓦的批判直指社会核心：
+• 生理决定论：解剖学差异被文化放大为性别等级。
+• 主体性剥夺：女性被固化为“他者”，丧失超越性。
+• 老年与死亡：晚年研究《老年》与《告别的仪式》，拓展生命政治批判。
+二、核心思想体系
+2.1 性别社会建构论
+1. 他者理论：
+  • 男性自居主体，将女性贬为“绝对他者”（《第二性》I.1）。
+2. 身体处境分析：
+  • 月经、怀孕等经验被父权制神话异化（I.2）。
+3. 经济依附批判：
+  • 无偿家务劳动固化女性从属地位（II.3）。
+2.2 存在主义伦理学
+1. 暧昧伦理学：
+  • 自由需在具体境遇中为他人负责（《模糊性的道德》）。
+2. 老年异化：
+  • 社会将老人视为“他者”，剥夺其主体性（《老年》）。
+3. 死亡政治：
+  • 医疗体系将死亡技术化，压抑临终自主权（《安详辞世》）。
+三、思想传承与影响
+3.1 女性主义浪潮
+• 第二波女性主义：弗里丹、米利特尊其为理论先驱。
+• 性别差异理论：克里斯蒂娃、伊利格瑞批判其生理-文化二分法。
+3.2 跨学科辐射
+• 老年学研究：开辟年龄批判理论新领域。
+• 文学实践：自传体小说开创女性经验书写范式。
+四、学术争议与批判
+4.1 理论局限
+• 白人中心论：忽视种族与阶级交叉压迫（贝尔·胡克斯批判）。
+• 性少数盲点：未预见酷儿理论对性别二元的解构。
+五、参考文献与原始文献
+1. 基础史料
+  • 《第二性》（郑克鲁中译本） | 上海译文出版社, 2011
+  • 《安详辞世》（黄荭中译本） | 浙江大学出版社, 2018
+  • 《波伏瓦回忆录》（罗国林译） | 作家出版社, 2012
+2. 现代研究
+  • 托莉·莫伊《性与文本的政治》 | 江苏人民出版社, 2000
+  • 凯特·柯克帕特里克《成为波伏瓦》 | 中信出版社, 2021`,
+      habermas: `哲学家 Philosopher #102
+姓名 Name: 尤尔根·哈贝马斯 Jürgen Habermas
+生卒年 Lifespan: 1929– | 法兰克福学派第二代旗手，沟通行动理论创立者，公共领域理论奠基人
+学派 School: 批判理论（重建理性基础，发展协商民主理论，调和现代性矛盾）
+一、生平与历史背景
+1.1 从战后反思到公共知识分子
+哈贝马斯生于德国杜塞尔多夫，少年经历纳粹统治，1949年入哥廷根大学学习哲学与社会学。1956年任阿多诺助手，1961年以《公共领域的结构转型》成名。1968年批判学生运动激进主义，与法兰克福学派部分成员决裂。1994年退休后仍活跃于公共论战，介入基因伦理、欧盟宪政等议题。
+1.2 晚期资本主义的诊断者
+在福利国家危机与全球化挑战中，哈贝马斯重构批判理论：
+• 理性重建：对抗后现代相对主义，捍卫启蒙理性潜能。
+• 民主赤字：技术官僚制侵蚀公共领域，需重建协商民主。
+• 宪法爱国主义：以政治文化认同超越民族国家狭隘性。
+二、核心思想体系
+2.1 沟通行动理论
+1. 交往理性：
+  • 区别于工具理性，以“最佳论据的力量”达成共识（《沟通行动理论》Ⅰ）。
+2. 理想言谈情境：
+  • 免于强制、平等参与、真诚表达的对话条件（Ⅱ.3）。
+3. 系统与生活世界：
+  • 货币与权力系统殖民生活世界，导致意义丧失（Ⅱ.6）。
+2.2 协商民主理论
+1. 双轨模型：
+  • 正式议会与非正式公共领域互补，形成“沟通权力”（《在事实与规范之间》Ⅷ）。
+2. 宪法爱国主义：
+  • 以民主程序为核心的政治认同，替代血缘民族主义（《后民族结构》）。
+3. 世界公民社会：
+  • 超越主权国家，建立跨国公共领域（《分裂的西方》）。
+2.3 后形而上学思想
+1. 后世俗社会：
+  • 宗教在现代社会中的认知地位需重新协商（《世俗化的辩证法》）。
+2. 人权与主权：
+  • 人权不应成为西方干涉借口，需与文化语境平衡（《他者的引入》）。
+3. 技术伦理：
+  • 基因工程威胁人类物种伦理自我理解（《人性的未来》）。
+三、思想传承与影响
+3.1 批判理论转型
+• 第三代法兰克福学派：霍耐特承认正义理论吸收其交往范式。
+• 审议民主实践：影响南欧反紧缩运动与公民陪审团制度设计。
+3.2 跨学科辐射
+• 法学：德沃金、阿列克西发展程序主义法哲学。
+• 传播学：公共领域理论重塑媒体研究范式。
+• 国际关系：建构主义学派吸收其国际政治沟通观。
+3.3 全球思想对话
+• 儒家民主：与贝淡宁对话“贤能政治”与协商民主兼容性。
+• 伊斯兰现代主义：塔利克·拉马丹尝试调和沙里亚法与宪政民主。
+四、学术争议与批判
+4.1 理论张力
+• 乌托邦嫌疑：理想言谈情境是否现实可行？（利奥塔质疑）
+• 欧洲中心论：协商模式是否忽视文化特殊性？（查尔斯·泰勒批评）
+五、参考文献与原始文献
+1. 基础史料
+  • 《沟通行动理论》（曹卫东中译本） | 上海人民出版社, 2018
+  • 《在事实与规范之间》（童世骏中译本） | 三联书店, 2003
+  • 《现代性的哲学话语》（曹卫东译） | 译林出版社, 2004
+2. 现代研究
+  • 童世骏《批判与实践》 | 三联书店, 2007
+  • 詹姆斯·戈登·芬利森《哈贝马斯》 | 牛津通识版, 2015`,
+      rawls: `哲学家 Philosopher #103
+姓名 Name: 约翰·罗尔斯 John Rawls
+生卒年 Lifespan: 1921–2002年 | 政治哲学复兴者，正义理论革新家，新自由主义伦理奠基人
+学派 School: 新契约论（提出“作为公平的正义”，重构自由平等原则，影响全球宪政设计）
+一、生平与历史背景
+1.1 从二战士兵到哈佛哲人
+罗尔斯生于美国巴尔的摩，1943年参军参与太平洋战役，目击核爆促成终身反战立场。1950年获普林斯顿大学博士学位，1971年出版《正义论》引发全球热议。哈佛任教三十载，培养桑德尔、科恩等学者。晚年修订《万民法》，逝于麻省列克星敦。
+1.2 冷战格局的理论应答
+在民权运动与福利国家争议中，罗尔斯重构社会契约：
+• 分配正义：回应美国贫富分化与种族矛盾。
+• 稳定性问题：多元社会如何达成重叠共识。
+• 全球伦理：后冷战时代的人权与战争规范。
+二、核心思想体系
+2.1 正义两原则
+1. 原初状态：
+  • 无知之幕屏蔽身份地位，确保公平选择（《正义论》§4）。
+2. 词典序列：
+  • ①基本自由平等→②机会公平与差异原则（§11）。
+3. 反思平衡：
+  • 道德直觉与原则间反复调试达成融贯（§4）。
+2.2 政治自由主义
+1. 合理多元主义：
+  • 现代社会价值分歧不可避免（《政治自由主义》Ⅰ）。
+2. 重叠共识：
+  • 不同整全学说支持同一政治正义观（Ⅳ）。
+3. 公共理性：
+  • 公民应以政治价值而非宗教/哲学学说参与公共辩论（Ⅵ）。
+2.3 万民法
+1. 人民社会：
+  • 自由人民与合宜等级制人民共组和平联盟（《万民法》）。
+2. 人权清单：
+  • 生存权、免于奴役、良心自由构成干预底线。
+3. 战争伦理：
+  • 仅限自卫与人道干预，禁止核威慑（§14）。
+三、思想传承与影响
+3.1 全球政治哲学
+• 自由平等主义：德沃金、森发展资源平等与可行能力理论。
+• 共同体批判：桑德尔、麦金泰尔质疑其个人主义预设。
+3.2 制度设计影响
+• 宪法法院：德国宪政法院援引差异原则审查社会立法。
+• 全球治理：联合国人权机制吸收其万民法理念。
+四、学术争议与批判
+4.1 理论挑战
+• 全球分配正义：博格批评其国内主义局限（《罗尔斯与国际正义》）。
+• 文化帝国主义：万民法被指隐含西方中心偏见（查尔斯·贝茨）。
+五、参考文献与原始文献
+1. 基础史料
+  • 《正义论》（何怀宏中译本） | 中国社会科学出版社, 2009
+  • 《政治自由主义》（万俊人中译本） | 译林出版社, 2011
+2. 现代研究
+  • 托马斯·博格《罗尔斯研究》 | 中国人民大学出版社, 2013
+  • 玛莎·努斯鲍姆《正义的前沿》 | 中国人民大学出版社, 2016`,
+      deleuze: `哲学家 Philosopher #104
+姓名 Name: 吉尔·德勒兹 Gilles Deleuze
+生卒年 Lifespan: 1925–1995年 | 后结构主义哲学家，差异哲学倡导者，块茎思维提出者
+学派 School: 后结构主义（解构同一性逻辑，主张生成、流动与多样性，与加塔利合创精神分析批判）
+一、生平与历史背景
+1.1 从哲学史家到革命理论家
+德勒兹生于法国巴黎，1944年入索邦大学攻读哲学，师从康吉扬。1962年以《尼采与哲学》崭露头角，1968年与加塔利相遇，合作完成《反俄狄浦斯》《千高原》。晚年深受呼吸系统疾病困扰，1995年自杀于巴黎，遗言“哲学是概念的创造”。
+1.2 五月风暴后的思想实验
+在资本主义精神分裂与全球化加速中，德勒兹的理论回应：
+• 欲望政治：批判弗洛伊德式压抑模型，主张欲望的生产性。
+• 游牧思维：对抗国家装置的层级化，推崇块茎（rhizome）的横向连接。
+• 控制社会：预言信息时代权力机制的微观渗透。
+二、核心思想体系
+2.1 差异哲学
+1. 差异与重复：
+  • 存在非基于同一性，而是差异的差异化（《差异与重复》）。
+2. 生成动物：
+  • 逃逸固定身份，成为不可辨识的“他者”（《卡夫卡：为弱势文学而作》）。
+3. 无器官身体：
+  • 打破有机体辖域化，探索强度的流动（《千高原》）。
+2.2 政治哲学批判
+1. 解辖域化：
+  • 资本主义通过解码与再辖域化捕获欲望流（《反俄狄浦斯》）。
+2. 战争机器：
+  • 游牧力量对抗国家装置的条纹化空间（《千高原》12章）。
+3. 控制社会：
+  • 从规训到调制（modulation），权力隐入算法与网络（《谈判》）。
+三、思想传承与影响
+3.1 后现代理论
+• 新唯物主义：哈拉维、布拉伊多蒂发展后人类本体论。
+• 数字文化研究：瓜塔里“三重生态学”启发生态媒介理论。
+3.2 跨学科辐射
+• 电影哲学：《电影I：运动-影像》重构影像分类学。
+• 建筑学：艾森曼解构主义建筑实践吸收块茎思维。
+四、学术争议与批判
+• 政治可行性：游牧抵抗是否乌托邦？（内格里质疑）
+• 文本晦涩：隐喻式写作被批制造理解壁垒（罗蒂批评）。
+五、参考文献与原始文献
+1. 基础史料
+  • 《千高原》（姜宇辉中译本） | 上海书店出版社, 2010
+  • 《差异与重复》（安靖中译本） | 华东师大出版社, 2019
+2. 现代研究
+  • 克莱尔·科勒布鲁克《德勒兹》 | 北京大学出版社, 2020`,
+      derrida: `哲学家 Philosopher #105
+姓名 Name: 雅克·德里达 Jacques Derrida
+生卒年 Lifespan: 1930–2004年 | 解构主义创始人，文本批判大师，逻各斯中心论解构者
+学派 School: 解构主义（揭示文本内在矛盾，颠覆二元对立，挑战西方形而上学传统）
+一、生平与历史背景
+1.1 从阿尔及利亚到巴黎高师
+德里达生于法属阿尔及利亚，犹太裔，1949年入巴黎高师。1967年以《论文字学》《书写与差异》引爆解构风暴。1980年代赴美讲学，推动文学批评的“耶鲁学派”。2004年逝于巴黎，葬礼致辞“他教我们阅读不可读之物”。
+1.2 结构主义之后的文本革命
+在语言学转向与殖民批判背景下，德里达解构：
+• 语音中心论：书写长期被贬为语音的次级补充。
+• 在场形而上学：西方哲学对确定性、起源的迷恋。
+• 伦理政治转向：晚年探讨宽恕、友爱的不可能性。
+二、核心思想体系
+2.1 解构策略
+1. 延异（différance）：
+  • 意义在差异与延迟中无限延宕（《论文字学》）。
+2. 补充逻辑：
+  • 边缘补充物颠覆中心/边缘等级（《哲学的边缘》）。
+3. 幽灵学：
+  • 马克思的幽灵徘徊于全球资本主义（《马克思的幽灵》）。
+2.2 伦理政治批判
+1. 无条件好客：
+  • 超越法律义务，接纳绝对他者（《论好客》）。
+2. 死刑解构：
+  • 主权权力通过死刑表演其神圣性（《死刑》）。
+三、思想传承与影响
+• 后殖民理论：斯皮瓦克翻译并发展属下阶层研究。
+• 建筑解构：埃森曼、屈米将不确定性融入空间设计。
+四、学术争议与批判
+• 虚无主义指控：哈贝马斯批评解构消解理性基础。
+• 政治模糊性：早期回避规范性，晚年伦理是否足够？
+五、参考文献与原始文献
+1. 基础史料
+  • 《论文字学》（汪堂家中译本） | 上海译文出版社, 1999
+  • 《马克思的幽灵》（何一中译本） | 中国人民大学出版社, 2008`,
+      said: `哲学家 Philosopher #106
+姓名 Name: 爱德华·萨义德 Edward Said
+生卒年 Lifespan: 1935–2003年 | 后殖民理论开创者，文化批判巨擘，东方主义解构者
+学派 School: 后殖民研究（揭示文化表征中的权力关系，批判西方中心主义的知识建构）
+一、生平与历史背景
+1.1 流散知识分子的双重身份
+萨义德生于耶路撒冷，巴勒斯坦基督徒，幼年移居埃及，后赴美求学。1964年获哈佛大学比较文学博士，任哥伦比亚大学教授。亲历1948年巴勒斯坦灾难，终身支持巴勒斯坦解放事业。2003年逝于纽约，葬于黎巴嫩，墓碑铭刻“为巴勒斯坦写作的笔”。
+1.2 冷战与文化霸权的批判者
+在全球化与后殖民语境中，萨义德的理论回应时代命题：
+• 东方主义批判：西方学术如何建构“东方”作为他者。
+• 知识分子责任：对抗权力与主流叙事的“业余者”立场。
+• 流亡诗学：离散经验作为批判性视角的优势。
+二、核心思想体系
+2.1 东方主义理论
+1. 知识-权力共谋：
+  • 东方学非客观学科，而是殖民统治的文化工具（《东方学》第一章）。
+2. 他者化机制：
+  • 东方被表征为落后、神秘、女性化，反衬西方理性优越（第二章）。
+3. 对抗性书写：
+  • 被殖民者需通过反叙述夺回话语权（《文化与帝国主义》）。
+2.2 晚期风格与知识分子论
+1. 不合时宜性：
+  • 伟大作品常在作者晚年呈现断裂、晦涩的“晚期风格”（《论晚期风格》）。
+2. 业余者伦理：
+  • 知识分子应超越专业分工，为正义发声（《知识分子论》）。
+3. 世俗批判：
+  • 拒绝本质化身份，拥抱混杂性与多元文化（《流离失所的政治》）。
+三、思想传承与影响
+3.1 后殖民理论谱系
+• 属下阶层研究：斯皮瓦克与霍米·巴巴发展其理论。
+• 文化研究：霍尔吸收其表征批判，重构媒体分析范式。
+3.2 跨学科辐射
+• 文学批评：重释简·奥斯汀至康拉德作品中的帝国意识。
+• 音乐社会学：《音乐的阐释》批判表演中的文化政治。
+四、学术争议与批判
+• 本质主义反转：反东方主义是否建构新二元对立？（伯纳德·刘易斯批评）
+• 政治行动有效性：理论批判如何转化为现实变革？（乔姆斯基质疑）
+五、参考文献与原始文献
+1. 基础史料
+  • 《东方学》（王宇根中译本） | 三联书店, 2007
+  • 《文化与帝国主义》（李琨中译本） | 三联书店, 2003
+2. 现代研究
+  • 艾贾兹·阿赫默德《在理论内部》 | 北京大学出版社, 2014`,
+      butler: `哲学家 Philosopher #107
+姓名 Name: 朱迪斯·巴特勒 Judith Butler
+生卒年 Lifespan: 1956– | 性别理论革命者，操演理论提出者，酷儿政治哲学先锋
+学派 School: 后结构女性主义（解构性别本质论，揭示身份的政治建构性，推动多元文化斗争）
+一、生平与历史背景
+1.1 从犹太家庭到学术偶像
+巴特勒生于美国克利夫兰犹太家庭，1984年获耶鲁大学哲学博士。1990年以《性别麻烦》引爆“酷儿理论”革命，任加州伯克利大学教授。参与巴勒斯坦团结运动，抵制以色列学术机构。以跨性别权利倡导与黑格尔研究闻名。
+1.2 性别政治的哲学突围
+在身份政治与保守主义回潮中，巴特勒的理论回应：
+• 性别操演性：生理性别/社会性别的二元论批判。
+• 脆弱性的政治：身体易受伤害性作为伦理联结基础。
+• 非暴力抵抗：以身体暴露于暴力揭露权力不义。
+二、核心思想体系
+2.1 性别操演理论
+1. 社会性别建构：
+  • 性别是重复仪式产生的“自然化假象”（《性别麻烦》Ⅰ）。
+2. 异性恋矩阵：
+  • 强制异性恋制度排斥酷儿存在，需颠覆范畴本身（Ⅲ）。
+3. 身体物质化：
+  • 解剖学差异被话语实践建构为物质事实（《身体之重》）。
+2.2 伦理政治转向
+1. 哀悼与暴力：
+  • 可哀悼性划分界定“何者为人类”（《脆弱的生命》）。
+2. 集会自由：
+  • 身体共在挑战新自由主义个人主义（《集会的力量》）。
+3. 非暴力伦理：
+  • 抵抗需暴露系统性暴力，而非复制暴力结构（《战争的框架》）。
+三、思想传承与影响
+3.1 酷儿理论运动
+• 跨性别研究：挑战医学话语对性别认同的病理化。
+• 行动主义：影响ACT UP等组织的直接行动策略。
+3.2 批判理论更新
+• 承认政治批判：弗雷泽争议揭示再分配与承认的张力。
+• 生命政治：与阿甘本对话赤裸生命与神圣人机制。
+四、学术争议与批判
+• 现实效力质疑：解构性别是否削弱女性主义斗争基础？（娜莎·弗雷泽）
+• 语言唯心主义：过度强调话语忽视物质压迫？（特里·伊格尔顿）
+五、参考文献与原始文献
+1. 基础史料
+  • 《性别麻烦》（宋素凤中译本） | 上海三联书店, 2009
+  • 《脆弱的生命》（何磊、赵英男译） | 河南大学出版社, 2013
+2. 现代研究
+  • 萨拉·萨里《巴特勒读本》 | 北京大学出版社, 2019`,
+      zizek: `哲学家 Philosopher #108
+姓名 Name: 斯拉沃热·齐泽克 Slavoj Žižek
+生卒年 Lifespan: 1949– | 拉康主义马克思主义者，意识形态批判大师，流行文化哲学明星
+学派 School: 批判理论（融合拉康精神分析与黑格尔辩证法，揭示意识形态的崇高客体）
+一、生平与历史背景
+1.1 从斯洛文尼亚到全球学术明星
+齐泽克生于斯洛文尼亚卢布尔雅那，1981年获巴黎第八大学哲学博士。1990年代以《意识形态的崇高客体》跻身国际学界，任纽约社会研究新学院教授。以演讲高产与跨界引用大众文化著称，涉足电影、政治评论与网络亚文化。
+1.2 后冷战时代的犬儒主义批判者
+在资本主义全球化与民粹主义兴起中，齐泽克的理论回应：
+• 意识形态批判：揭示自由民主制的内在悖论。
+• 实在界的创伤：拉康视角下的政治行动可能性。
+• 生态危机重思：资本主义结构性暴力与气候灾难。
+二、核心思想体系
+2.1 意识形态分析
+1. 犬儒意识形态：
+  • “他们清楚所作所为，但依然为之”（《意识形态的崇高客体》Ⅰ）。
+2. 商品恋物癖：
+  • 马克思商品拜物教与拉康幻想公式的缝合（Ⅱ）。
+3. 视差之见：
+  • 真理存在于对立视角的不可化约间隙（《视差之见》）。
+2.2 政治哲学批判
+1. 列宁重读：
+  • 革命行动需“破坏破坏者”，打破资本主义自然化（《重述列宁》）。
+2. 暴力辩证法：
+  • 区分系统性暴力与反抗暴力（《暴力：六个侧面的反思》）。
+3. 共产主义假设：
+  • 全球资本主义无出路，需重提共产主义方案（《生于末世》）。
+三、思想传承与影响
+3.1 文化批判实践
+• 电影分析：解构好莱坞意识形态装置（《斜目而视》）。
+• 网络迷因研究：揭示数字时代主体性的碎片化。
+3.2 左翼战略更新
+• 占领运动：为“无需求者”的抗议提供理论弹药。
+• 民粹主义批判：区分进步民粹与右翼排外主义。
+四、学术争议与批判
+• 理论杂糅：哲学拼贴是否削弱严谨性？（伊格尔顿批评）
+• 行动空想：革命修辞缺乏具体策略（巴迪欧质疑）
+五、参考文献与原始文献
+1. 基础史料
+  • 《意识形态的崇高客体》（季广茂译） | 中央编译出版社, 2014
+  • 《斜目而视》（季广茂译） | 浙江大学出版社, 2011
+2. 现代研究
+  • 托尼·迈尔斯《导读齐泽克》 | 重庆大学出版社, 2014`,
+      agamben: `哲学家 Philosopher #109
+姓名 Name: 乔吉奥·阿甘本 Giorgio Agamben
+生卒年 Lifespan: 1942– | 例外状态理论家，神圣人系谱学者，生命政治批判先锋
+学派 School: 大陆哲学（融合海德格尔与福柯，揭示主权权力对赤裸生命的捕获）
+一、生平与历史背景
+1.1 从罗马法到哲学弥赛亚
+阿甘本生于意大利罗马，1966年获法学博士，师从海德格尔与阿多诺。1995年《神圣人》系列开启生命政治批判，任威尼斯建筑大学教授。以对纳粹集中营与反恐法的哲学分析震动学界，隐居巴黎与意大利小镇。
+1.2 全球反恐战争的理论镜鉴
+在安全国家与生物技术统治中，阿甘本的理论回应：
+• 例外状态常态化：911后美国爱国者法案的哲学批判。
+• 神圣人机制：从古罗马献祭到关塔那摩监狱的生命剥夺。
+• 来临中的共同体：超越身份政治的弥赛亚时间观。
+二、核心思想体系
+2.1 生命政治系谱
+1. 神圣人（Homo Sacer）：
+  • 可被杀死但不可献祭的赤裸生命（《神圣人：主权权力与赤裸生命》）。
+2. 例外状态：
+  • 法律通过悬置自身确立主权权威（《例外状态》）。
+3. 装置批判：
+  • 从宗教仪式到智能手机，权力技术捕获主体（《何为装置？》）。
+2.2 弥赛亚哲学
+1. 剩余时间：
+  • 保罗书信中的“弥赛亚时间”瓦解线性历史（《剩余的时间》）。
+2. 任意独体：
+  • 不可分类的个体存在预示共同体的可能性（《来临中的共同体》）。
+3. 姿势论：
+  • 超越目的性的纯粹手段作为抵抗策略（《无目的的手段》）。
+三、思想传承与影响
+3.1 政治神学批判
+• 南希与埃斯波西托：欧洲生命政治学派对话与分歧。
+• 难民政治：揭示无国籍者的神圣人处境。
+3.2 艺术理论重构
+• 潜能诗学：艺术作为未实现之可能的保存（《潜能》）。
+• 影像考古：电影作为记忆与遗忘的装置（《宁芙》）。
+四、学术争议与批判
+• 历史简化：神圣人系谱是否实证薄弱？（布朗质疑）
+• 政治悲观：弥赛亚主义是否逃避现实斗争？（巴迪欧批评）
+五、参考文献与原始文献
+1. 基础史料
+  • 《神圣人》（吴冠军译） | 中央编译出版社, 2016
+  • 《例外状态》（薛熙平译） | 西北大学出版社, 2015
+2. 现代研究
+  • 凯瑟琳·米尔斯《阿甘本哲学指南》 | 重庆大学出版社, 2020`,
+      berkeley: `哲学家 Philosopher #86
+姓名 Name: 乔治·贝克莱 George Berkeley（George Berkeley）
+生卒年 Lifespan: 1685–1753年 | 爱尔兰经验主义哲学家，主教，非物主义创立者
+学派 School: 经验主义（主张“存在即被感知”，否定物质实体，强调心灵与上帝的终极实在性）
+一、生平与历史背景
+1.1 从学者到殖民理想主义者
+贝克莱生于爱尔兰基尔肯尼郡，15岁入都柏林三一学院，学习洛克与牛顿学说。1707年留校任教，24岁出版《视觉新论》（1709），提出空间感知理论。1710年完成《人类知识原理》，奠定非物主义哲学。1724年任德利教区副主教，1728年赴北美罗德岛筹建百慕大学院（未果），试图“教化美洲原住民”。1734年任克洛因主教，晚年关注焦油水疗效，逝于牛津，墓碑铭“一切终将消逝，唯真理永恒”。
+1.2 启蒙运动早期的反物质论争
+在牛顿力学与唯物主义兴起的背景下，贝克莱的哲学直指科学革命的形而上学基础：
+• 挑战物质实体：以经验主义逻辑消解洛克的“物质基底”，断言“物是观念的集合”。
+• 调和科学与宗教：将自然规律解释为“上帝设定的观念秩序”，维护神学权威。
+• 教育乌托邦：试图在百慕大建立跨大西洋学术共同体，因英国议会断资流产。
+二、核心思想体系
+2.1 非物主义（Immaterialism）
+1. 存在即被感知（Esse est Percipi）：
+  • 物体仅为感官观念的集合，“离开感知的苹果无非形状、颜色、味道等观念的共存”（《人类知识原理》§1-3）。
+  • 物质实体是“无意义的抽象”，如“无人听见的树倒声不存在”（§23）。
+2. 上帝作为终极感知者：
+  • 世界持续存在因上帝永恒感知，“宇宙是神圣心智的语言”（§6, §109）。
+3. 自然符号论：
+  • 感官观念是上帝与人类交流的符号，“火的热非因必然因果，而是神定符号关联”（《西利斯》§254）。
+2.2 视觉与空间哲学
+1. 视觉的相对性：
+  • 距离非直接感知，而是经验联想的推论，“婴儿须学习看世界”（《视觉新论》§41）。
+2. 触觉的中心性：
+  • 触觉建立空间实在性，视觉依赖触觉经验校准，“盲人复明后无法仅凭视觉判断距离”（§79）。
+3. 最小可觉差异：
+  • 提出感知阈值概念，启发心理物理学（《视觉新论》§54）。
+2.3 社会与伦理思想
+1. 反奢侈经济：
+  • 批判殖民掠夺与奢侈消费，“金链锁住的是佩戴者的灵魂”（《提问者》§38）。
+2. 公共善优先：
+  • 主张税收支持教育与社会福利，“国家应如蜂巢，个体为整体奉献”（《阿尔西弗朗》对话Ⅶ）。
+3. 宗教实用主义：
+  • 信仰的合理性在于促进道德实践，“信上帝者更可能行善”（《阿尔西弗朗》对话Ⅵ）。
+三、思想传承与影响
+3.1 哲学史的争议遗产
+• 休谟的激进发展：将非物主义推至怀疑论，否定上帝与灵魂实体，贝克莱斥其为“破坏性极端”。
+• 康德先验转向：物自体概念间接回应“存在即被感知”，但批判其否定物质客观性。
+• 分析哲学重估：罗素称其逻辑严谨但结论荒谬，赖尔在《心的概念》中重审其语言分析价值。
+3.2 科学与人文学科启示
+• 心理学奠基：贝克莱的感知理论影响格式塔学派与吉布森生态心理学。
+• 现象学先声：胡塞尔悬置实体观念呼应其现象描述方法。
+• 科技哲学：虚拟现实技术印证“感知构建实在”的命题，引发元宇宙本体论讨论。
+3.3 跨文明对话
+• 佛教唯识宗：与“万法唯识”说形似，但贝克莱以上帝替代阿赖耶识为终极依止。
+• 中国心学：王阳明“心外无物”与其非物主义形成形而上学对照，但前者缺乏上帝预设。
+• 伊斯兰教义学：艾什尔里派“原子论”同样否定物质恒常性，但以真主意志维系世界。
+四、学术争议与批判
+4.1 同时代反驳
+• 约翰逊踢石辩：塞缪尔·约翰逊以踢石宣称“我反驳它”，贝克莱回应“痛觉证明感知存在”。
+• 物质科学家的敌意：牛顿派指其否定绝对空间危及物理学，但贝克莱称“数学与现象学兼容”。
+• 神学家的疑虑：教会质疑其削弱创世论，贝克莱辩护“上帝持续创造即最伟大神迹”。
+4.2 现代哲学挑战
+• 实证主义批判：马赫称其混淆心理学与本体论，科学应描述现象无需形而上学承诺。
+• 科学实在论：普特南以“缸中之脑”悖论揭示其理论困境，但承认其启发意义。
+• 分析哲学解构：斯特劳森区分“描述的形而上学”与“修正的形而上学”，将其归为后者。
+4.3 理论与实践的矛盾
+• 殖民事业悖论：倡导仁爱却参与奴隶制经济，百慕大计划依赖种植园利润。
+• 医学谬误：晚年推崇焦油水为“万灵药”，遭医学界嘲讽，暴露经验主义局限性。
+五、参考文献与原始文献
+1. 基础史料
+  • 《人类知识原理》（关文运中译本） | 商务印书馆, 1973
+  • 《视觉新论》（周晓亮中译本） | 北京大学出版社, 2010
+  • 《西利斯》（高秉江中译本） | 商务印书馆, 2020
+2. 现代研究
+  • A.A. Luce《贝克莱的非物主义》 | 伦敦出版社, 1945
+  • David Berman《乔治·贝克莱：非物主义与批判》 | 牛津大学出版社, 1994
+  • 高秉江《贝克莱与现象学传统》 | 武汉大学出版社, 2017
+3. 跨学科研究
+  • 詹姆斯·吉布森《视觉世界的感知》 | 中国人民大学出版社, 2015（心理学视角）
+  • 凯瑟琳·威尔逊《形而上学与科学革命》 | 上海译文出版社, 2008（科学哲学分析）
+  • 尼尔·斯蒂芬森《雪崩》 | 四川科技出版社, 2009（科技哲学虚构）`,
     };
     const quotes = [
       "「哲学的任务，不在于给出答案，而在于澄清问题。」",
@@ -6877,6 +12217,7 @@
     const philosopherDetailEl = document.getElementById("philosopherDetail");
     const homeViewEl = document.getElementById("homeView");
     const appViewEl = document.getElementById("appView");
+    const timelineViewEl = document.getElementById("timelineView");
     const homeSearchInputEl = document.getElementById("homeSearchInput");
     const homeSearchBtnEl = document.getElementById("homeSearchBtn");
     const homeRecoListEl = document.getElementById("homeRecoList");
@@ -6886,22 +12227,93 @@
     const categoryChipsEl = document.getElementById("categoryChips");
     let activeCategory = "all";
     let activeEntryId = "confucius";
+    let mindmapMode = "relation"; // "relation" | "concept"
+    let activeConcept = null;     // 概念视图中当前选中的概念，如 "存在"
 
     function showHomeView() {
-      if (homeViewEl && appViewEl) {
-        homeViewEl.classList.remove("view-hidden");
-        appViewEl.classList.add("view-hidden");
-      }
+      if (homeViewEl) homeViewEl.classList.remove("view-hidden");
+      if (appViewEl) appViewEl.classList.add("view-hidden");
+      if (timelineViewEl) timelineViewEl.classList.add("view-hidden");
       showListView();
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
     function showAppView() {
-      if (homeViewEl && appViewEl) {
-        homeViewEl.classList.add("view-hidden");
-        appViewEl.classList.remove("view-hidden");
-      }
+      if (homeViewEl) homeViewEl.classList.add("view-hidden");
+      if (appViewEl) appViewEl.classList.remove("view-hidden");
+      if (timelineViewEl) timelineViewEl.classList.add("view-hidden");
       window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function showTimelineView() {
+      if (homeViewEl) homeViewEl.classList.add("view-hidden");
+      if (appViewEl) appViewEl.classList.add("view-hidden");
+      if (timelineViewEl) timelineViewEl.classList.remove("view-hidden");
+      renderTimeline();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function renderTimeline() {
+      function renderTrack(containerId, data) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        container.innerHTML = "";
+        data.forEach((stage) => {
+          const block = document.createElement("div");
+          block.className = "timeline-period";
+          block.innerHTML =
+            "<div class=\"timeline-period-title\">" + stage.period + "</div>" +
+            "<div class=\"timeline-period-time\">" + stage.timeLabel + "</div>" +
+            "<div class=\"timeline-figures\"></div>";
+          const figuresEl = block.querySelector(".timeline-figures");
+          (stage.figures || []).forEach((fig) => {
+            if (fig.id && entryById[fig.id]) {
+              const link = document.createElement("a");
+              link.className = "timeline-figure";
+              link.href = "javascript:void(0)";
+              link.title = "点击进入该哲学家的思想图谱与资料";
+              link.textContent = fig.name;
+              link.addEventListener("click", (e) => {
+                e.preventDefault();
+                setActiveEntry(fig.id);
+                showAppView();
+                showPhilosopherDetail(fig.id);
+              });
+              figuresEl.appendChild(link);
+            } else {
+              const span = document.createElement("span");
+              span.className = "timeline-figure";
+              span.textContent = fig.name;
+              figuresEl.appendChild(span);
+            }
+          });
+          container.appendChild(block);
+        });
+      }
+      renderTrack("timelineChinaContent", timelineChina);
+      renderTrack("timelineWestContent", timelineWest);
+    }
+    let workToPhilosophersCache = null;
+    function buildWorkToPhilosophers() {
+      if (workToPhilosophersCache) return workToPhilosophersCache;
+      const index = {};
+      for (const [pid, text] of Object.entries(philosopherDetails)) {
+        const regex = /《([^》]+)》/g;
+        let m;
+        while ((m = regex.exec(text)) !== null) {
+          const title = m[1].trim();
+          if (!title) continue;
+          if (!index[title]) index[title] = [];
+          if (!index[title].includes(pid)) index[title].push(pid);
+          const main = title.split("·")[0].split(/[\s　]+/)[0].trim();
+          if (main && main.length >= 2 && main !== title) {
+            if (!index[main]) index[main] = [];
+            if (!index[main].includes(pid)) index[main].push(pid);
+          }
+        }
+      }
+      workToPhilosophersCache = index;
+      return index;
     }
     function filterEntries(query, category) {
       const q = (query || "").trim().toLowerCase();
@@ -6915,11 +12327,27 @@
         }
         if (category === "by_work") {
           if (e.type !== "philosopher") return false;
-          const detail = philosopherDetails[e.id];
-          if (!detail) return false;
-          if (!q) return true;
-          const withBrackets = q.includes("《") ? q : "《" + q + "》";
-          return detail.includes(withBrackets);
+          if (!q) return false;
+          const workIndex = buildWorkToPhilosophers();
+          const matchedIds = new Set();
+          for (const workTitle of Object.keys(workIndex)) {
+            const workLower = workTitle.toLowerCase();
+            if (workLower.includes(q) || q.includes(workLower)) {
+              workIndex[workTitle].forEach((id) => matchedIds.add(id));
+            }
+          }
+          return matchedIds.has(e.id);
+        }
+        if (category === "by_concept") {
+          if (e.type !== "philosopher") return false;
+          if (!q) return false;
+          const matchedConceptIds = new Set();
+          conceptList.forEach((conceptName) => {
+            if (conceptName.toLowerCase().includes(q) || q.includes(conceptName.toLowerCase())) {
+              (conceptToPhilosophers[conceptName] || []).forEach((pid) => matchedConceptIds.add(pid));
+            }
+          });
+          return matchedConceptIds.has(e.id);
         }
         if (category !== "all" && e.type !== category) {
           return false;
@@ -7061,7 +12489,9 @@
     // 分类 chip 交互
     function updateSearchPlaceholder() {
       if (!searchInputEl) return;
-      if (activeCategory === "by_school") {
+      if (activeCategory === "by_concept") {
+        searchInputEl.placeholder = "输入概念名，如：存在、正义、自由…";
+      } else if (activeCategory === "by_school") {
         searchInputEl.placeholder = "输入流派名，如：理学、心学、今文经学…";
       } else if (activeCategory === "by_work") {
         searchInputEl.placeholder = "输入著作名（书名号内），如：论语、道德经、仁学…";
@@ -7190,14 +12620,75 @@
           card.dataset.entryId === entryId,
         );
       });
-      // 更新面板文案
-      mapTitleSubEl.textContent = "当前中心：" + entry.title;
-      centerSummaryEl.innerHTML =
-        "<strong>" +
-        entry.title +
-        "</strong>：" +
-        (entry.centerSummary || entry.quote || "关系说明预留。");
+      if (mindmapMode === "concept") {
+        mapTitleSubEl.textContent = "当前中心：" + entry.title;
+        centerSummaryEl.innerHTML =
+          "该哲学家的<strong>概念线索</strong>及与之讨论相似论题的其他哲学家。点击概念可筛选。";
+        renderConceptChips();
+      } else {
+        mapTitleSubEl.textContent = "当前中心：" + entry.title;
+        centerSummaryEl.innerHTML =
+          "<strong>" +
+          entry.title +
+          "</strong>：" +
+          (entry.centerSummary || entry.quote || "关系说明预留。");
+      }
       renderMindmap(entryId);
+    }
+    function setMindmapMode(mode) {
+      mindmapMode = mode;
+      const modeRelationBtn = document.getElementById("modeRelationBtn");
+      const modeConceptBtn = document.getElementById("modeConceptBtn");
+      const mindmapModeBadge = document.getElementById("mindmapModeBadge");
+      const mindmapConceptBar = document.getElementById("mindmapConceptBar");
+      if (modeRelationBtn) modeRelationBtn.classList.toggle("active", mode === "relation");
+      if (modeConceptBtn) modeConceptBtn.classList.toggle("active", mode === "concept");
+      if (mindmapModeBadge) {
+        mindmapModeBadge.textContent = mode === "relation" ? "RADIAL · 关系视图" : "RADIAL · 概念视图";
+      }
+      if (mindmapConceptBar) {
+        mindmapConceptBar.classList.toggle("view-hidden", mode !== "concept");
+      }
+      if (mode === "concept") {
+        activeConcept = null;
+        renderConceptChips();
+        renderMindmapConcept();
+      } else {
+        setActiveEntry(activeEntryId);
+      }
+    }
+    function renderConceptChips() {
+      const container = document.getElementById("conceptChips");
+      if (!container) return;
+      container.innerHTML = "";
+      const concepts = philosopherToConcepts[activeEntryId] || [];
+      if (!concepts.length) {
+        container.appendChild(document.createTextNode("该哲学家暂无概念标注"));
+        return;
+      }
+      concepts.forEach((name) => {
+        const chip = document.createElement("button");
+        chip.type = "button";
+        chip.className = "concept-chip" + (name === activeConcept ? " active" : "");
+        chip.textContent = name;
+        chip.title = "仅显示与「" + name + "」相关的学者";
+        chip.addEventListener("click", () => {
+          activeConcept = activeConcept === name ? null : name;
+          renderConceptChips();
+          renderMindmap(activeEntryId);
+        });
+        container.appendChild(chip);
+      });
+    }
+    function renderMindmapConcept() {
+      if (mindmapMode !== "concept") return;
+      const entry = entryById[activeEntryId];
+      mapTitleSubEl.textContent = entry ? "当前中心：" + entry.title : "当前中心";
+      centerSummaryEl.innerHTML =
+        entry
+          ? "该哲学家的<strong>概念线索</strong>及与之讨论相似论题的其他哲学家。点击概念可筛选。"
+          : "请先选择一位哲学家。";
+      renderMindmap(activeEntryId);
     }
     function collectNeighborIds(centerId) {
       const center = entryById[centerId];
@@ -7264,14 +12755,36 @@
       mindmapSvg.setAttribute("viewBox", `0 0 ${width} ${height}`);
       mindmapSvg.style.cursor = "grab";
       const { cx, cy, radiusStep } = computeLayout(width, height, 3);
-      const neighbors = collectNeighborIds(centerId);
-      const firstRing = neighbors.firstRing;
-      const secondRing = neighbors.secondRing;
-      mapDepthLabelEl.textContent = secondRing.length ? "两到三层" : "两层";
+      let centerIdFinal = centerId;
+      let firstRing, secondRing;
+      const centerEntryMap = {}; // 概念模式下中心为虚拟节点
+
+      if (mindmapMode === "concept" && centerId && entryById[centerId]) {
+        centerIdFinal = centerId;
+        const concepts = (philosopherToConcepts[centerId] || []).filter(
+          (c) => !activeConcept || c === activeConcept
+        );
+        firstRing = concepts.map((c) => "concept:" + c);
+        concepts.forEach((c) => {
+          centerEntryMap["concept:" + c] = { id: "concept:" + c, title: c, type: "concept" };
+        });
+        const secondSet = new Set();
+        concepts.forEach((c) => {
+          (conceptToPhilosophers[c] || []).forEach((pid) => {
+            if (entryById[pid] && pid !== centerId) secondSet.add(pid);
+          });
+        });
+        secondRing = [...secondSet];
+        mapDepthLabelEl.textContent = secondRing.length ? "概念 · 两层" : "概念 · 一层";
+      } else {
+        const neighbors = collectNeighborIds(centerId);
+        firstRing = neighbors.firstRing;
+        secondRing = neighbors.secondRing;
+        mapDepthLabelEl.textContent = secondRing.length ? "两到三层" : "两层";
+      }
+
       const nodesPos = {};
-      // 中心节点
-      nodesPos[centerId] = { x: cx, y: cy };
-      // 第一圈：均匀分布
+      nodesPos[centerIdFinal] = { x: cx, y: cy };
       const ring1Radius = radiusStep * 1.6;
       firstRing.forEach((id, index) => {
         const angle = (2 * Math.PI * index) / Math.max(firstRing.length, 1);
@@ -7279,7 +12792,6 @@
         const y = cy + ring1Radius * Math.sin(angle) * 0.85;
         nodesPos[id] = { x, y };
       });
-      // 第二圈：围绕第一圈再分布
       const ring2Radius = radiusStep * 2.7;
       secondRing.forEach((id, index) => {
         const angle = (2 * Math.PI * index) / Math.max(secondRing.length, 1);
@@ -7287,12 +12799,14 @@
         const y = cy + ring2Radius * Math.sin(angle) * 0.9;
         nodesPos[id] = { x, y };
       });
-      // 连线
+
       function drawLine(sourceId, targetId) {
         const a = nodesPos[sourceId];
         const b = nodesPos[targetId];
         if (!a || !b) return;
-        const type = relationType(sourceId, targetId);
+        const isConceptNode =
+          String(sourceId).startsWith("concept:") || String(targetId).startsWith("concept:");
+        const type = isConceptNode ? "related" : relationType(sourceId, targetId);
         const isInfluence = type === "influences" || type === "influencedBy";
         const line = createSvgElement("line", {
           x1: a.x,
@@ -7312,23 +12826,32 @@
         });
         mindmapSvg.appendChild(line);
       }
-      // 中心与第一圈
-      firstRing.forEach((id) => drawLine(centerId, id));
-      // 第一圈与第二圈
-      secondRing.forEach((id) => {
-        const node = entryById[id];
-        if (!node || !node.relations) return;
-        const rels = new Set();
-        Object.values(node.relations).forEach((arr) =>
-          arr.forEach((x) => rels.add(x)),
-        );
-        rels.forEach((rid) => {
-          if (firstRing.includes(rid)) {
-            drawLine(id, rid);
-          }
+      firstRing.forEach((id) => drawLine(centerIdFinal, id));
+      if (mindmapMode === "concept") {
+        firstRing.forEach((cid) => {
+          const cname = cid.replace(/^concept:/, "");
+          (conceptToPhilosophers[cname] || []).forEach((pid) => {
+            if (pid !== centerIdFinal && secondRing.includes(pid) && nodesPos[pid]) {
+              drawLine(cid, pid);
+            }
+          });
         });
-      });
-      // 节点
+      } else {
+        secondRing.forEach((id) => {
+          const node = entryById[id];
+          if (!node || !node.relations) return;
+          const rels = new Set();
+          Object.values(node.relations).forEach((arr) =>
+            arr.forEach((x) => rels.add(x)),
+          );
+          rels.forEach((rid) => {
+            if (firstRing.includes(rid)) {
+              drawLine(id, rid);
+            }
+          });
+        });
+      }
+
       function nodeColor(entry, isCenter) {
         if (isCenter) return "rgba(200,169,106,0.98)";
         switch (entry.type) {
@@ -7357,11 +12880,14 @@
             return 8;
         }
       }
+      function getEntry(id) {
+        return centerEntryMap[id] || entryById[id];
+      }
       function drawNode(id) {
         const pos = nodesPos[id];
-        const entry = entryById[id];
+        const entry = getEntry(id);
         if (!pos || !entry) return;
-        const isCenter = id === centerId;
+        const isCenter = id === centerIdFinal;
         const glow = createSvgElement("circle", {
           cx: pos.x,
           cy: pos.y,
@@ -7399,7 +12925,7 @@
         group.style.cursor = "pointer";
         group.addEventListener("click", (e) => {
           e.stopPropagation();
-          if (id !== centerId) {
+          if (id !== centerIdFinal && entryById[id]) {
             showPhilosopherDetail(id);
           }
         });
@@ -7413,7 +12939,7 @@
         });
         mindmapSvg.appendChild(group);
       }
-      drawNode(centerId);
+      drawNode(centerIdFinal);
       firstRing.forEach(drawNode);
       secondRing.forEach(drawNode);
     }
@@ -7453,20 +12979,39 @@
       }
     });
     recenterBtn.addEventListener("click", () => {
-      renderMindmap(activeEntryId);
+      if (mindmapMode === "concept") {
+        renderMindmapConcept();
+      } else {
+        renderMindmap(activeEntryId);
+      }
+    });
+    document.getElementById("modeRelationBtn")?.addEventListener("click", () => {
+      setMindmapMode("relation");
+    });
+    document.getElementById("modeConceptBtn")?.addEventListener("click", () => {
+      setMindmapMode("concept");
     });
 
     // 顶部视图切换按钮：在“搜索/图谱页”和“首页”之间往返
     const viewToggleBtn = document.getElementById("viewToggleBtn");
     if (viewToggleBtn) {
       viewToggleBtn.addEventListener("click", () => {
-        if (appViewEl && appViewEl.classList.contains("view-hidden")) {
+        if (timelineViewEl && !timelineViewEl.classList.contains("view-hidden")) {
+          showHomeView();
+        } else if (appViewEl && appViewEl.classList.contains("view-hidden")) {
           showAppView();
         } else {
           showHomeView();
         }
       });
     }
+    document.getElementById("timelineEntryBtn")?.addEventListener("click", (e) => {
+      e.preventDefault();
+      showTimelineView();
+    });
+    document.getElementById("timelineBackBtn")?.addEventListener("click", () => {
+      showHomeView();
+    });
 
     // ===== 初始化 =====
     pickQuote();
